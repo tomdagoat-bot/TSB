@@ -578,6 +578,19 @@ local item = {
 				};
 			};
 		};
+		[5] = {
+			type = "Folder";
+			attributes = {};
+			tags = {};
+			id = 28;
+			properties = {
+				Name = "Events";
+				Parent = {
+					[1] = 0;
+				};
+			};
+			children = {};
+		};
 	};
 }
 scan = function(objectData)
