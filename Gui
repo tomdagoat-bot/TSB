@@ -1,0 +1,1388 @@
+local awaitRef = {}
+local objects = {}
+local coroutines = {}
+
+local item = {
+	id = 0;
+	type = "ScreenGui";
+	children = {
+		[1] = {
+			id = 1;
+			type = "Frame";
+			children = {
+				[1] = {
+					id = 2;
+					type = "UIAspectRatioConstraint";
+					children = {};
+					properties = {
+						AspectRatio = 11.399999618530273;
+						Name = "Ratio";
+						Parent = {
+							[1] = 1;
+						};
+						AspectType = Enum.AspectType.ScaleWithParentSize;
+						DominantAxis = Enum.DominantAxis.Height;
+					};
+				};
+				[2] = {
+					id = 3;
+					type = "UIListLayout";
+					children = {};
+					properties = {
+						VerticalAlignment = Enum.VerticalAlignment.Center;
+						FillDirection = Enum.FillDirection.Horizontal;
+						HorizontalAlignment = Enum.HorizontalAlignment.Center;
+						Parent = {
+							[1] = 1;
+						};
+						Padding = UDim.new(0.0299999993, 0);
+						SortOrder = Enum.SortOrder.LayoutOrder;
+						Name = "List";
+					};
+				};
+				[3] = {
+					id = 4;
+					type = "Frame";
+					children = {
+						[1] = {
+							id = 5;
+							type = "UIGradient";
+							children = {};
+							properties = {
+								Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.533333, 0.533333, 0.533333))});
+								Parent = {
+									[1] = 4;
+								};
+								Name = "Gradiant";
+								Rotation = 90;
+							};
+						};
+						[2] = {
+							id = 6;
+							type = "TextLabel";
+							children = {
+								[1] = {
+									id = 7;
+									type = "UIGradient";
+									children = {};
+									properties = {
+										Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.490196, 0.478431, 0.647059))});
+										Parent = {
+											[1] = 6;
+										};
+										Name = "Gradiant";
+										Rotation = 90;
+									};
+								};
+								[2] = {
+									id = 8;
+									type = "UITextSizeConstraint";
+									children = {};
+									properties = {
+										MaxTextSize = 40;
+										Name = "Scale";
+										Parent = {
+											[1] = 6;
+										};
+									};
+								};
+							};
+							properties = {
+								FontFace = Font.new("rbxassetid://12187368843", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+								TextStrokeColor3 = Color3.new(0.231373, 0.294118, 0.372549);
+								TextStrokeTransparency = 0;
+								AnchorPoint = Vector2.new(0.5, 1);
+								BorderSizePixel = 0;
+								Size = UDim2.new(1, 0, 1.5, 0);
+								TextColor3 = Color3.new(1, 1, 1);
+								BorderColor3 = Color3.new(0, 0, 0);
+								Text = "Evasive";
+								Parent = {
+									[1] = 4;
+								};
+								TextWrapped = true;
+								Name = "Action";
+								Position = UDim2.new(0.5, 0, -0.5, 0);
+								TextSize = 14;
+								BackgroundTransparency = 1;
+								TextScaled = true;
+								BackgroundColor3 = Color3.new(1, 1, 1);
+							};
+						};
+						[3] = {
+							id = 9;
+							type = "Frame";
+							children = {
+								[1] = {
+									id = 10;
+									type = "UIGradient";
+									children = {};
+									properties = {
+										Rotation = 90;
+										Transparency = NumberSequence.new(0, 0.2, 0, 1, 0.2, 0);
+										Name = "Gradiant";
+										Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.188235, 0.403922, 0.176471))});
+										Parent = {
+											[1] = 9;
+										};
+									};
+								};
+							};
+							properties = {
+								BorderColor3 = Color3.new(0, 0, 0);
+								AnchorPoint = Vector2.new(0, 0.5);
+								Parent = {
+									[1] = 4;
+								};
+								BackgroundTransparency = 0.30000001192092896;
+								Position = UDim2.new(0, 0, 0.5, 0);
+								Size = UDim2.new(0, 0, 1, 0);
+								Name = "Fill";
+								BorderSizePixel = 0;
+								BackgroundColor3 = Color3.new(0.27451, 1, 0.113725);
+							};
+						};
+					};
+					properties = {
+						LayoutOrder = 1;
+						BorderColor3 = Color3.new(0.337255, 0.337255, 0.337255);
+						AnchorPoint = Vector2.new(0.5, 0.5);
+						BackgroundTransparency = 0.20000000298023224;
+						Parent = {
+							[1] = 1;
+						};
+						Size = UDim2.new(0.200000003, 0, 0.180000007, 0);
+						Name = "Evasive";
+						BorderSizePixel = 2;
+						BackgroundColor3 = Color3.new(0.854902, 0.890196, 1);
+					};
+				};
+				[4] = {
+					id = 11;
+					type = "Folder";
+					children = {
+						[1] = {
+							id = 12;
+							type = "Frame";
+							children = {
+								[1] = {
+									id = 13;
+									type = "UIGradient";
+									children = {};
+									properties = {
+										Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.533333, 0.533333, 0.533333))});
+										Parent = {
+											[1] = 12;
+										};
+										Name = "Gradiant";
+										Rotation = 90;
+									};
+								};
+								[2] = {
+									id = 14;
+									type = "TextLabel";
+									children = {
+										[1] = {
+											id = 15;
+											type = "UIGradient";
+											children = {};
+											properties = {
+												Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.490196, 0.478431, 0.647059))});
+												Parent = {
+													[1] = 14;
+												};
+												Name = "Gradiant";
+												Rotation = 90;
+											};
+										};
+										[2] = {
+											id = 16;
+											type = "UITextSizeConstraint";
+											children = {};
+											properties = {
+												MaxTextSize = 40;
+												Name = "Scale";
+												Parent = {
+													[1] = 14;
+												};
+											};
+										};
+									};
+									properties = {
+										FontFace = Font.new("rbxassetid://12187368843", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+										TextStrokeColor3 = Color3.new(0.231373, 0.294118, 0.372549);
+										TextStrokeTransparency = 0;
+										AnchorPoint = Vector2.new(0.5, 1);
+										BorderSizePixel = 0;
+										Size = UDim2.new(1, 0, 1.5, 0);
+										TextColor3 = Color3.new(1, 1, 1);
+										BorderColor3 = Color3.new(0, 0, 0);
+										Text = "Side Dash";
+										Parent = {
+											[1] = 12;
+										};
+										TextWrapped = true;
+										Name = "Action";
+										Position = UDim2.new(0.5, 0, -0.5, 0);
+										TextSize = 14;
+										BackgroundTransparency = 1;
+										TextScaled = true;
+										BackgroundColor3 = Color3.new(1, 1, 1);
+									};
+								};
+								[3] = {
+									id = 17;
+									type = "Frame";
+									children = {
+										[1] = {
+											id = 18;
+											type = "UIGradient";
+											children = {};
+											properties = {
+												Rotation = 90;
+												Transparency = NumberSequence.new(0, 0.2, 0, 1, 0.2, 0);
+												Name = "Gradiant";
+												Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.647059, 0.337255, 0.0823529))});
+												Parent = {
+													[1] = 17;
+												};
+											};
+										};
+									};
+									properties = {
+										BorderColor3 = Color3.new(0, 0, 0);
+										AnchorPoint = Vector2.new(0, 0.5);
+										Parent = {
+											[1] = 12;
+										};
+										BackgroundTransparency = 0.10000000149011612;
+										Position = UDim2.new(0, 0, 0.5, 0);
+										Size = UDim2.new(0, 0, 1, 0);
+										Name = "Fill";
+										BorderSizePixel = 0;
+										BackgroundColor3 = Color3.new(1, 0.792157, 0.305882);
+									};
+								};
+							};
+							properties = {
+								LayoutOrder = 2;
+								BorderColor3 = Color3.new(0.337255, 0.337255, 0.337255);
+								AnchorPoint = Vector2.new(0.5, 0.5);
+								BackgroundTransparency = 0.20000000298023224;
+								Parent = {
+									[1] = 11;
+								};
+								Size = UDim2.new(0.150000006, 0, 0.159999996, 0);
+								Name = "Side Dash";
+								BorderSizePixel = 2;
+								BackgroundColor3 = Color3.new(0.854902, 0.890196, 1);
+							};
+						};
+						[2] = {
+							id = 19;
+							type = "Frame";
+							children = {
+								[1] = {
+									id = 20;
+									type = "UIGradient";
+									children = {};
+									properties = {
+										Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.533333, 0.533333, 0.533333))});
+										Parent = {
+											[1] = 19;
+										};
+										Name = "Gradiant";
+										Rotation = 90;
+									};
+								};
+								[2] = {
+									id = 21;
+									type = "Frame";
+									children = {
+										[1] = {
+											id = 22;
+											type = "UIGradient";
+											children = {};
+											properties = {
+												Rotation = 90;
+												Transparency = NumberSequence.new(0, 0.2, 0, 1, 0.2, 0);
+												Name = "Gradiant";
+												Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.227451, 0.396078, 0.647059))});
+												Parent = {
+													[1] = 21;
+												};
+											};
+										};
+									};
+									properties = {
+										BorderColor3 = Color3.new(0, 0, 0);
+										AnchorPoint = Vector2.new(0, 0.5);
+										Parent = {
+											[1] = 19;
+										};
+										BackgroundTransparency = 0.10000000149011612;
+										Position = UDim2.new(0, 0, 0.5, 0);
+										Size = UDim2.new(0, 0, 1, 0);
+										Name = "Fill";
+										BorderSizePixel = 0;
+										BackgroundColor3 = Color3.new(0.168627, 0.541176, 1);
+									};
+								};
+								[3] = {
+									id = 23;
+									type = "TextLabel";
+									children = {
+										[1] = {
+											id = 24;
+											type = "UIGradient";
+											children = {};
+											properties = {
+												Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.490196, 0.478431, 0.647059))});
+												Parent = {
+													[1] = 23;
+												};
+												Name = "Gradiant";
+												Rotation = 90;
+											};
+										};
+										[2] = {
+											id = 25;
+											type = "UITextSizeConstraint";
+											children = {};
+											properties = {
+												MaxTextSize = 40;
+												Name = "Scale";
+												Parent = {
+													[1] = 23;
+												};
+											};
+										};
+									};
+									properties = {
+										FontFace = Font.new("rbxassetid://12187368843", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+										TextStrokeColor3 = Color3.new(0.231373, 0.294118, 0.372549);
+										TextStrokeTransparency = 0;
+										AnchorPoint = Vector2.new(0.5, 1);
+										BorderSizePixel = 0;
+										Size = UDim2.new(1, 0, 1.5, 0);
+										TextColor3 = Color3.new(1, 1, 1);
+										BorderColor3 = Color3.new(0, 0, 0);
+										Text = "Front Dash";
+										Parent = {
+											[1] = 19;
+										};
+										TextWrapped = true;
+										Name = "Action";
+										Position = UDim2.new(0.5, 0, -0.5, 0);
+										TextSize = 14;
+										BackgroundTransparency = 1;
+										TextScaled = true;
+										BackgroundColor3 = Color3.new(1, 1, 1);
+									};
+								};
+							};
+							properties = {
+								AnchorPoint = Vector2.new(0.5, 0.5);
+								Parent = {
+									[1] = 11;
+								};
+								Name = "Front Dash";
+								Size = UDim2.new(0.150000006, 0, 0.159999996, 0);
+								BorderColor3 = Color3.new(0.337255, 0.337255, 0.337255);
+								BackgroundTransparency = 0.20000000298023224;
+								BorderSizePixel = 2;
+								BackgroundColor3 = Color3.new(0.854902, 0.890196, 1);
+							};
+						};
+						[3] = {
+							id = 26;
+							type = "UIListLayout";
+							children = {};
+							properties = {
+								VerticalAlignment = Enum.VerticalAlignment.Bottom;
+								FillDirection = Enum.FillDirection.Horizontal;
+								HorizontalAlignment = Enum.HorizontalAlignment.Center;
+								Parent = {
+									[1] = 11;
+								};
+								Padding = UDim.new(0.200000003, 0);
+								SortOrder = Enum.SortOrder.LayoutOrder;
+								Name = "List";
+							};
+						};
+					};
+					properties = {
+						Name = "Dashes";
+						Parent = {
+							[1] = 1;
+						};
+					};
+				};
+				[5] = {
+					id = 27;
+					type = "UIPadding";
+					children = {};
+					properties = {
+						Parent = {
+							[1] = 1;
+						};
+						PaddingTop = UDim.new(0.200000003, 0);
+						Name = "Padding";
+					};
+				};
+			};
+			properties = {
+				BorderColor3 = Color3.new(0, 0, 0);
+				AnchorPoint = Vector2.new(0.5, 0);
+				Parent = {
+					[1] = 0;
+				};
+				BackgroundTransparency = 1;
+				Position = UDim2.new(0.5, 0, 0, 0);
+				Size = UDim2.new(0.850000024, 0, 0.125, 0);
+				Name = "Cooldowns";
+				BorderSizePixel = 0;
+				BackgroundColor3 = Color3.new(1, 1, 1);
+			};
+		};
+		[2] = {
+			id = 28;
+			type = "Frame";
+			children = {
+				[1] = {
+					id = 29;
+					type = "UIAspectRatioConstraint";
+					children = {};
+					properties = {
+						AspectRatio = 0.42567408084869385;
+						Name = "Ratio";
+						Parent = {
+							[1] = 28;
+						};
+						AspectType = Enum.AspectType.ScaleWithParentSize;
+						DominantAxis = Enum.DominantAxis.Height;
+					};
+				};
+				[2] = {
+					id = 30;
+					type = "UIListLayout";
+					children = {};
+					properties = {
+						SortOrder = Enum.SortOrder.LayoutOrder;
+						Name = "List";
+						Parent = {
+							[1] = 28;
+						};
+						Padding = UDim.new(0.0199999996, 0);
+						HorizontalAlignment = Enum.HorizontalAlignment.Center;
+					};
+				};
+			};
+			properties = {
+				BorderColor3 = Color3.new(0, 0, 0);
+				AnchorPoint = Vector2.new(1, 1);
+				Parent = {
+					[1] = 0;
+				};
+				BackgroundTransparency = 1;
+				Position = UDim2.new(1, 0, 1, 0);
+				Size = UDim2.new(0.239999995, 0, 0.824999988, 0);
+				Name = "Options";
+				BorderSizePixel = 0;
+				BackgroundColor3 = Color3.new(1, 1, 1);
+			};
+		};
+		[3] = {
+			id = 31;
+			type = "Frame";
+			children = {
+				[1] = {
+					id = 32;
+					type = "UIGradient";
+					children = {};
+					properties = {
+						Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.533333, 0.533333, 0.533333))});
+						Parent = {
+							[1] = 31;
+						};
+						Name = "Gradiant";
+						Rotation = 90;
+					};
+				};
+				[2] = {
+					id = 33;
+					type = "Frame";
+					children = {
+						[1] = {
+							id = 34;
+							type = "UIGradient";
+							children = {};
+							properties = {
+								Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 0.470588, 0.886275)), ColorSequenceKeypoint.new(1, Color3.new(0.454902, 0.117647, 0.117647))});
+								Parent = {
+									[1] = 33;
+								};
+								Name = "Gradiant";
+								Rotation = 90;
+							};
+						};
+					};
+					properties = {
+						BorderColor3 = Color3.new(0, 0, 0);
+						AnchorPoint = Vector2.new(0, 0.5);
+						Parent = {
+							[1] = 31;
+						};
+						BackgroundTransparency = 0.20000000298023224;
+						Position = UDim2.new(0, 0, 0.5, 0);
+						Size = UDim2.new(1, 0, 1, 0);
+						Name = "Fill";
+						BorderSizePixel = 0;
+						BackgroundColor3 = Color3.new(1, 0, 0.0156863);
+					};
+				};
+				[3] = {
+					id = 35;
+					type = "TextLabel";
+					children = {
+						[1] = {
+							id = 36;
+							type = "UIGradient";
+							children = {};
+							properties = {
+								Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(0.5, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.490196, 0.478431, 0.647059))});
+								Parent = {
+									[1] = 35;
+								};
+								Name = "Gradiant";
+								Rotation = 90;
+							};
+						};
+					};
+					properties = {
+						FontFace = Font.new("rbxasset://fonts/families/AccanthisADFStd.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+						TextStrokeColor3 = Color3.new(0.231373, 0.294118, 0.372549);
+						TextStrokeTransparency = 0;
+						AnchorPoint = Vector2.new(0.5, 0.5);
+						BorderSizePixel = 0;
+						Size = UDim2.new(1, 0, 1.20000005, 0);
+						TextColor3 = Color3.new(1, 1, 1);
+						BorderColor3 = Color3.new(0, 0, 0);
+						Text = "100%";
+						Parent = {
+							[1] = 31;
+						};
+						TextWrapped = true;
+						Name = "Value";
+						Position = UDim2.new(0.5, 0, 0.5, 0);
+						TextSize = 14;
+						BackgroundTransparency = 1;
+						TextScaled = true;
+						BackgroundColor3 = Color3.new(1, 1, 1);
+					};
+				};
+				[4] = {
+					id = 37;
+					type = "UIAspectRatioConstraint";
+					children = {};
+					properties = {
+						AspectRatio = 9.960000038146973;
+						Name = "Ratio";
+						Parent = {
+							[1] = 31;
+						};
+						AspectType = Enum.AspectType.ScaleWithParentSize;
+						DominantAxis = Enum.DominantAxis.Height;
+					};
+				};
+			};
+			properties = {
+				BorderColor3 = Color3.new(0.337255, 0.337255, 0.337255);
+				AnchorPoint = Vector2.new(1, 0);
+				Parent = {
+					[1] = 0;
+				};
+				BackgroundTransparency = 0.20000000298023224;
+				Position = UDim2.new(0.980000019, 0, 0.0299999993, 0);
+				Size = UDim2.new(0.150000006, 0, 0.0219999999, 0);
+				Name = "Health";
+				BorderSizePixel = 2;
+				BackgroundColor3 = Color3.new(0.854902, 0.890196, 1);
+			};
+		};
+		[4] = {
+			id = 38;
+			type = "Frame";
+			children = {
+				[1] = {
+					id = 39;
+					type = "UIListLayout";
+					children = {};
+					properties = {
+						SortOrder = Enum.SortOrder.LayoutOrder;
+						Name = "List";
+						Parent = {
+							[1] = 38;
+						};
+						Padding = UDim.new(0.0399999991, 0);
+						HorizontalAlignment = Enum.HorizontalAlignment.Center;
+					};
+				};
+				[2] = {
+					id = 40;
+					type = "ImageButton";
+					children = {
+						[1] = {
+							id = 41;
+							type = "TextLabel";
+							children = {
+								[1] = {
+									id = 42;
+									type = "UIGradient";
+									children = {};
+									properties = {
+										Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.490196, 0.478431, 0.647059))});
+										Parent = {
+											[1] = 41;
+										};
+										Name = "Gradiant";
+										Rotation = 90;
+									};
+								};
+							};
+							properties = {
+								FontFace = Font.new("rbxassetid://12187360881", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+								TextStrokeColor3 = Color3.new(0.054902, 0.172549, 0.494118);
+								TextStrokeTransparency = 0;
+								AnchorPoint = Vector2.new(0.5, 0.5);
+								BorderSizePixel = 0;
+								Size = UDim2.new(0.899999976, 0, 0.899999976, 0);
+								RichText = true;
+								TextColor3 = Color3.new(0.109804, 0.882353, 1);
+								BorderColor3 = Color3.new(0, 0, 0);
+								Text = "Teleport";
+								Parent = {
+									[1] = 40;
+								};
+								TextWrapped = true;
+								Name = "Text";
+								Position = UDim2.new(0.5, 0, 0.5, 0);
+								BackgroundTransparency = 1;
+								TextSize = 14;
+								TextScaled = true;
+								BackgroundColor3 = Color3.new(1, 1, 1);
+							};
+						};
+					};
+					properties = {
+						LayoutOrder = 10;
+						ImageTransparency = 1;
+						BorderColor3 = Color3.new(0, 0, 0);
+						Parent = {
+							[1] = 38;
+						};
+						AnchorPoint = Vector2.new(0.5, 0.5);
+						Image = "rbxasset://textures/ui/GuiImagePlaceholder.png";
+						BackgroundTransparency = 1;
+						Size = UDim2.new(0.850000024, 0, 0.0500000007, 0);
+						Name = "Teleport";
+						BorderSizePixel = 0;
+						BackgroundColor3 = Color3.new(1, 1, 1);
+					};
+				};
+				[3] = {
+					id = 43;
+					type = "TextLabel";
+					children = {
+						[1] = {
+							id = 44;
+							type = "UIGradient";
+							children = {};
+							properties = {
+								Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.490196, 0.478431, 0.647059))});
+								Parent = {
+									[1] = 43;
+								};
+								Name = "Gradiant";
+								Rotation = 90;
+							};
+						};
+						[2] = {
+							id = 45;
+							type = "ImageLabel";
+							children = {
+								[1] = {
+									id = 46;
+									type = "ImageLabel";
+									children = {};
+									properties = {
+										BorderColor3 = Color3.new(0, 0, 0);
+										Parent = {
+											[1] = 45;
+										};
+										Size = UDim2.new(1, 0, 1, 0);
+										AnchorPoint = Vector2.new(0.5, 0.5);
+										Image = "rbxassetid://132975398557010";
+										BackgroundTransparency = 1;
+										Position = UDim2.new(0.5, 0, 0.5, 0);
+										Name = "Picture";
+										BorderSizePixel = 0;
+										BackgroundColor3 = Color3.new(0.713726, 0.686275, 1);
+									};
+								};
+							};
+							properties = {
+								ScaleType = Enum.ScaleType.Crop;
+								ImageTransparency = 0.10000000149011612;
+								BorderColor3 = Color3.new(0.419608, 0.160784, 0.490196);
+								Parent = {
+									[1] = 43;
+								};
+								AnchorPoint = Vector2.new(0.5, 1);
+								Image = "rbxassetid://9305457875";
+								Name = "Profile";
+								Position = UDim2.new(0.5, 0, -0.5, 0);
+								Size = UDim2.new(0.200057372, 0, 1.75640929, 0);
+								BorderSizePixel = 2;
+								BackgroundColor3 = Color3.new(0.713726, 0.686275, 1);
+							};
+						};
+					};
+					properties = {
+						FontFace = Font.new("rbxassetid://12187368843", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+						Parent = {
+							[1] = 38;
+						};
+						TextColor3 = Color3.new(1, 1, 1);
+						BorderColor3 = Color3.new(0, 0, 0);
+						Text = "Username";
+						TextWrapped = true;
+						TextStrokeTransparency = 0;
+						TextStrokeColor3 = Color3.new(0.231373, 0.294118, 0.372549);
+						TextSize = 14;
+						Name = "Username";
+						TextScaled = true;
+						BackgroundTransparency = 1;
+						Size = UDim2.new(0.824999988, 0, 0.0399999991, 0);
+						BorderSizePixel = 0;
+						BackgroundColor3 = Color3.new(1, 1, 1);
+					};
+				};
+				[4] = {
+					id = 47;
+					type = "UIAspectRatioConstraint";
+					children = {};
+					properties = {
+						AspectRatio = 0.42567408084869385;
+						Name = "Ratio";
+						Parent = {
+							[1] = 38;
+						};
+						AspectType = Enum.AspectType.ScaleWithParentSize;
+						DominantAxis = Enum.DominantAxis.Height;
+					};
+				};
+				[5] = {
+					id = 48;
+					type = "Frame";
+					children = {
+						[1] = {
+							id = 49;
+							type = "Frame";
+							children = {
+								[1] = {
+									id = 50;
+									type = "UIGradient";
+									children = {};
+									properties = {
+										Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.533333, 0.533333, 0.533333))});
+										Parent = {
+											[1] = 49;
+										};
+										Name = "Gradiant";
+										Rotation = 90;
+									};
+								};
+								[2] = {
+									id = 51;
+									type = "Frame";
+									children = {
+										[1] = {
+											id = 52;
+											type = "UIGradient";
+											children = {};
+											properties = {
+												Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 0.470588, 0.886275)), ColorSequenceKeypoint.new(1, Color3.new(0.454902, 0.117647, 0.117647))});
+												Parent = {
+													[1] = 51;
+												};
+												Name = "Gradiant";
+												Rotation = 90;
+											};
+										};
+									};
+									properties = {
+										BorderColor3 = Color3.new(0, 0, 0);
+										AnchorPoint = Vector2.new(0, 0.5);
+										Parent = {
+											[1] = 49;
+										};
+										BackgroundTransparency = 0.20000000298023224;
+										Position = UDim2.new(0, 0, 0.5, 0);
+										Size = UDim2.new(1, 0, 1, 0);
+										Name = "Fill";
+										BorderSizePixel = 0;
+										BackgroundColor3 = Color3.new(1, 0, 0.0156863);
+									};
+								};
+								[3] = {
+									id = 53;
+									type = "TextLabel";
+									children = {
+										[1] = {
+											id = 54;
+											type = "UIGradient";
+											children = {};
+											properties = {
+												Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(0.5, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.490196, 0.478431, 0.647059))});
+												Parent = {
+													[1] = 53;
+												};
+												Name = "Gradiant";
+												Rotation = 90;
+											};
+										};
+									};
+									properties = {
+										FontFace = Font.new("rbxasset://fonts/families/AccanthisADFStd.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+										TextStrokeColor3 = Color3.new(0.231373, 0.294118, 0.372549);
+										TextStrokeTransparency = 0;
+										AnchorPoint = Vector2.new(0.5, 0.5);
+										BorderSizePixel = 0;
+										Size = UDim2.new(1, 0, 1.20000005, 0);
+										TextColor3 = Color3.new(1, 1, 1);
+										BorderColor3 = Color3.new(0, 0, 0);
+										Text = "100%";
+										Parent = {
+											[1] = 49;
+										};
+										TextWrapped = true;
+										Name = "Value";
+										Position = UDim2.new(0.5, 0, 0.5, 0);
+										TextSize = 14;
+										BackgroundTransparency = 1;
+										TextScaled = true;
+										BackgroundColor3 = Color3.new(1, 1, 1);
+									};
+								};
+							};
+							properties = {
+								BorderColor3 = Color3.new(0.337255, 0.337255, 0.337255);
+								AnchorPoint = Vector2.new(0.5, 0.5);
+								Parent = {
+									[1] = 48;
+								};
+								BackgroundTransparency = 0.20000000298023224;
+								Position = UDim2.new(0.5, 0, 0.5, 0);
+								Size = UDim2.new(1, 0, 0.180000007, 0);
+								Name = "Health";
+								BorderSizePixel = 2;
+								BackgroundColor3 = Color3.new(0.854902, 0.890196, 1);
+							};
+						};
+						[2] = {
+							id = 55;
+							type = "Frame";
+							children = {
+								[1] = {
+									id = 56;
+									type = "UIGradient";
+									children = {};
+									properties = {
+										Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.533333, 0.533333, 0.533333))});
+										Parent = {
+											[1] = 55;
+										};
+										Name = "Gradiant";
+										Rotation = 90;
+									};
+								};
+								[2] = {
+									id = 57;
+									type = "TextLabel";
+									children = {
+										[1] = {
+											id = 58;
+											type = "UIGradient";
+											children = {};
+											properties = {
+												Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(0.5, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.490196, 0.478431, 0.647059))});
+												Parent = {
+													[1] = 57;
+												};
+												Name = "Gradiant";
+												Rotation = 90;
+											};
+										};
+									};
+									properties = {
+										FontFace = Font.new("rbxasset://fonts/families/AccanthisADFStd.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+										TextStrokeColor3 = Color3.new(0.231373, 0.294118, 0.372549);
+										TextStrokeTransparency = 0;
+										AnchorPoint = Vector2.new(0.5, 0.5);
+										ZIndex = 2;
+										BorderSizePixel = 0;
+										Size = UDim2.new(1, 0, 1.20000005, 0);
+										TextColor3 = Color3.new(1, 1, 1);
+										BorderColor3 = Color3.new(0, 0, 0);
+										Text = "100%";
+										Parent = {
+											[1] = 55;
+										};
+										TextWrapped = true;
+										BackgroundTransparency = 1;
+										Position = UDim2.new(0.5, 0, 0.5, 0);
+										Name = "Value";
+										TextSize = 14;
+										TextScaled = true;
+										BackgroundColor3 = Color3.new(1, 1, 1);
+									};
+								};
+								[3] = {
+									id = 59;
+									type = "Frame";
+									children = {
+										[1] = {
+											id = 60;
+											type = "UIGradient";
+											children = {};
+											properties = {
+												Rotation = 90;
+												Transparency = NumberSequence.new(0, 0.2, 0, 1, 0.2, 0);
+												Name = "Gradiant";
+												Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.227451, 0.396078, 0.647059))});
+												Parent = {
+													[1] = 59;
+												};
+											};
+										};
+									};
+									properties = {
+										BorderColor3 = Color3.new(0, 0, 0);
+										AnchorPoint = Vector2.new(0, 0.5);
+										Parent = {
+											[1] = 55;
+										};
+										BackgroundTransparency = 0.10000000149011612;
+										Position = UDim2.new(0, 0, 0.5, 0);
+										Size = UDim2.new(1, 0, 1, 0);
+										Name = "Fill";
+										BorderSizePixel = 0;
+										BackgroundColor3 = Color3.new(0.168627, 0.541176, 1);
+									};
+								};
+							};
+							properties = {
+								BorderColor3 = Color3.new(0.337255, 0.337255, 0.337255);
+								AnchorPoint = Vector2.new(0.5, 0.5);
+								Parent = {
+									[1] = 48;
+								};
+								BackgroundTransparency = 0.20000000298023224;
+								Position = UDim2.new(0.5, 0, 0.5, 0);
+								Size = UDim2.new(1, 0, 0.180000007, 0);
+								Name = "Ultimate";
+								BorderSizePixel = 2;
+								BackgroundColor3 = Color3.new(0.854902, 0.890196, 1);
+							};
+						};
+						[3] = {
+							id = 61;
+							type = "UIListLayout";
+							children = {};
+							properties = {
+								VerticalAlignment = Enum.VerticalAlignment.Center;
+								Name = "List";
+								Parent = {
+									[1] = 48;
+								};
+								Padding = UDim.new(0.25, 0);
+								HorizontalAlignment = Enum.HorizontalAlignment.Center;
+							};
+						};
+						[4] = {
+							id = 62;
+							type = "Frame";
+							children = {
+								[1] = {
+									id = 63;
+									type = "UIGradient";
+									children = {};
+									properties = {
+										Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.533333, 0.533333, 0.533333))});
+										Parent = {
+											[1] = 62;
+										};
+										Name = "Gradiant";
+										Rotation = 90;
+									};
+								};
+								[2] = {
+									id = 64;
+									type = "TextLabel";
+									children = {
+										[1] = {
+											id = 65;
+											type = "UIGradient";
+											children = {};
+											properties = {
+												Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(0.5, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.490196, 0.478431, 0.647059))});
+												Parent = {
+													[1] = 64;
+												};
+												Name = "Gradiant";
+												Rotation = 90;
+											};
+										};
+									};
+									properties = {
+										FontFace = Font.new("rbxasset://fonts/families/AccanthisADFStd.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+										TextStrokeColor3 = Color3.new(0.231373, 0.294118, 0.372549);
+										TextStrokeTransparency = 0;
+										AnchorPoint = Vector2.new(0.5, 0.5);
+										ZIndex = 2;
+										BorderSizePixel = 0;
+										Size = UDim2.new(1, 0, 1.20000005, 0);
+										TextColor3 = Color3.new(1, 1, 1);
+										BorderColor3 = Color3.new(0, 0, 0);
+										Text = "25s";
+										Parent = {
+											[1] = 62;
+										};
+										TextWrapped = true;
+										BackgroundTransparency = 1;
+										Position = UDim2.new(0.5, 0, 0.5, 0);
+										Name = "Value";
+										TextSize = 14;
+										TextScaled = true;
+										BackgroundColor3 = Color3.new(1, 1, 1);
+									};
+								};
+								[3] = {
+									id = 66;
+									type = "Frame";
+									children = {
+										[1] = {
+											id = 67;
+											type = "UIGradient";
+											children = {};
+											properties = {
+												Rotation = 90;
+												Transparency = NumberSequence.new(0, 0.2, 0, 1, 0.2, 0);
+												Name = "Gradiant";
+												Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.188235, 0.403922, 0.176471))});
+												Parent = {
+													[1] = 66;
+												};
+											};
+										};
+									};
+									properties = {
+										BorderColor3 = Color3.new(0, 0, 0);
+										AnchorPoint = Vector2.new(0, 0.5);
+										Parent = {
+											[1] = 62;
+										};
+										BackgroundTransparency = 0.30000001192092896;
+										Position = UDim2.new(0, 0, 0.5, 0);
+										Size = UDim2.new(1, 0, 1, 0);
+										Name = "Fill";
+										BorderSizePixel = 0;
+										BackgroundColor3 = Color3.new(0.27451, 1, 0.113725);
+									};
+								};
+							};
+							properties = {
+								BorderColor3 = Color3.new(0.337255, 0.337255, 0.337255);
+								AnchorPoint = Vector2.new(0.5, 0.5);
+								Parent = {
+									[1] = 48;
+								};
+								BackgroundTransparency = 0.20000000298023224;
+								Position = UDim2.new(0.5, 0, 0.5, 0);
+								Size = UDim2.new(1, 0, 0.180000007, 0);
+								Name = "Ragdoll";
+								BorderSizePixel = 2;
+								BackgroundColor3 = Color3.new(0.854902, 0.890196, 1);
+							};
+						};
+					};
+					properties = {
+						BorderColor3 = Color3.new(0.337255, 0.337255, 0.337255);
+						AnchorPoint = Vector2.new(1, 0);
+						Parent = {
+							[1] = 38;
+						};
+						BackgroundTransparency = 1;
+						Position = UDim2.new(0.980000019, 0, 0.0299999993, 0);
+						Size = UDim2.new(0.600000024, 0, 0.150000006, 0);
+						Name = "Bars";
+						BorderSizePixel = 0;
+						BackgroundColor3 = Color3.new(0.854902, 0.890196, 1);
+					};
+				};
+				[6] = {
+					id = 68;
+					type = "TextLabel";
+					children = {
+						[1] = {
+							id = 69;
+							type = "UIGradient";
+							children = {};
+							properties = {
+								Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.490196, 0.478431, 0.647059))});
+								Parent = {
+									[1] = 68;
+								};
+								Name = "Gradiant";
+								Rotation = 90;
+							};
+						};
+					};
+					properties = {
+						FontFace = Font.new("rbxassetid://12187368843", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+						Parent = {
+							[1] = 38;
+						};
+						TextColor3 = Color3.new(1, 1, 1);
+						BorderColor3 = Color3.new(0, 0, 0);
+						Text = "Kills: 100";
+						TextWrapped = true;
+						TextStrokeTransparency = 0;
+						TextStrokeColor3 = Color3.new(0.231373, 0.294118, 0.372549);
+						TextSize = 14;
+						Name = "Kills";
+						TextScaled = true;
+						BackgroundTransparency = 1;
+						Size = UDim2.new(0.824999988, 0, 0.0399999991, 0);
+						BorderSizePixel = 0;
+						BackgroundColor3 = Color3.new(1, 1, 1);
+					};
+				};
+				[7] = {
+					id = 70;
+					type = "TextLabel";
+					children = {
+						[1] = {
+							id = 71;
+							type = "UIGradient";
+							children = {};
+							properties = {
+								Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.490196, 0.478431, 0.647059))});
+								Parent = {
+									[1] = 70;
+								};
+								Name = "Gradiant";
+								Rotation = 90;
+							};
+						};
+					};
+					properties = {
+						FontFace = Font.new("rbxassetid://12187368843", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+						Parent = {
+							[1] = 38;
+						};
+						TextColor3 = Color3.new(1, 1, 1);
+						BorderColor3 = Color3.new(0, 0, 0);
+						Text = "Total Kills: 100";
+						TextWrapped = true;
+						TextStrokeTransparency = 0;
+						TextStrokeColor3 = Color3.new(0.231373, 0.294118, 0.372549);
+						TextSize = 14;
+						Name = "Total Kills";
+						TextScaled = true;
+						BackgroundTransparency = 1;
+						Size = UDim2.new(0.824999988, 0, 0.0399999991, 0);
+						BorderSizePixel = 0;
+						BackgroundColor3 = Color3.new(1, 1, 1);
+					};
+				};
+				[8] = {
+					id = 72;
+					type = "TextLabel";
+					children = {
+						[1] = {
+							id = 73;
+							type = "UIGradient";
+							children = {};
+							properties = {
+								Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 0.635294, 0.215686)), ColorSequenceKeypoint.new(1, Color3.new(0.647059, 0.254902, 0.0980392))});
+								Parent = {
+									[1] = 72;
+								};
+								Name = "Gradiant";
+								Rotation = 90;
+							};
+						};
+					};
+					properties = {
+						FontFace = Font.new("rbxassetid://12187368843", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+						Parent = {
+							[1] = 38;
+						};
+						TextColor3 = Color3.new(1, 1, 1);
+						BorderColor3 = Color3.new(0, 0, 0);
+						Text = "Streak: 10";
+						TextWrapped = true;
+						TextStrokeTransparency = 0;
+						TextStrokeColor3 = Color3.new(0.6, 0.282353, 0.137255);
+						TextSize = 14;
+						Name = "Streak";
+						TextScaled = true;
+						BackgroundTransparency = 1;
+						Size = UDim2.new(0.824999988, 0, 0.0399999991, 0);
+						BorderSizePixel = 0;
+						BackgroundColor3 = Color3.new(1, 1, 1);
+					};
+				};
+				[9] = {
+					id = 74;
+					type = "TextLabel";
+					children = {
+						[1] = {
+							id = 75;
+							type = "UIGradient";
+							children = {};
+							properties = {
+								Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.490196, 0.478431, 0.647059))});
+								Parent = {
+									[1] = 74;
+								};
+								Name = "Gradiant";
+								Rotation = 90;
+							};
+						};
+					};
+					properties = {
+						Parent = {
+							[1] = 38;
+						};
+						FontFace = Font.new("rbxassetid://12187368843", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+						TextWrapped = true;
+						TextColor3 = Color3.new(1, 1, 1);
+						BorderColor3 = Color3.new(0, 0, 0);
+						Text = "Moveset: <font color = 'rgb(3, 211, 255)'><stroke color = 'rgb(29, 104, 255)' joins='round' thickness='2' transparency='0'>Garou</stroke></font>";
+						TextStrokeColor3 = Color3.new(0.231373, 0.294118, 0.372549);
+						TextStrokeTransparency = 0;
+						TextSize = 14;
+						TextScaled = true;
+						BackgroundTransparency = 1;
+						RichText = true;
+						Name = "Moveset";
+						Size = UDim2.new(0.824999988, 0, 0.0399999991, 0);
+						BorderSizePixel = 0;
+						BackgroundColor3 = Color3.new(1, 1, 1);
+					};
+				};
+				[10] = {
+					id = 76;
+					type = "TextLabel";
+					children = {
+						[1] = {
+							id = 77;
+							type = "UIGradient";
+							children = {};
+							properties = {
+								Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 0, 0.0156863)), ColorSequenceKeypoint.new(1, Color3.new(0.647059, 0, 0.0117647))});
+								Parent = {
+									[1] = 76;
+								};
+								Name = "Gradiant";
+								Rotation = 90;
+							};
+						};
+					};
+					properties = {
+						Visible = false;
+						FontFace = Font.new("rbxassetid://12187368843", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+						Parent = {
+							[1] = 38;
+						};
+						TextColor3 = Color3.new(1, 1, 1);
+						BorderColor3 = Color3.new(0, 0, 0);
+						Text = "Death Counter";
+						TextWrapped = true;
+						TextStrokeTransparency = 0;
+						TextStrokeColor3 = Color3.new(0.6, 0, 0.0117647);
+						TextSize = 14;
+						BackgroundTransparency = 1;
+						TextScaled = true;
+						Name = "Death";
+						Size = UDim2.new(0.824999988, 0, 0.0399999991, 0);
+						BorderSizePixel = 0;
+						BackgroundColor3 = Color3.new(1, 1, 1);
+					};
+				};
+			};
+			properties = {
+				BorderColor3 = Color3.new(0, 0, 0);
+				AnchorPoint = Vector2.new(0, 1);
+				Parent = {
+					[1] = 0;
+				};
+				BackgroundTransparency = 1;
+				Position = UDim2.new(0, 0, 1, 0);
+				Size = UDim2.new(0.239999995, 0, 0.824999988, 0);
+				Name = "Target";
+				BorderSizePixel = 0;
+				BackgroundColor3 = Color3.new(1, 1, 1);
+			};
+		};
+	};
+	properties = {
+		Name = "TSB";
+		ZIndexBehavior = Enum.ZIndexBehavior.Sibling;
+		ResetOnSpawn = false;
+		IgnoreGuiInset = true;
+		Parent = game.Players.LocalPlayer.PlayerGui;
+		ScreenInsets = Enum.ScreenInsets.DeviceSafeInsets;
+	};
+}
+scan = function(objectData)
+	local object = Instance.new(objectData.type)
+	
+	objects[objectData.id] = object
+	
+	for property, value in pairs(objectData.properties) do
+		if type(value) == "table" then
+			awaitRef[object] = {
+				["v"] = value[1],
+				["k"] = property
+			}
+			
+			continue
+		end
+		
+		if property == "Source" then
+			table.insert(coroutines, coroutine.create(value))
+			
+			continue
+		end
+		
+		object[property] = value
+	end
+	
+	for _, child in pairs(objectData.children) do
+		scan(child)
+	end
+end
+
+scan(item) 
+
+for object, data in pairs(awaitRef) do
+	object[data.k] = objects[data.v]
+end
+
+for _, cCoroutine in pairs(coroutines) do
+	coroutine.resume(cCoroutine)
+end
