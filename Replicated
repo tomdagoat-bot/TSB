@@ -1,0 +1,647 @@
+local CollectionService = game:GetService("CollectionService")
+local awaitRef = {}
+local objects = {}
+local coroutines = {}
+
+local item = {
+	type = "Folder";
+	attributes = {};
+	tags = {};
+	id = 0;
+	properties = {
+		Name = "Gerp";
+		Parent = game["ReplicatedStorage"];
+	};
+	children = {
+		[1] = {
+			type = "BillboardGui";
+			attributes = {};
+			tags = {};
+			id = 1;
+			properties = {
+				ClipsDescendants = true;
+				ResetOnSpawn = false;
+				MaxDistance = 70;
+				Name = "Cooldowns";
+				ZIndexBehavior = Enum.ZIndexBehavior.Sibling;
+				StudsOffsetWorldSpace = Vector3.new(-4, 0, 0);
+				Parent = {
+					[1] = 0;
+				};
+				Active = true;
+				Size = UDim2.new(3, 0, 6, 0);
+			};
+			children = {
+				[1] = {
+					type = "Frame";
+					attributes = {};
+					tags = {};
+					id = 2;
+					properties = {
+						BorderColor3 = Color3.new(0, 0, 0);
+						Parent = {
+							[1] = 1;
+						};
+						Position = UDim2.new(0.5, 0, 0.5, 0);
+						Size = UDim2.new(1, 0, 1, 0);
+						AnchorPoint = Vector2.new(0.5, 0.5);
+						Transparency = 1;
+						BackgroundTransparency = 1;
+						BorderColor = BrickColor.new("Really black");
+						BorderSizePixel = 0;
+						Name = "Scale";
+						BackgroundColor = BrickColor.new("Institutional white");
+						BackgroundColor3 = Color3.new(1, 1, 1);
+					};
+					children = {
+						[1] = {
+							type = "UIListLayout";
+							attributes = {};
+							tags = {};
+							id = 3;
+							properties = {
+								VerticalAlignment = Enum.VerticalAlignment.Center;
+								FillDirection = Enum.FillDirection.Horizontal;
+								HorizontalAlignment = Enum.HorizontalAlignment.Center;
+								Parent = {
+									[1] = 2;
+								};
+								Padding = UDim.new(0.15000000596046448, 0);
+								SortOrder = Enum.SortOrder.LayoutOrder;
+								Name = "List";
+							};
+							children = {};
+						};
+						[2] = {
+							type = "Frame";
+							attributes = {};
+							tags = {};
+							id = 4;
+							properties = {
+								BorderColor3 = Color3.new(0.33725491166114807, 0.33725491166114807, 0.33725491166114807);
+								Parent = {
+									[1] = 2;
+								};
+								Size = UDim2.new(0.15000000596046448, 0, 0.800000011920929, 0);
+								AnchorPoint = Vector2.new(0.5, 0.5);
+								Transparency = 0.20000000298023224;
+								BackgroundTransparency = 0.20000000298023224;
+								BorderColor = BrickColor.new("Dark grey metallic");
+								BorderSizePixel = 0;
+								Name = "Front Dash";
+								BackgroundColor = BrickColor.new("Tr. Flu. Blue");
+								BackgroundColor3 = Color3.new(0.8549019694328308, 0.8901960849761963, 1);
+							};
+							children = {
+								[1] = {
+									type = "UIGradient";
+									attributes = {};
+									tags = {};
+									id = 5;
+									properties = {
+										Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.5333333611488342, 0.5333333611488342, 0.5333333611488342))});
+										Parent = {
+											[1] = 4;
+										};
+										Name = "Gradiant";
+										Rotation = 90;
+									};
+									children = {};
+								};
+								[2] = {
+									type = "Frame";
+									attributes = {};
+									tags = {};
+									id = 6;
+									properties = {
+										BorderColor3 = Color3.new(0, 0, 0);
+										Parent = {
+											[1] = 4;
+										};
+										Position = UDim2.new(0.5, 0, 1, 0);
+										Size = UDim2.new(1, 0, 0, 0);
+										AnchorPoint = Vector2.new(0.5, 1);
+										Transparency = 0.10000000149011612;
+										BackgroundTransparency = 0.10000000149011612;
+										BorderColor = BrickColor.new("Really black");
+										BorderSizePixel = 0;
+										Name = "Fill";
+										BackgroundColor = BrickColor.new("Electric blue");
+										BackgroundColor3 = Color3.new(0.16862745583057404, 0.5411764979362488, 1);
+									};
+									children = {
+										[1] = {
+											type = "UIGradient";
+											attributes = {};
+											tags = {};
+											id = 7;
+											properties = {
+												Rotation = 90;
+												Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.20000000298023224, 0), NumberSequenceKeypoint.new(1, 0.20000000298023224, 0)});
+												Name = "Gradiant";
+												Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.22745098173618317, 0.3960784375667572, 0.6470588445663452))});
+												Parent = {
+													[1] = 6;
+												};
+											};
+											children = {};
+										};
+									};
+								};
+								[3] = {
+									type = "UIStroke";
+									attributes = {};
+									tags = {};
+									id = 8;
+									properties = {
+										Thickness = 0.10000000149011612;
+										LineJoinMode = Enum.LineJoinMode.Miter;
+										Name = "Stroke";
+										StrokeSizingMode = Enum.StrokeSizingMode.ScaledSize;
+										Parent = {
+											[1] = 4;
+										};
+										Color = Color3.new(0.33725491166114807, 0.33725491166114807, 0.33725491166114807);
+									};
+									children = {};
+								};
+							};
+						};
+						[3] = {
+							type = "Frame";
+							attributes = {};
+							tags = {};
+							id = 9;
+							properties = {
+								LayoutOrder = 2;
+								BorderColor3 = Color3.new(0.33725491166114807, 0.33725491166114807, 0.33725491166114807);
+								Parent = {
+									[1] = 2;
+								};
+								Size = UDim2.new(0.15000000596046448, 0, 0.800000011920929, 0);
+								AnchorPoint = Vector2.new(0.5, 0.5);
+								Transparency = 0.20000000298023224;
+								BackgroundTransparency = 0.20000000298023224;
+								BorderColor = BrickColor.new("Dark grey metallic");
+								BorderSizePixel = 0;
+								Name = "Side Dash";
+								BackgroundColor = BrickColor.new("Tr. Flu. Blue");
+								BackgroundColor3 = Color3.new(0.8549019694328308, 0.8901960849761963, 1);
+							};
+							children = {
+								[1] = {
+									type = "UIGradient";
+									attributes = {};
+									tags = {};
+									id = 10;
+									properties = {
+										Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.5333333611488342, 0.5333333611488342, 0.5333333611488342))});
+										Parent = {
+											[1] = 9;
+										};
+										Name = "Gradiant";
+										Rotation = 90;
+									};
+									children = {};
+								};
+								[2] = {
+									type = "Frame";
+									attributes = {};
+									tags = {};
+									id = 11;
+									properties = {
+										BorderColor3 = Color3.new(0, 0, 0);
+										Parent = {
+											[1] = 9;
+										};
+										Position = UDim2.new(0.5, 0, 1, 0);
+										Size = UDim2.new(1, 0, 0, 0);
+										AnchorPoint = Vector2.new(0.5, 1);
+										Transparency = 0.10000000149011612;
+										BackgroundTransparency = 0.10000000149011612;
+										BorderColor = BrickColor.new("Really black");
+										BorderSizePixel = 0;
+										Name = "Fill";
+										BackgroundColor = BrickColor.new("Bright yellow");
+										BackgroundColor3 = Color3.new(1, 0.7921568751335144, 0.30588236451148987);
+									};
+									children = {
+										[1] = {
+											type = "UIGradient";
+											attributes = {};
+											tags = {};
+											id = 12;
+											properties = {
+												Rotation = 90;
+												Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.20000000298023224, 0), NumberSequenceKeypoint.new(1, 0.20000000298023224, 0)});
+												Name = "Gradiant";
+												Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.6470588445663452, 0.33725491166114807, 0.08235294371843338))});
+												Parent = {
+													[1] = 11;
+												};
+											};
+											children = {};
+										};
+									};
+								};
+								[3] = {
+									type = "UIStroke";
+									attributes = {};
+									tags = {};
+									id = 13;
+									properties = {
+										Thickness = 0.10000000149011612;
+										LineJoinMode = Enum.LineJoinMode.Miter;
+										Name = "Stroke";
+										StrokeSizingMode = Enum.StrokeSizingMode.ScaledSize;
+										Parent = {
+											[1] = 9;
+										};
+										Color = Color3.new(0.33725491166114807, 0.33725491166114807, 0.33725491166114807);
+									};
+									children = {};
+								};
+							};
+						};
+						[4] = {
+							type = "Frame";
+							attributes = {};
+							tags = {};
+							id = 14;
+							properties = {
+								BorderColor3 = Color3.new(0.33725491166114807, 0.33725491166114807, 0.33725491166114807);
+								Parent = {
+									[1] = 2;
+								};
+								Size = UDim2.new(0.15000000596046448, 0, 0.800000011920929, 0);
+								AnchorPoint = Vector2.new(0.5, 0.5);
+								Transparency = 0.20000000298023224;
+								BackgroundTransparency = 0.20000000298023224;
+								BorderColor = BrickColor.new("Dark grey metallic");
+								BorderSizePixel = 0;
+								Name = "Evasive";
+								BackgroundColor = BrickColor.new("Tr. Flu. Blue");
+								BackgroundColor3 = Color3.new(0.8549019694328308, 0.8901960849761963, 1);
+							};
+							children = {
+								[1] = {
+									type = "UIGradient";
+									attributes = {};
+									tags = {};
+									id = 15;
+									properties = {
+										Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.5333333611488342, 0.5333333611488342, 0.5333333611488342))});
+										Parent = {
+											[1] = 14;
+										};
+										Name = "Gradiant";
+										Rotation = 90;
+									};
+									children = {};
+								};
+								[2] = {
+									type = "Frame";
+									attributes = {};
+									tags = {};
+									id = 16;
+									properties = {
+										BorderColor3 = Color3.new(0, 0, 0);
+										Parent = {
+											[1] = 14;
+										};
+										Position = UDim2.new(0.5, 0, 1, 0);
+										Size = UDim2.new(1, 0, 0, 0);
+										AnchorPoint = Vector2.new(0.5, 1);
+										Transparency = 0.10000000149011612;
+										BackgroundTransparency = 0.10000000149011612;
+										BorderColor = BrickColor.new("Really black");
+										BorderSizePixel = 0;
+										Name = "Fill";
+										BackgroundColor = BrickColor.new("Olivine");
+										BackgroundColor3 = Color3.new(0.5411764979362488, 1, 0.4901961088180542);
+									};
+									children = {
+										[1] = {
+											type = "UIGradient";
+											attributes = {};
+											tags = {};
+											id = 17;
+											properties = {
+												Rotation = 90;
+												Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.20000000298023224, 0), NumberSequenceKeypoint.new(1, 0.20000000298023224, 0)});
+												Name = "Gradiant";
+												Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.15294118225574493, 0.5058823823928833, 0.054901961237192154))});
+												Parent = {
+													[1] = 16;
+												};
+											};
+											children = {};
+										};
+									};
+								};
+								[3] = {
+									type = "UIStroke";
+									attributes = {};
+									tags = {};
+									id = 18;
+									properties = {
+										Thickness = 0.10000000149011612;
+										LineJoinMode = Enum.LineJoinMode.Miter;
+										Name = "Stroke";
+										StrokeSizingMode = Enum.StrokeSizingMode.ScaledSize;
+										Parent = {
+											[1] = 14;
+										};
+										Color = Color3.new(0.33725491166114807, 0.33725491166114807, 0.33725491166114807);
+									};
+									children = {};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+		[2] = {
+			type = "BillboardGui";
+			attributes = {};
+			tags = {};
+			id = 19;
+			properties = {
+				ClipsDescendants = true;
+				ResetOnSpawn = false;
+				MaxDistance = 70;
+				Name = "Counters";
+				ZIndexBehavior = Enum.ZIndexBehavior.Sibling;
+				StudsOffsetWorldSpace = Vector3.new(0, 3, 0);
+				Parent = {
+					[1] = 0;
+				};
+				Active = true;
+				Size = UDim2.new(6, 0, 2, 0);
+			};
+			children = {
+				[1] = {
+					type = "TextLabel";
+					attributes = {};
+					tags = {};
+					id = 20;
+					properties = {
+						Visible = false;
+						FontSize = Enum.FontSize.Size14;
+						TextStrokeColor3 = Color3.new(0.2039215862751007, 0.1568627506494522, 0.8392157554626465);
+						TextStrokeTransparency = 0;
+						AnchorPoint = Vector2.new(0.5, 0.5);
+						Parent = {
+							[1] = 19;
+						};
+						TextWrapped = true;
+						BorderColor = BrickColor.new("Really black");
+						TextWrap = true;
+						TextSize = 14;
+						BackgroundColor = BrickColor.new("Institutional white");
+						Size = UDim2.new(1, 0, 0.6000000238418579, 0);
+						BorderSizePixel = 0;
+						TextBounds = Vector2.new(0.9056603908538818, 0.9056603908538818);
+						TextColor = BrickColor.new("Cyan");
+						TextColor3 = Color3.new(0.07450980693101883, 0.6705882549285889, 0.8901961445808411);
+						BorderColor3 = Color3.new(0, 0, 0);
+						Text = "Counter";
+						LocalizedText = "Counter";
+						FontFace = Font.new("rbxassetid://12187368843", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+						ContentText = "Counter";
+						Transparency = 1;
+						Name = "Counter";
+						Position = UDim2.new(0.5, 0, 0.5, 0);
+						Font = Enum.Font.Unknown;
+						BackgroundTransparency = 1;
+						TextScaled = true;
+						BackgroundColor3 = Color3.new(1, 1, 1);
+					};
+					children = {};
+				};
+				[2] = {
+					type = "TextLabel";
+					attributes = {};
+					tags = {};
+					id = 21;
+					properties = {
+						Visible = false;
+						FontSize = Enum.FontSize.Size14;
+						TextStrokeColor3 = Color3.new(0.38823533058166504, 0, 0.007843137718737125);
+						TextStrokeTransparency = 0;
+						AnchorPoint = Vector2.new(0.5, 0.5);
+						Parent = {
+							[1] = 19;
+						};
+						TextWrapped = true;
+						BorderColor = BrickColor.new("Really black");
+						TextWrap = true;
+						TextSize = 14;
+						BackgroundColor = BrickColor.new("Institutional white");
+						Size = UDim2.new(1, 0, 1, 0);
+						BorderSizePixel = 0;
+						TextBounds = Vector2.new(1.8113207817077637, 0.9056603908538818);
+						TextColor = BrickColor.new("Really red");
+						TextColor3 = Color3.new(0.8901961445808411, 0, 0.01568627543747425);
+						BorderColor3 = Color3.new(0, 0, 0);
+						Text = "Death Counter";
+						LocalizedText = "Death Counter";
+						FontFace = Font.new("rbxassetid://12187368843", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+						ContentText = "Death Counter";
+						Transparency = 1;
+						Name = "Death";
+						Position = UDim2.new(0.5, 0, 0.5, 0);
+						Font = Enum.Font.Unknown;
+						BackgroundTransparency = 1;
+						TextScaled = true;
+						BackgroundColor3 = Color3.new(1, 1, 1);
+					};
+					children = {};
+				};
+			};
+		};
+		[3] = {
+			type = "Model";
+			attributes = {};
+			tags = {};
+			id = 22;
+			properties = {
+				Name = "Highlights";
+				Parent = {
+					[1] = 0;
+				};
+			};
+			children = {
+				[1] = {
+					type = "Highlight";
+					attributes = {};
+					tags = {};
+					id = 23;
+					properties = {
+						FillColor = Color3.new(1, 0.8549020290374756, 0.125490203499794);
+						Name = "Counter";
+						Parent = {
+							[1] = 22;
+						};
+						FillTransparency = 0.30000001192092896;
+						OutlineTransparency = 0.20000000298023224;
+					};
+					children = {};
+				};
+				[2] = {
+					type = "Highlight";
+					attributes = {};
+					tags = {};
+					id = 24;
+					properties = {
+						FillColor = Color3.new(1, 0, 0.01568627543747425);
+						Name = "Death";
+						OutlineColor = Color3.new(1, 0, 0.01568627543747425);
+						Parent = {
+							[1] = 22;
+						};
+						FillTransparency = 0.30000001192092896;
+						OutlineTransparency = 0.20000000298023224;
+					};
+					children = {};
+				};
+				[3] = {
+					type = "Highlight";
+					attributes = {};
+					tags = {};
+					id = 25;
+					properties = {
+						FillColor = Color3.new(0.2352941334247589, 0.6313725709915161, 1);
+						Name = "Silent";
+						OutlineColor = Color3.new(0, 0, 1);
+						Parent = {
+							[1] = 22;
+						};
+						FillTransparency = 0.30000001192092896;
+						OutlineTransparency = 0.20000000298023224;
+					};
+					children = {};
+				};
+			};
+		};
+		[4] = {
+			type = "TextButton";
+			attributes = {};
+			tags = {};
+			id = 26;
+			properties = {
+				FontFace = Font.new("rbxassetid://12187360881", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+				TextStrokeColor3 = Color3.new(0.23137255012989044, 0.29411765933036804, 0.37254902720451355);
+				TextStrokeTransparency = 0;
+				AnchorPoint = Vector2.new(0.5, 0.5);
+				Parent = {
+					[1] = 0;
+				};
+				BorderColor = BrickColor.new("Really black");
+				TextWrapped = true;
+				TextWrap = true;
+				BackgroundColor = BrickColor.new("Institutional white");
+				Size = UDim2.new(0.8500000238418579, 0, 0.05999999865889549, 0);
+				BorderSizePixel = 0;
+				RichText = true;
+				TextFits = true;
+				TextColor3 = Color3.new(1, 1, 1);
+				BorderColor3 = Color3.new(0, 0, 0);
+				AbsolutePosition = Vector2.new(15.863212585449219, 0);
+				TextColor = BrickColor.new("Institutional white");
+				Text = "Auto Tech: <font color = 'rgb(0, 255, 0)'>Enabled</font>";
+				ContentText = "Auto Tech: Enabled";
+				Transparency = 1;
+				BackgroundTransparency = 1;
+				LocalizedText = "Auto Tech: <font color = 'rgb(0, 255, 0)'>Enabled</font>";
+				Font = Enum.Font.Unknown;
+				Name = "Tech";
+				TextScaled = true;
+				BackgroundColor3 = Color3.new(1, 1, 1);
+			};
+			children = {
+				[1] = {
+					type = "UIGradient";
+					attributes = {};
+					tags = {};
+					id = 27;
+					properties = {
+						Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.4901960790157318, 0.47843137383461, 0.6470588445663452))});
+						Parent = {
+							[1] = 26;
+						};
+						Name = "Gradiant";
+						Rotation = 90;
+					};
+					children = {};
+				};
+			};
+		};
+	};
+}
+scan = function(objectData)
+	local object = Instance.new(objectData.type)
+
+	objects[objectData.id] = object
+
+	for property, value in pairs(objectData.properties) do
+		if type(value) == "table" then
+			awaitRef[object] = {
+				["v"] = value[1],
+				["k"] = property
+			}
+
+			continue
+		end
+
+		if property == "Source" then
+			table.insert(coroutines, coroutine.create(value))
+
+			continue
+		end
+
+		for property, value in pairs(objectData.properties) do
+			local ok, err = pcall(function()
+					object[property] = value
+			end)
+
+			if not ok then
+				warn(
+					"Failed property:",
+					object.ClassName,
+					property,
+					err
+				)
+			end
+		end
+	end
+
+	for attrName, attrValue in pairs(objectData.attributes) do
+		object:SetAttribute(attrName, attrValue)
+	end
+
+	for _, tag in pairs(objectData.tags) do
+		CollectionService:AddTag(object, tag)
+	end
+
+	for _, child in pairs(objectData.children) do
+		scan(child)
+	end
+	
+	if objectData.properties.__Scale then
+		local scale = tonumber(objectData.properties.__Scale)
+		object:ScaleTo(scale)
+		objectData.properties.__Scale = nil
+	end
+end
+
+scan(item)
+
+for object, data in pairs(awaitRef) do
+	object[data.k] = objects[data.v]
+end
+
+for _, cCoroutine in pairs(coroutines) do
+	coroutine.resume(cCoroutine)
+end
