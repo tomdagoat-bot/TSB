@@ -1,0 +1,533 @@
+local awaitRef = {}
+local objects = {}
+local coroutines = {}
+
+local item = {
+	id = 0;
+	type = "Folder";
+	children = {
+		[1] = {
+			id = 1;
+			type = "ImageButton";
+			children = {
+				[1] = {
+					id = 2;
+					type = "TextLabel";
+					children = {
+						[1] = {
+							id = 3;
+							type = "UIGradient";
+							children = {};
+							properties = {
+								Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.490196, 0.478431, 0.647059))});
+								Parent = {
+									[1] = 2;
+								};
+								Name = "Gradiant";
+								Rotation = 90;
+							};
+						};
+					};
+					properties = {
+						FontFace = Font.new("rbxassetid://12187360881", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+						Parent = {
+							[1] = 1;
+						};
+						TextStrokeTransparency = 0.699999988079071;
+						AnchorPoint = Vector2.new(0.5, 0.5);
+						BorderSizePixel = 0;
+						Size = UDim2.new(0.899999976, 0, 0.899999976, 0);
+						RichText = true;
+						TextColor3 = Color3.new(1, 1, 1);
+						BorderColor3 = Color3.new(0, 0, 0);
+						Text = "Auto Tech: <font color = 'rgb(0, 255, 0)'>Enabled</font>";
+						TextWrapped = true;
+						Name = "Text";
+						Position = UDim2.new(0.5, 0, 0.5, 0);
+						BackgroundTransparency = 1;
+						TextSize = 14;
+						TextScaled = true;
+						BackgroundColor3 = Color3.new(1, 1, 1);
+					};
+				};
+			};
+			properties = {
+				ImageTransparency = 1;
+				BorderColor3 = Color3.new(0, 0, 0);
+				Parent = {
+					[1] = 0;
+				};
+				AnchorPoint = Vector2.new(0.5, 0.5);
+				Image = "rbxasset://textures/ui/GuiImagePlaceholder.png";
+				BackgroundTransparency = 1;
+				Name = "Tech";
+				Size = UDim2.new(0.850000024, 0, 0.0799999982, 0);
+				BorderSizePixel = 0;
+				BackgroundColor3 = Color3.new(1, 1, 1);
+			};
+		};
+		[2] = {
+			id = 4;
+			type = "BillboardGui";
+			children = {
+				[1] = {
+					id = 5;
+					type = "Frame";
+					children = {
+						[1] = {
+							id = 6;
+							type = "UIListLayout";
+							children = {};
+							properties = {
+								VerticalAlignment = Enum.VerticalAlignment.Center;
+								FillDirection = Enum.FillDirection.Horizontal;
+								HorizontalAlignment = Enum.HorizontalAlignment.Center;
+								Parent = {
+									[1] = 5;
+								};
+								Padding = UDim.new(0.150000006, 0);
+								SortOrder = Enum.SortOrder.LayoutOrder;
+								Name = "List";
+							};
+						};
+						[2] = {
+							id = 7;
+							type = "Frame";
+							children = {
+								[1] = {
+									id = 8;
+									type = "UIGradient";
+									children = {};
+									properties = {
+										Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.533333, 0.533333, 0.533333))});
+										Parent = {
+											[1] = 7;
+										};
+										Name = "Gradiant";
+										Rotation = 90;
+									};
+								};
+								[2] = {
+									id = 9;
+									type = "Frame";
+									children = {
+										[1] = {
+											id = 10;
+											type = "UIGradient";
+											children = {};
+											properties = {
+												Rotation = 90;
+												Transparency = NumberSequence.new(0, 0.2, 0, 1, 0.2, 0);
+												Name = "Gradiant";
+												Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.227451, 0.396078, 0.647059))});
+												Parent = {
+													[1] = 9;
+												};
+											};
+										};
+									};
+									properties = {
+										BorderColor3 = Color3.new(0, 0, 0);
+										AnchorPoint = Vector2.new(0.5, 1);
+										Parent = {
+											[1] = 7;
+										};
+										BackgroundTransparency = 0.10000000149011612;
+										Position = UDim2.new(0.5, 0, 1, 0);
+										Size = UDim2.new(1, 0, 0, 0);
+										Name = "Fill";
+										BorderSizePixel = 0;
+										BackgroundColor3 = Color3.new(0.168627, 0.541176, 1);
+									};
+								};
+								[3] = {
+									id = 11;
+									type = "UIStroke";
+									children = {};
+									properties = {
+										Thickness = 0.10000000149011612;
+										LineJoinMode = Enum.LineJoinMode.Miter;
+										Name = "Stroke";
+										StrokeSizingMode = Enum.StrokeSizingMode.ScaledSize;
+										Parent = {
+											[1] = 7;
+										};
+										Color = Color3.new(0.337255, 0.337255, 0.337255);
+									};
+								};
+							};
+							properties = {
+								AnchorPoint = Vector2.new(0.5, 0.5);
+								Parent = {
+									[1] = 5;
+								};
+								Name = "Front Dash";
+								Size = UDim2.new(0.150000006, 0, 0.800000012, 0);
+								BorderColor3 = Color3.new(0.337255, 0.337255, 0.337255);
+								BackgroundTransparency = 0.20000000298023224;
+								BorderSizePixel = 0;
+								BackgroundColor3 = Color3.new(0.854902, 0.890196, 1);
+							};
+						};
+						[3] = {
+							id = 12;
+							type = "Frame";
+							children = {
+								[1] = {
+									id = 13;
+									type = "UIGradient";
+									children = {};
+									properties = {
+										Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.533333, 0.533333, 0.533333))});
+										Parent = {
+											[1] = 12;
+										};
+										Name = "Gradiant";
+										Rotation = 90;
+									};
+								};
+								[2] = {
+									id = 14;
+									type = "Frame";
+									children = {
+										[1] = {
+											id = 15;
+											type = "UIGradient";
+											children = {};
+											properties = {
+												Rotation = 90;
+												Transparency = NumberSequence.new(0, 0.2, 0, 1, 0.2, 0);
+												Name = "Gradiant";
+												Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.647059, 0.337255, 0.0823529))});
+												Parent = {
+													[1] = 14;
+												};
+											};
+										};
+									};
+									properties = {
+										BorderColor3 = Color3.new(0, 0, 0);
+										AnchorPoint = Vector2.new(0.5, 1);
+										Parent = {
+											[1] = 12;
+										};
+										BackgroundTransparency = 0.10000000149011612;
+										Position = UDim2.new(0.5, 0, 1, 0);
+										Size = UDim2.new(1, 0, 0, 0);
+										Name = "Fill";
+										BorderSizePixel = 0;
+										BackgroundColor3 = Color3.new(1, 0.792157, 0.305882);
+									};
+								};
+								[3] = {
+									id = 16;
+									type = "UIStroke";
+									children = {};
+									properties = {
+										Thickness = 0.10000000149011612;
+										LineJoinMode = Enum.LineJoinMode.Miter;
+										Name = "Stroke";
+										StrokeSizingMode = Enum.StrokeSizingMode.ScaledSize;
+										Parent = {
+											[1] = 12;
+										};
+										Color = Color3.new(0.337255, 0.337255, 0.337255);
+									};
+								};
+							};
+							properties = {
+								LayoutOrder = 2;
+								BorderColor3 = Color3.new(0.337255, 0.337255, 0.337255);
+								AnchorPoint = Vector2.new(0.5, 0.5);
+								BackgroundTransparency = 0.20000000298023224;
+								Parent = {
+									[1] = 5;
+								};
+								Size = UDim2.new(0.150000006, 0, 0.800000012, 0);
+								Name = "Side Dash";
+								BorderSizePixel = 0;
+								BackgroundColor3 = Color3.new(0.854902, 0.890196, 1);
+							};
+						};
+						[4] = {
+							id = 17;
+							type = "Frame";
+							children = {
+								[1] = {
+									id = 18;
+									type = "UIGradient";
+									children = {};
+									properties = {
+										Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.533333, 0.533333, 0.533333))});
+										Parent = {
+											[1] = 17;
+										};
+										Name = "Gradiant";
+										Rotation = 90;
+									};
+								};
+								[2] = {
+									id = 19;
+									type = "Frame";
+									children = {
+										[1] = {
+											id = 20;
+											type = "UIGradient";
+											children = {};
+											properties = {
+												Rotation = 90;
+												Transparency = NumberSequence.new(0, 0.2, 0, 1, 0.2, 0);
+												Name = "Gradiant";
+												Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.152941, 0.505882, 0.054902))});
+												Parent = {
+													[1] = 19;
+												};
+											};
+										};
+									};
+									properties = {
+										BorderColor3 = Color3.new(0, 0, 0);
+										AnchorPoint = Vector2.new(0.5, 1);
+										Parent = {
+											[1] = 17;
+										};
+										BackgroundTransparency = 0.10000000149011612;
+										Position = UDim2.new(0.5, 0, 1, 0);
+										Size = UDim2.new(1, 0, 0, 0);
+										Name = "Fill";
+										BorderSizePixel = 0;
+										BackgroundColor3 = Color3.new(0.541176, 1, 0.490196);
+									};
+								};
+								[3] = {
+									id = 21;
+									type = "UIStroke";
+									children = {};
+									properties = {
+										Thickness = 0.10000000149011612;
+										LineJoinMode = Enum.LineJoinMode.Miter;
+										Name = "Stroke";
+										StrokeSizingMode = Enum.StrokeSizingMode.ScaledSize;
+										Parent = {
+											[1] = 17;
+										};
+										Color = Color3.new(0.337255, 0.337255, 0.337255);
+									};
+								};
+							};
+							properties = {
+								AnchorPoint = Vector2.new(0.5, 0.5);
+								Parent = {
+									[1] = 5;
+								};
+								Name = "Evasive";
+								Size = UDim2.new(0.150000006, 0, 0.800000012, 0);
+								BorderColor3 = Color3.new(0.337255, 0.337255, 0.337255);
+								BackgroundTransparency = 0.20000000298023224;
+								BorderSizePixel = 0;
+								BackgroundColor3 = Color3.new(0.854902, 0.890196, 1);
+							};
+						};
+					};
+					properties = {
+						BorderColor3 = Color3.new(0, 0, 0);
+						AnchorPoint = Vector2.new(0.5, 0.5);
+						Parent = {
+							[1] = 4;
+						};
+						BackgroundTransparency = 1;
+						Position = UDim2.new(0.5, 0, 0.5, 0);
+						Size = UDim2.new(1, 0, 1, 0);
+						Name = "Scale";
+						BorderSizePixel = 0;
+						BackgroundColor3 = Color3.new(1, 1, 1);
+					};
+				};
+			};
+			properties = {
+				ClipsDescendants = true;
+				ResetOnSpawn = false;
+				MaxDistance = 70;
+				Name = "Cooldowns";
+				ZIndexBehavior = Enum.ZIndexBehavior.Sibling;
+				StudsOffsetWorldSpace = Vector3.new(-4, 0, 0);
+				Parent = {
+					[1] = 0;
+				};
+				Active = true;
+				Size = UDim2.new(3, 0, 6, 0);
+			};
+		};
+		[3] = {
+			id = 22;
+			type = "BillboardGui";
+			children = {
+				[1] = {
+					id = 23;
+					type = "TextLabel";
+					children = {};
+					properties = {
+						Visible = false;
+						FontFace = Font.new("rbxassetid://12187368843", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+						TextStrokeColor3 = Color3.new(0.203922, 0.156863, 0.839216);
+						TextStrokeTransparency = 0;
+						AnchorPoint = Vector2.new(0.5, 0.5);
+						BorderSizePixel = 0;
+						Size = UDim2.new(1, 0, 0.600000024, 0);
+						TextColor3 = Color3.new(0.0745098, 0.670588, 0.890196);
+						BorderColor3 = Color3.new(0, 0, 0);
+						Text = "Counter";
+						Parent = {
+							[1] = 22;
+						};
+						TextWrapped = true;
+						Name = "Counter";
+						Position = UDim2.new(0.5, 0, 0.5, 0);
+						TextSize = 14;
+						BackgroundTransparency = 1;
+						TextScaled = true;
+						BackgroundColor3 = Color3.new(1, 1, 1);
+					};
+				};
+				[2] = {
+					id = 24;
+					type = "TextLabel";
+					children = {};
+					properties = {
+						Visible = false;
+						FontFace = Font.new("rbxassetid://12187368843", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+						TextStrokeColor3 = Color3.new(0.388235, 0, 0.00784314);
+						TextStrokeTransparency = 0;
+						AnchorPoint = Vector2.new(0.5, 0.5);
+						BorderSizePixel = 0;
+						Size = UDim2.new(1, 0, 1, 0);
+						TextColor3 = Color3.new(0.890196, 0, 0.0156863);
+						BorderColor3 = Color3.new(0, 0, 0);
+						Text = "Death Counter";
+						Parent = {
+							[1] = 22;
+						};
+						TextWrapped = true;
+						Name = "Death";
+						Position = UDim2.new(0.5, 0, 0.5, 0);
+						TextSize = 14;
+						BackgroundTransparency = 1;
+						TextScaled = true;
+						BackgroundColor3 = Color3.new(1, 1, 1);
+					};
+				};
+			};
+			properties = {
+				ClipsDescendants = true;
+				ResetOnSpawn = false;
+				MaxDistance = 70;
+				Name = "Counters";
+				ZIndexBehavior = Enum.ZIndexBehavior.Sibling;
+				StudsOffsetWorldSpace = Vector3.new(0, 3, 0);
+				Parent = {
+					[1] = 0;
+				};
+				Active = true;
+				Size = UDim2.new(6, 0, 2, 0);
+			};
+		};
+		[4] = {
+			id = 25;
+			type = "Model";
+			children = {
+				[1] = {
+					id = 26;
+					type = "Highlight";
+					children = {};
+					properties = {
+						FillColor = Color3.new(1, 0.854902, 0.12549);
+						Name = "Counter";
+						Parent = {
+							[1] = 25;
+						};
+						FillTransparency = 0.30000001192092896;
+						OutlineTransparency = 0.20000000298023224;
+					};
+				};
+				[2] = {
+					id = 27;
+					type = "Highlight";
+					children = {};
+					properties = {
+						FillColor = Color3.new(1, 0, 0.0156863);
+						Name = "Death";
+						OutlineColor = Color3.new(1, 0, 0.0156863);
+						Parent = {
+							[1] = 25;
+						};
+						FillTransparency = 0.30000001192092896;
+						OutlineTransparency = 0.20000000298023224;
+					};
+				};
+				[3] = {
+					id = 28;
+					type = "Highlight";
+					children = {};
+					properties = {
+						FillColor = Color3.new(0.235294, 0.631373, 1);
+						Name = "Silent";
+						OutlineColor = Color3.new(0, 0, 1);
+						Parent = {
+							[1] = 25;
+						};
+						FillTransparency = 0.30000001192092896;
+						OutlineTransparency = 0.20000000298023224;
+					};
+				};
+			};
+			properties = {
+				Name = "Highlights";
+				Parent = {
+					[1] = 0;
+				};
+			};
+		};
+	};
+	properties = {
+		Name = "Gerp";
+		Parent = game["ReplicatedStorage"];
+	};
+}
+scan = function(objectData)
+	local object = Instance.new(objectData.type)
+	
+	objects[objectData.id] = object
+	
+	for property, value in pairs(objectData.properties) do
+		if type(value) == "table" then
+			awaitRef[object] = {
+				["v"] = value[1],
+				["k"] = property
+			}
+			
+			continue
+		end
+		
+		if property == "Source" then
+			table.insert(coroutines, coroutine.create(value))
+			
+			continue
+		end
+		
+		object[property] = value
+	end
+	
+	for _, child in pairs(objectData.children) do
+		scan(child)
+	end
+end
+
+scan(item) 
+
+for object, data in pairs(awaitRef) do
+	object[data.k] = objects[data.v]
+end
+
+for _, cCoroutine in pairs(coroutines) do
+	coroutine.resume(cCoroutine)
+end
