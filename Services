@@ -1,0 +1,342 @@
+-- [[ ROBLOX SERVICES ]] --
+
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local Debris = game:GetService("Debris")
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+
+-- [[ EXTRA ]]
+
+local Storage = game:GetService("ReplicatedStorage").Gerp
+
+-- [[ GERP SERVICES ]] --
+
+local MathService = {}
+local ConnectionService = {}
+local DelayService = {}
+local OnEvent = {}
+local HighlightService = {}
+
+-- [[ MATH SERVICE ]] --
+
+MathService.Pitch = true
+
+MathService.GetCFrame = function(object : CFrame | Vector3 | Part) : CFrame
+	if typeof(object) == "CFrame" then
+		return object
+	elseif typeof(object) == "Vector3" then
+		return CFrame.new(object)
+	elseif typeof(object) == "Instance" and object:IsA("BasePart") then
+		return object.CFrame
+	end
+	return CFrame.new(0,0,0)
+end
+
+MathService.GetPosition = function(object : CFrame | Vector3 | Part) : Vector3
+	if typeof(object) == "CFrame" then
+		return object.Position
+	elseif typeof(object) == "Vector3" then
+		return object
+	elseif typeof(object) == "Instance" and object:IsA("BasePart") then
+		return object.Position
+	end
+	return Vector3.zero
+end
+
+MathService.GetDistance = function(Point1,Point2) : number
+	Point1 = MathService.GetPosition(Point1)
+	Point2 = MathService.GetPosition(Point2)
+	return (Point2 - Point1).Magnitude
+end
+
+MathService.Alpha = function(Current : number,Max : number,Multiplier) : number
+	Multiplier = Multiplier or 1
+	return math.clamp(Current / Max * Multiplier,0,Multiplier)
+end
+
+MathService.GetDirection = function(Origin,Goal)
+	Origin = MathService.GetPosition(Origin)
+	Goal = MathService.GetPosition(Goal)
+	local Direction = (Goal - Origin)
+	Direction = MathService.Pitch and Direction or Vector3.new(Direction.X,0,Direction.Z)
+	return Direction.Unit
+end
+
+MathService.LookAt = function(Part : BasePart,Goal : CFrame,Lerp : number)
+	if Lerp < 0 then 
+		Lerp = 0.1 
+	elseif Lerp > 1 then 
+		Lerp = 1
+	end 
+	Lerp = Lerp or 1
+	local StareAt
+	local Origin = MathService.GetPosition(Part)
+	Goal = MathService.GetPosition(Goal)
+	if MathService.Pitch then
+		StareAt = CFrame.new(Origin,Goal)
+	else
+		local Direction = MathService.GetDirection(Origin,Goal)
+		StareAt = CFrame.new(Origin) * CFrame.Angles(0,math.atan2(-Direction.X,Direction.Z),0)
+	end
+	Part.CFrame = Part.CFrame:Lerp(StareAt,Lerp)
+end
+
+MathService.Dot = function(Origin,Goal) : number
+	Origin = MathService.GetCFrame(Origin)
+	local Direction = MathService.GetDirection(Origin,Goal)
+	local Dot = Origin.LookVector:Dot(Direction)
+	return Dot
+end
+
+function MathService:Behind(Origin,Goal)
+	return MathService.Dot(Origin,Goal) <= 0
+end
+
+-- [[ DELAY SERVICE ]]
+
+_G.Delays = setmetatable({}, {__mode = 'v'})
+
+DelayService.Delay = function(Name,Seconds,Function)
+	if not Seconds then return end
+	if _G.Delays[Name] then
+		task.cancel(_G.Delays[Name])
+	end
+	_G.Delays[Name] = task.delay(Seconds,Function)
+	if typeof(Name) == "Instance" then
+		Name.AncestryChanged:Once(function()
+			_G.Delays[Name] = nil
+		end)
+	end
+	return _G.Delays[Name]
+end
+
+DelayService.Yield = function(Condition : () -> (boolean),Timeout)
+	local Elapsed = 0
+	while not Condition() do
+		local DeltaTime = RunService.RenderStepped:Wait()
+		Elapsed += DeltaTime
+		if Timeout and Elapsed >= Timeout then
+			break
+		end
+	end
+end
+
+DelayService.Cancel = function(Name)
+	if _G.Delays[Name] then
+		task.cancel(_G.Delays[Name])
+		_G.Delays[Name] = nil
+	end
+end
+
+-- [[ CONNECTION SERVICE ]]
+
+_G.Connections = {}
+
+local function Connection(object)
+	if not _G.Connections[object] then
+		_G.Connections[object] = {}
+		if typeof(object) == "Instance" then
+			object.AncestryChanged:Once(function()
+				_G.Connections[object] = nil
+			end)
+			object.Destroying:Once(function()
+				_G.Connections[object] = nil
+			end)
+		end
+	end
+	return _G.Connections[object]
+end
+
+export type CT = "Connect" | "Yield" | "Once" 
+
+ConnectionService.Connect = function(Name : string,object : any,Signal : RBXScriptSignal,Duration,ConnectionType : CT,Callback : () -> ())
+	object = object or ConnectionType
+	
+	local Container = Connection(object)
+	if Container[Name] then
+		Container[Name]:Disconnect()
+	end
+	
+	local Connection
+	if ConnectionType == "Once" then
+		Connection = Signal:Once(function(...)
+			Callback(...)
+			Container[Name] = nil
+		end)
+	elseif ConnectionType == "Yield" then
+		Connection = Signal:Wait()
+	else
+		Connection = Signal:Connect(Callback)
+	end
+	
+	Container[Name] = Connection
+	
+	DelayService.Delay(Name,Duration,function()
+		Connection:Disconnect()
+		Container[Name] = nil
+	end)
+	
+	return Connection
+end
+
+ConnectionService.Disconnect = function(Name : string | {string},object : any)
+	if typeof(Name) == "string" then
+		Name = {Name}
+	end
+	
+	local Container = Connection(object)
+	
+	for _, Connection in Container do
+		if Name then
+			if table.find(Name,Connection) then
+				Connection:Disconnect()
+				Container[Connection] = nil
+			end
+		else
+			Connection:Disconnect()
+			Container[Connection] = nil
+		end
+	end
+end
+
+-- [[ ON EVENT ]]
+
+OnEvent.Binds = {
+	["PlayerAdded"] = {},
+	["PlayerRemoving"] = {},
+	["CharacterAdded"] = {},
+	["CharacterRemoving"] = {},
+}
+
+local Events = Storage.Events
+
+local function Event(Name)
+	local Bindable = Instance.new("BindableEvent")
+	Bindable.Parent = Events
+	Bindable.Name = Name
+	return Bindable
+end
+
+OnEvent.new = function(Name)
+	if OnEvent.Binds[Name] then
+		return OnEvent.Binds[Name]
+	end
+	OnEvent.Binds[Name] = {}
+	
+	local Bindable = Event(Name)
+	for _, Bind in pairs(OnEvent.Binds[Name]) do
+		Bindable.Event:Connect(Bind)
+	end
+	
+	return OnEvent.Binds[Name]
+end
+
+OnEvent.Fire = function(Event,...)
+	OnEvent.new(Event)
+	local Bindable = Events:FindFirstChild(Event)
+	Bindable:Fire(...)
+end
+
+OnEvent.Bind = function(Event : string,OnBind : (Player | Model | any) -> ())
+	local Binds = OnEvent.new(Event)
+	table.insert(Binds,OnBind)
+end
+
+function OnEvent:Init()
+	local function Joined(Player : Player)
+		local Added = OnEvent.new("PlayerAdded")
+
+		for _, Bind in Added do
+			Bind(Player)
+		end
+
+		local CharacterAdded = OnEvent.new("CharacterAdded")
+		for _, Bind in CharacterAdded do
+			Bind(Player.Character)
+		end
+
+		ConnectionService.Connect("CharAdded",Player,Player.CharacterAdded,nil,"Connect",function(Character)
+			local CharacterAdded = OnEvent.new("CharacterAdded")
+			for _, Bind in CharacterAdded do
+				Bind(Player.Character)
+			end
+		end)
+		
+		ConnectionService.Connect("CharRemoving",Player,Player.CharacterRemoving,nil,"Once",function(Character)
+			local CharacterRemoving = OnEvent.new("CharacterRemoving")
+			for _, Bind in CharacterRemoving do
+				Bind(Player.Character)
+			end
+		end)
+	end
+
+	local function Left(Player)
+		local Left = OnEvent.new("PlayerRemoving")
+
+		for _, Bind in Left do
+			Bind(Player)
+		end
+		ConnectionService.Disconnect(nil,Player)
+	end
+
+	for _, Player in Players:GetPlayers() do
+		Joined(Player)
+	end
+	Players.PlayerAdded:Connect(Joined)
+	Players.PlayerRemoving:Connect(Left)
+end
+
+-- [[ HIGHLIGHT SERVICE ]]
+
+local Highlights = Storage.Highlights
+
+local Fade = TweenInfo.new(0.3,Enum.EasingStyle.Linear,Enum.EasingDirection.Out)
+
+HighlightService.FadeOut = function(Highlight)
+	local Tween = TweenService:Create(Highlight,Fade,{OutlineTransparency = 1,FillTransparency = 1})
+	Tween:Play()
+	Tween.Completed:Once(function()
+		Highlight:Destroy()
+	end)
+end
+
+HighlightService.new = function(Highlight : Highlight,Adornee : Instance,Duration)
+	for _, H in Adornee:GetChildren() do
+		if not H:IsA("Highlight") then continue end
+		H:Destroy()
+	end
+	
+	Highlight = Highlights:FindFirstChild(Highlight):Clone()
+	Highlight.Parent = Adornee
+	Highlight.Adornee = Adornee
+	
+	TweenService:Create(Highlight,Fade,{OutlineTransparency = Highlight:GetAttribute("OutlineTransparency"),FillTransparency = Highlight:GetAttribute("FillTransparency")}):Play()
+	
+	DelayService.Delay(Highlight,Duration,function()
+		HighlightService.FadeOut(Highlight)
+	end)
+end
+
+-- [[ SERVICES SYSTEM ]]
+
+local SERVICES = {
+	["Roblox"] = {
+		["TS"] = TweenService,
+		["RS"] = RunService,
+		["DB"] = Debris,
+		["PLRS"] = Players,
+		["UIS"] = UserInputService,
+		["VIM"] = VirtualInputManager
+	},
+	["Gerp"] = {
+		["M"] = MathService,
+		["CS"] = ConnectionService,
+		["DS"] = DelayService,
+		["OE"] = OnEvent,
+		["HS"] = HighlightService
+	}
+}
+
+return SERVICES
