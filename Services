@@ -10,6 +10,8 @@ local VirtualInputManager = game:GetService("VirtualInputManager")
 -- [[ EXTRA ]]
 
 local Storage = game:GetService("ReplicatedStorage").Gerp
+local LocalPlayer = Players.LocalPlayer
+local Live : Folder = workspace.Live
 
 -- [[ GERP SERVICES ]] --
 
@@ -21,7 +23,7 @@ local HighlightService = {}
 
 -- [[ MATH SERVICE ]] --
 
-MathService.Pitch = true
+MathService.Pitch = false
 
 MathService.GetCFrame = function(object : CFrame | Vector3 | Part) : CFrame
 	if typeof(object) == "CFrame" then
@@ -78,7 +80,7 @@ MathService.LookAt = function(Part : BasePart,Goal : CFrame,Lerp : number)
 		StareAt = CFrame.new(Origin,Goal)
 	else
 		local Direction = MathService.GetDirection(Origin,Goal)
-		StareAt = CFrame.new(Origin) * CFrame.Angles(0,math.atan2(-Direction.X,Direction.Z),0)
+		StareAt = CFrame.new(Origin) * CFrame.Angles(0,math.atan2(-Direction.X,-Direction.Z),0)
 	end
 	Part.CFrame = Part.CFrame:Lerp(StareAt,Lerp)
 end
@@ -88,6 +90,22 @@ MathService.Dot = function(Origin,Goal) : number
 	local Direction = MathService.GetDirection(Origin,Goal)
 	local Dot = Origin.LookVector:Dot(Direction)
 	return Dot
+end
+
+MathService.Nearest = function(Origin : BasePart) : Model
+	local Nearest = nil
+	local MaxDistance = math.huge
+	for _,Model in pairs(Live:GetChildren()) do
+		if Model == LocalPlayer.Character then continue end
+		local ROOT = Model:FindFirstChild("HumanoidRootPart")
+		if not ROOT then continue end
+		
+		local Distance = MathService.GetDistance(ROOT,Origin)
+		if Distance > MaxDistance then continue end
+		Nearest = Model
+		MaxDistance = Distance
+	end
+	return Nearest,MaxDistance
 end
 
 function MathService:Behind(Origin,Goal)
@@ -183,20 +201,22 @@ end
 
 ConnectionService.Disconnect = function(Name : string | {string},object : any)
 	if typeof(Name) == "string" then
-		Name = {Name}
+		Name = {[Name] = true}
+	else
+		for _, Event in Name do
+			Name[Event] = true
+		end
 	end
 	
 	local Container = Connection(object)
 	
-	for _, Connection in Container do
-		if Name then
-			if table.find(Name,Connection) then
-				Connection:Disconnect()
-				Container[Connection] = nil
-			end
+	for ConnectionName, Connection in Container do
+		if Name[ConnectionName] then
+			Connection:Disconnect()
+			Container[ConnectionName] = nil
 		else
 			Connection:Disconnect()
-			Container[Connection] = nil
+			Container[ConnectionName] = nil
 		end
 	end
 end
@@ -208,6 +228,8 @@ OnEvent.Binds = {
 	["PlayerRemoving"] = {},
 	["CharacterAdded"] = {},
 	["CharacterRemoving"] = {},
+	["MyCharacterAdded"] = {},
+	["MyCharacterRemoving"] = {},
 }
 
 local Events = Storage.Events
@@ -226,9 +248,12 @@ OnEvent.new = function(Name)
 	OnEvent.Binds[Name] = {}
 	
 	local Bindable = Event(Name)
-	for _, Bind in pairs(OnEvent.Binds[Name]) do
-		Bindable.Event:Connect(Bind)
-	end
+	
+	Bindable.Event:Connect(function(...)
+		for _, Bind in pairs(OnEvent.Binds[Name]) do
+			Bind(...)
+		end
+	end)
 	
 	return OnEvent.Binds[Name]
 end
@@ -239,6 +264,8 @@ OnEvent.Fire = function(Event,...)
 	Bindable:Fire(...)
 end
 
+export type Eventation = "PlayerAdded" | "PlayerRemoving" | "CharacterAdded" | "CharacterRemoving" | "MyCharacterAdded" | "MyCharacterRemoving" | string
+
 OnEvent.Bind = function(Event : string,OnBind : (Player | Model | any) -> ())
 	local Binds = OnEvent.new(Event)
 	table.insert(Binds,OnBind)
@@ -246,33 +273,16 @@ end
 
 function OnEvent:Init()
 	local function Joined(Player : Player)
+		if Player == LocalPlayer then return end
 		local Added = OnEvent.new("PlayerAdded")
 
 		for _, Bind in Added do
 			Bind(Player)
 		end
-
-		local CharacterAdded = OnEvent.new("CharacterAdded")
-		for _, Bind in CharacterAdded do
-			Bind(Player.Character)
-		end
-
-		ConnectionService.Connect("CharAdded",Player,Player.CharacterAdded,nil,"Connect",function(Character)
-			local CharacterAdded = OnEvent.new("CharacterAdded")
-			for _, Bind in CharacterAdded do
-				Bind(Player.Character)
-			end
-		end)
-		
-		ConnectionService.Connect("CharRemoving",Player,Player.CharacterRemoving,nil,"Once",function(Character)
-			local CharacterRemoving = OnEvent.new("CharacterRemoving")
-			for _, Bind in CharacterRemoving do
-				Bind(Player.Character)
-			end
-		end)
 	end
 
 	local function Left(Player)
+		if Player == LocalPlayer then return end
 		local Left = OnEvent.new("PlayerRemoving")
 
 		for _, Bind in Left do
@@ -286,6 +296,49 @@ function OnEvent:Init()
 	end
 	Players.PlayerAdded:Connect(Joined)
 	Players.PlayerRemoving:Connect(Left)
+	
+	local function MyCharAdded(Character)
+		local MyCharacterAdded = OnEvent.new("MyCharacterAdded")
+		for _, Bind in MyCharacterAdded do
+			Bind(Character)
+		end
+	end
+	
+	local function MyCharRemoving(Character)
+		local MyCharacterRemoving = OnEvent.new("MyCharacterRemoving")
+		for _, Bind in MyCharacterRemoving do
+			Bind(Character)
+		end
+		ConnectionService.Disconnect(nil,Character)
+	end
+	
+	MyCharAdded(LocalPlayer.Character)
+	LocalPlayer.CharacterRemoving:Connect(MyCharRemoving)
+	LocalPlayer.CharacterAdded:Connect(MyCharAdded)
+	
+	local function CharAdded(Character)
+		if Character == LocalPlayer.Character then return end
+		local CharacterAdded = OnEvent.new("CharacterAdded")
+		for _, Bind in CharacterAdded do
+			Bind(Character)
+		end
+	end
+	
+	local function CharRemoving(Character)
+		if Character == LocalPlayer.Character then return end
+		local CharacterRemoving = OnEvent.new("CharacterRemoving")
+		for _, Bind in CharacterRemoving do
+			Bind(Character)
+		end
+	end
+	
+	for _, Character in Live:GetChildren() do
+		CharAdded(Character)
+	end
+	
+	Live.ChildAdded:Connect(CharAdded)
+	Live.ChildRemoved:Connect(CharRemoving)
+	
 end
 
 -- [[ HIGHLIGHT SERVICE ]]
@@ -309,6 +362,7 @@ HighlightService.new = function(Highlight : Highlight,Adornee : Instance,Duratio
 	end
 	
 	Highlight = Highlights:FindFirstChild(Highlight):Clone()
+	Highlight.Enabled = true
 	Highlight.Parent = Adornee
 	Highlight.Adornee = Adornee
 	
@@ -317,6 +371,7 @@ HighlightService.new = function(Highlight : Highlight,Adornee : Instance,Duratio
 	DelayService.Delay(Highlight,Duration,function()
 		HighlightService.FadeOut(Highlight)
 	end)
+	return Highlight
 end
 
 -- [[ SERVICES SYSTEM ]]
