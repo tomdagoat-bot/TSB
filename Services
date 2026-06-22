@@ -63,16 +63,19 @@ MathService.GetDirection = function(Origin,Goal)
 	Goal = MathService.GetPosition(Goal)
 	local Direction = (Goal - Origin)
 	Direction = MathService.Pitch and Direction or Vector3.new(Direction.X,0,Direction.Z)
+	if Direction.Magnitude == 0 then
+		return Vector3.zero
+	end
 	return Direction.Unit
 end
 
 MathService.LookAt = function(Part : BasePart,Goal : CFrame,Lerp : number)
+	Lerp = Lerp or 1
 	if Lerp < 0 then 
 		Lerp = 0.1 
 	elseif Lerp > 1 then 
 		Lerp = 1
 	end 
-	Lerp = Lerp or 1
 	local StareAt
 	local Origin = MathService.GetPosition(Part)
 	Goal = MathService.GetPosition(Goal)
@@ -184,7 +187,8 @@ ConnectionService.Connect = function(Name : string,object : any,Signal : RBXScri
 			Container[Name] = nil
 		end)
 	elseif ConnectionType == "Yield" then
-		Connection = Signal:Wait()
+		local args = Signal:Wait()
+		Callback(args)
 	else
 		Connection = Signal:Connect(Callback)
 	end
@@ -200,15 +204,22 @@ ConnectionService.Connect = function(Name : string,object : any,Signal : RBXScri
 end
 
 ConnectionService.Disconnect = function(Name : string | {string},object : any)
-	if typeof(Name) == "string" then
-		Name = {[Name] = true}
-	else
-		for _, Event in Name do
-			Name[Event] = true
-		end
+	local Container = Connection(object)
+	if next(Container) == nil then
+		return
 	end
 	
-	local Container = Connection(object)
+	if typeof(Name) == "string" then
+		Name = {Name}
+	end
+
+	local Lookup = {}
+
+	for _, Event in Name do
+		Lookup[Event] = true
+	end
+
+	Name = Lookup
 	
 	for ConnectionName, Connection in Container do
 		if Name then
@@ -314,7 +325,9 @@ function OnEvent:Init()
 		ConnectionService.Disconnect(nil,Character)
 	end
 	
-	MyCharAdded(LocalPlayer.Character)
+	if LocalPlayer.Character then
+		MyCharAdded(LocalPlayer.Character)
+	end
 	LocalPlayer.CharacterRemoving:Connect(MyCharRemoving)
 	LocalPlayer.CharacterAdded:Connect(MyCharAdded)
 	
@@ -357,7 +370,7 @@ HighlightService.FadeOut = function(Highlight)
 	end)
 end
 
-HighlightService.new = function(Highlight : Highlight,Adornee : Instance,Duration)
+HighlightService.new = function(Highlight : string | Highlight,Adornee : Instance,Duration)
 	for _, H in Adornee:GetChildren() do
 		if not H:IsA("Highlight") then continue end
 		H:Destroy()
