@@ -9,8 +9,9 @@ local item = {
 	tags = {};
 	id = 0;
 	properties = {
-		Name = "Gerp";
 		Parent = game["ReplicatedStorage"];
+		Name = "Gerp";
+		Archivable = true;
 	};
 	children = {
 		[1] = {
@@ -19,17 +20,33 @@ local item = {
 			tags = {};
 			id = 1;
 			properties = {
-				ClipsDescendants = true;
-				ResetOnSpawn = false;
-				MaxDistance = 70;
-				Name = "Cooldowns";
-				ZIndexBehavior = Enum.ZIndexBehavior.Sibling;
-				StudsOffsetWorldSpace = Vector3.new(-4, 0, 0);
+				Active = true;
 				Parent = {
 					[1] = 0;
 				};
-				Active = true;
+				ExtentsOffset = Vector3.new(0, 0, 0);
+				LightInfluence = 0;
+				DistanceStep = 0;
+				SelectionBehaviorDown = Enum.SelectionBehavior.Escape;
+				Brightness = 1;
+				Archivable = true;
 				Size = UDim2.new(3, 0, 6, 0);
+				Enabled = true;
+				StudsOffsetWorldSpace = Vector3.new(-4, 0, 0);
+				AutoLocalize = true;
+				SelectionBehaviorUp = Enum.SelectionBehavior.Escape;
+				ClipsDescendants = true;
+				SizeOffset = Vector2.new(0, 0);
+				SelectionBehaviorLeft = Enum.SelectionBehavior.Escape;
+				ExtentsOffsetWorldSpace = Vector3.new(0, 0, 0);
+				Localize = true;
+				MaxDistance = 70;
+				Name = "Cooldowns";
+				ZIndexBehavior = Enum.ZIndexBehavior.Sibling;
+				SelectionBehaviorRight = Enum.SelectionBehavior.Escape;
+				DistanceUpperLimit = -1;
+				DistanceLowerLimit = 0;
+				StudsOffset = Vector3.new(0, 0, 0);
 			};
 			children = {
 				[1] = {
@@ -38,19 +55,37 @@ local item = {
 					tags = {};
 					id = 2;
 					properties = {
-						BorderColor3 = Color3.new(0, 0, 0);
+						LayoutOrder = 0;
+						SelectionBehaviorLeft = Enum.SelectionBehavior.Escape;
+						Interactable = true;
 						Parent = {
 							[1] = 1;
 						};
-						Position = UDim2.new(0.5, 0, 0.5, 0);
-						Size = UDim2.new(1, 0, 1, 0);
+						Style = Enum.FrameStyle.Custom;
+						SizeConstraint = Enum.SizeConstraint.RelativeXY;
 						AnchorPoint = Vector2.new(0.5, 0.5);
-						Transparency = 1;
-						BackgroundTransparency = 1;
+						Visible = true;
+						BorderMode = Enum.BorderMode.Outline;
 						BorderColor = BrickColor.new("Really black");
+						SelectionBehaviorDown = Enum.SelectionBehavior.Escape;
+						ZIndex = 1;
+						Archivable = true;
+						Size = UDim2.new(1, 0, 1, 0);
+						Localize = true;
+						SelectionOrder = 0;
+						AutoLocalize = true;
+						SelectionBehaviorUp = Enum.SelectionBehavior.Escape;
+						BorderColor3 = Color3.new(0, 0, 0);
 						BorderSizePixel = 0;
-						Name = "Scale";
+						AutomaticSize = Enum.AutomaticSize.None;
 						BackgroundColor = BrickColor.new("Institutional white");
+						Rotation = 0;
+						Transparency = 1;
+						Name = "Scale";
+						Position = UDim2.new(0.5, 0, 0.5, 0);
+						SelectionBehaviorRight = Enum.SelectionBehavior.Escape;
+						BackgroundTransparency = 1;
+						InputSink = Enum.InputSink.None;
 						BackgroundColor3 = Color3.new(1, 1, 1);
 					};
 					children = {
@@ -60,15 +95,19 @@ local item = {
 							tags = {};
 							id = 3;
 							properties = {
-								VerticalAlignment = Enum.VerticalAlignment.Center;
 								FillDirection = Enum.FillDirection.Horizontal;
 								HorizontalAlignment = Enum.HorizontalAlignment.Center;
+								HorizontalFlex = Enum.UIFlexAlignment.None;
 								Parent = {
 									[1] = 2;
 								};
-								Padding = UDim.new(0.15000000596046448, 0);
+								VerticalAlignment = Enum.VerticalAlignment.Center;
 								SortOrder = Enum.SortOrder.LayoutOrder;
 								Name = "List";
+								VerticalFlex = Enum.UIFlexAlignment.None;
+								Padding = UDim.new(0.15000000596046448, 0);
+								Archivable = true;
+								ItemLineAlignment = Enum.ItemLineAlignment.Automatic;
 							};
 							children = {};
 						};
@@ -78,18 +117,37 @@ local item = {
 							tags = {};
 							id = 4;
 							properties = {
-								BorderColor3 = Color3.new(0.33725491166114807, 0.33725491166114807, 0.33725491166114807);
+								LayoutOrder = 0;
+								SelectionBehaviorLeft = Enum.SelectionBehavior.Escape;
+								Interactable = true;
 								Parent = {
 									[1] = 2;
 								};
-								Size = UDim2.new(0.15000000596046448, 0, 0.800000011920929, 0);
+								Style = Enum.FrameStyle.Custom;
+								SizeConstraint = Enum.SizeConstraint.RelativeXY;
 								AnchorPoint = Vector2.new(0.5, 0.5);
-								Transparency = 0.20000000298023224;
-								BackgroundTransparency = 0.20000000298023224;
+								Visible = true;
+								BorderMode = Enum.BorderMode.Outline;
 								BorderColor = BrickColor.new("Dark grey metallic");
+								SelectionBehaviorDown = Enum.SelectionBehavior.Escape;
+								ZIndex = 1;
+								Archivable = true;
+								Size = UDim2.new(0.15000000596046448, 0, 0.800000011920929, 0);
+								Localize = true;
+								SelectionOrder = 0;
+								AutoLocalize = true;
+								SelectionBehaviorUp = Enum.SelectionBehavior.Escape;
+								BorderColor3 = Color3.new(0.33725491166114807, 0.33725491166114807, 0.33725491166114807);
 								BorderSizePixel = 0;
-								Name = "Front Dash";
+								AutomaticSize = Enum.AutomaticSize.None;
 								BackgroundColor = BrickColor.new("Tr. Flu. Blue");
+								Rotation = 0;
+								Transparency = 0.20000000298023224;
+								Name = "Front Dash";
+								Position = UDim2.new(0, 0, 0, 0);
+								SelectionBehaviorRight = Enum.SelectionBehavior.Escape;
+								BackgroundTransparency = 0.20000000298023224;
+								InputSink = Enum.InputSink.None;
 								BackgroundColor3 = Color3.new(0.8549019694328308, 0.8901960849761963, 1);
 							};
 							children = {
@@ -99,12 +157,19 @@ local item = {
 									tags = {};
 									id = 5;
 									properties = {
+										Offset = Vector2.new(0, 0);
+										Type = Enum.GradientType.Linear;
 										Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.5333333611488342, 0.5333333611488342, 0.5333333611488342))});
+										TileMode = Enum.GradientTileMode.Clamp;
+										Rotation = 90;
+										Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0, 0), NumberSequenceKeypoint.new(1, 0, 0)});
+										Name = "Gradiant";
 										Parent = {
 											[1] = 4;
 										};
-										Name = "Gradiant";
-										Rotation = 90;
+										Enabled = true;
+										Archivable = true;
+										Scale = 1;
 									};
 									children = {};
 								};
@@ -114,19 +179,37 @@ local item = {
 									tags = {};
 									id = 6;
 									properties = {
-										BorderColor3 = Color3.new(0, 0, 0);
+										LayoutOrder = 0;
+										SelectionBehaviorLeft = Enum.SelectionBehavior.Escape;
+										Interactable = true;
 										Parent = {
 											[1] = 4;
 										};
-										Position = UDim2.new(0.5, 0, 1, 0);
-										Size = UDim2.new(1, 0, 0, 0);
+										Style = Enum.FrameStyle.Custom;
+										SizeConstraint = Enum.SizeConstraint.RelativeXY;
 										AnchorPoint = Vector2.new(0.5, 1);
-										Transparency = 0.10000000149011612;
-										BackgroundTransparency = 0.10000000149011612;
+										Visible = true;
+										BorderMode = Enum.BorderMode.Outline;
 										BorderColor = BrickColor.new("Really black");
+										SelectionBehaviorDown = Enum.SelectionBehavior.Escape;
+										ZIndex = 1;
+										Archivable = true;
+										Size = UDim2.new(1, 0, 0, 0);
+										Localize = true;
+										SelectionOrder = 0;
+										AutoLocalize = true;
+										SelectionBehaviorUp = Enum.SelectionBehavior.Escape;
+										BorderColor3 = Color3.new(0, 0, 0);
 										BorderSizePixel = 0;
-										Name = "Fill";
+										AutomaticSize = Enum.AutomaticSize.None;
 										BackgroundColor = BrickColor.new("Electric blue");
+										Rotation = 0;
+										Transparency = 0.10000000149011612;
+										Name = "Fill";
+										Position = UDim2.new(0.5, 0, 1, 0);
+										SelectionBehaviorRight = Enum.SelectionBehavior.Escape;
+										BackgroundTransparency = 0.10000000149011612;
+										InputSink = Enum.InputSink.None;
 										BackgroundColor3 = Color3.new(0.16862745583057404, 0.5411764979362488, 1);
 									};
 									children = {
@@ -136,13 +219,19 @@ local item = {
 											tags = {};
 											id = 7;
 											properties = {
+												Offset = Vector2.new(0, 0);
+												Type = Enum.GradientType.Linear;
+												Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.22745098173618317, 0.3960784375667572, 0.6470588445663452))});
+												TileMode = Enum.GradientTileMode.Clamp;
 												Rotation = 90;
 												Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.20000000298023224, 0), NumberSequenceKeypoint.new(1, 0.20000000298023224, 0)});
 												Name = "Gradiant";
-												Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.22745098173618317, 0.3960784375667572, 0.6470588445663452))});
 												Parent = {
 													[1] = 6;
 												};
+												Enabled = true;
+												Archivable = true;
+												Scale = 1;
 											};
 											children = {};
 										};
@@ -154,14 +243,21 @@ local item = {
 									tags = {};
 									id = 8;
 									properties = {
-										Thickness = 0.10000000149011612;
-										LineJoinMode = Enum.LineJoinMode.Miter;
-										Name = "Stroke";
-										StrokeSizingMode = Enum.StrokeSizingMode.ScaledSize;
+										Enabled = true;
+										BorderOffset = UDim.new(0, 0);
+										Color = Color3.new(0.33725491166114807, 0.33725491166114807, 0.33725491166114807);
 										Parent = {
 											[1] = 4;
 										};
-										Color = Color3.new(0.33725491166114807, 0.33725491166114807, 0.33725491166114807);
+										StrokeSizingMode = Enum.StrokeSizingMode.ScaledSize;
+										ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual;
+										LineJoinMode = Enum.LineJoinMode.Miter;
+										Name = "Stroke";
+										Transparency = 0;
+										Thickness = 0.10000000149011612;
+										ZIndex = 1;
+										Archivable = true;
+										BorderStrokePosition = Enum.BorderStrokePosition.Outer;
 									};
 									children = {};
 								};
@@ -174,18 +270,36 @@ local item = {
 							id = 9;
 							properties = {
 								LayoutOrder = 2;
-								BorderColor3 = Color3.new(0.33725491166114807, 0.33725491166114807, 0.33725491166114807);
+								SelectionBehaviorLeft = Enum.SelectionBehavior.Escape;
+								Interactable = true;
 								Parent = {
 									[1] = 2;
 								};
-								Size = UDim2.new(0.15000000596046448, 0, 0.800000011920929, 0);
+								Style = Enum.FrameStyle.Custom;
+								SizeConstraint = Enum.SizeConstraint.RelativeXY;
 								AnchorPoint = Vector2.new(0.5, 0.5);
-								Transparency = 0.20000000298023224;
-								BackgroundTransparency = 0.20000000298023224;
+								Visible = true;
+								BorderMode = Enum.BorderMode.Outline;
 								BorderColor = BrickColor.new("Dark grey metallic");
+								SelectionBehaviorDown = Enum.SelectionBehavior.Escape;
+								ZIndex = 1;
+								Archivable = true;
+								Size = UDim2.new(0.15000000596046448, 0, 0.800000011920929, 0);
+								Localize = true;
+								SelectionOrder = 0;
+								AutoLocalize = true;
+								SelectionBehaviorUp = Enum.SelectionBehavior.Escape;
+								BorderColor3 = Color3.new(0.33725491166114807, 0.33725491166114807, 0.33725491166114807);
 								BorderSizePixel = 0;
-								Name = "Side Dash";
+								AutomaticSize = Enum.AutomaticSize.None;
 								BackgroundColor = BrickColor.new("Tr. Flu. Blue");
+								Rotation = 0;
+								Transparency = 0.20000000298023224;
+								Name = "Side Dash";
+								Position = UDim2.new(0, 0, 0, 0);
+								SelectionBehaviorRight = Enum.SelectionBehavior.Escape;
+								BackgroundTransparency = 0.20000000298023224;
+								InputSink = Enum.InputSink.None;
 								BackgroundColor3 = Color3.new(0.8549019694328308, 0.8901960849761963, 1);
 							};
 							children = {
@@ -195,12 +309,19 @@ local item = {
 									tags = {};
 									id = 10;
 									properties = {
+										Offset = Vector2.new(0, 0);
+										Type = Enum.GradientType.Linear;
 										Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.5333333611488342, 0.5333333611488342, 0.5333333611488342))});
+										TileMode = Enum.GradientTileMode.Clamp;
+										Rotation = 90;
+										Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0, 0), NumberSequenceKeypoint.new(1, 0, 0)});
+										Name = "Gradiant";
 										Parent = {
 											[1] = 9;
 										};
-										Name = "Gradiant";
-										Rotation = 90;
+										Enabled = true;
+										Archivable = true;
+										Scale = 1;
 									};
 									children = {};
 								};
@@ -210,19 +331,37 @@ local item = {
 									tags = {};
 									id = 11;
 									properties = {
-										BorderColor3 = Color3.new(0, 0, 0);
+										LayoutOrder = 0;
+										SelectionBehaviorLeft = Enum.SelectionBehavior.Escape;
+										Interactable = true;
 										Parent = {
 											[1] = 9;
 										};
-										Position = UDim2.new(0.5, 0, 1, 0);
-										Size = UDim2.new(1, 0, 0, 0);
+										Style = Enum.FrameStyle.Custom;
+										SizeConstraint = Enum.SizeConstraint.RelativeXY;
 										AnchorPoint = Vector2.new(0.5, 1);
-										Transparency = 0.10000000149011612;
-										BackgroundTransparency = 0.10000000149011612;
+										Visible = true;
+										BorderMode = Enum.BorderMode.Outline;
 										BorderColor = BrickColor.new("Really black");
+										SelectionBehaviorDown = Enum.SelectionBehavior.Escape;
+										ZIndex = 1;
+										Archivable = true;
+										Size = UDim2.new(1, 0, 0, 0);
+										Localize = true;
+										SelectionOrder = 0;
+										AutoLocalize = true;
+										SelectionBehaviorUp = Enum.SelectionBehavior.Escape;
+										BorderColor3 = Color3.new(0, 0, 0);
 										BorderSizePixel = 0;
-										Name = "Fill";
+										AutomaticSize = Enum.AutomaticSize.None;
 										BackgroundColor = BrickColor.new("Bright yellow");
+										Rotation = 0;
+										Transparency = 0.10000000149011612;
+										Name = "Fill";
+										Position = UDim2.new(0.5, 0, 1, 0);
+										SelectionBehaviorRight = Enum.SelectionBehavior.Escape;
+										BackgroundTransparency = 0.10000000149011612;
+										InputSink = Enum.InputSink.None;
 										BackgroundColor3 = Color3.new(1, 0.7921568751335144, 0.30588236451148987);
 									};
 									children = {
@@ -232,13 +371,19 @@ local item = {
 											tags = {};
 											id = 12;
 											properties = {
+												Offset = Vector2.new(0, 0);
+												Type = Enum.GradientType.Linear;
+												Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.6470588445663452, 0.33725491166114807, 0.08235294371843338))});
+												TileMode = Enum.GradientTileMode.Clamp;
 												Rotation = 90;
 												Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.20000000298023224, 0), NumberSequenceKeypoint.new(1, 0.20000000298023224, 0)});
 												Name = "Gradiant";
-												Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.6470588445663452, 0.33725491166114807, 0.08235294371843338))});
 												Parent = {
 													[1] = 11;
 												};
+												Enabled = true;
+												Archivable = true;
+												Scale = 1;
 											};
 											children = {};
 										};
@@ -250,14 +395,21 @@ local item = {
 									tags = {};
 									id = 13;
 									properties = {
-										Thickness = 0.10000000149011612;
-										LineJoinMode = Enum.LineJoinMode.Miter;
-										Name = "Stroke";
-										StrokeSizingMode = Enum.StrokeSizingMode.ScaledSize;
+										Enabled = true;
+										BorderOffset = UDim.new(0, 0);
+										Color = Color3.new(0.33725491166114807, 0.33725491166114807, 0.33725491166114807);
 										Parent = {
 											[1] = 9;
 										};
-										Color = Color3.new(0.33725491166114807, 0.33725491166114807, 0.33725491166114807);
+										StrokeSizingMode = Enum.StrokeSizingMode.ScaledSize;
+										ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual;
+										LineJoinMode = Enum.LineJoinMode.Miter;
+										Name = "Stroke";
+										Transparency = 0;
+										Thickness = 0.10000000149011612;
+										ZIndex = 1;
+										Archivable = true;
+										BorderStrokePosition = Enum.BorderStrokePosition.Outer;
 									};
 									children = {};
 								};
@@ -269,18 +421,37 @@ local item = {
 							tags = {};
 							id = 14;
 							properties = {
-								BorderColor3 = Color3.new(0.33725491166114807, 0.33725491166114807, 0.33725491166114807);
+								LayoutOrder = 0;
+								SelectionBehaviorLeft = Enum.SelectionBehavior.Escape;
+								Interactable = true;
 								Parent = {
 									[1] = 2;
 								};
-								Size = UDim2.new(0.15000000596046448, 0, 0.800000011920929, 0);
+								Style = Enum.FrameStyle.Custom;
+								SizeConstraint = Enum.SizeConstraint.RelativeXY;
 								AnchorPoint = Vector2.new(0.5, 0.5);
-								Transparency = 0.20000000298023224;
-								BackgroundTransparency = 0.20000000298023224;
+								Visible = true;
+								BorderMode = Enum.BorderMode.Outline;
 								BorderColor = BrickColor.new("Dark grey metallic");
+								SelectionBehaviorDown = Enum.SelectionBehavior.Escape;
+								ZIndex = 1;
+								Archivable = true;
+								Size = UDim2.new(0.15000000596046448, 0, 0.800000011920929, 0);
+								Localize = true;
+								SelectionOrder = 0;
+								AutoLocalize = true;
+								SelectionBehaviorUp = Enum.SelectionBehavior.Escape;
+								BorderColor3 = Color3.new(0.33725491166114807, 0.33725491166114807, 0.33725491166114807);
 								BorderSizePixel = 0;
-								Name = "Evasive";
+								AutomaticSize = Enum.AutomaticSize.None;
 								BackgroundColor = BrickColor.new("Tr. Flu. Blue");
+								Rotation = 0;
+								Transparency = 0.20000000298023224;
+								Name = "Evasive";
+								Position = UDim2.new(0, 0, 0, 0);
+								SelectionBehaviorRight = Enum.SelectionBehavior.Escape;
+								BackgroundTransparency = 0.20000000298023224;
+								InputSink = Enum.InputSink.None;
 								BackgroundColor3 = Color3.new(0.8549019694328308, 0.8901960849761963, 1);
 							};
 							children = {
@@ -290,12 +461,19 @@ local item = {
 									tags = {};
 									id = 15;
 									properties = {
+										Offset = Vector2.new(0, 0);
+										Type = Enum.GradientType.Linear;
 										Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.5333333611488342, 0.5333333611488342, 0.5333333611488342))});
+										TileMode = Enum.GradientTileMode.Clamp;
+										Rotation = 90;
+										Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0, 0), NumberSequenceKeypoint.new(1, 0, 0)});
+										Name = "Gradiant";
 										Parent = {
 											[1] = 14;
 										};
-										Name = "Gradiant";
-										Rotation = 90;
+										Enabled = true;
+										Archivable = true;
+										Scale = 1;
 									};
 									children = {};
 								};
@@ -305,19 +483,37 @@ local item = {
 									tags = {};
 									id = 16;
 									properties = {
-										BorderColor3 = Color3.new(0, 0, 0);
+										LayoutOrder = 0;
+										SelectionBehaviorLeft = Enum.SelectionBehavior.Escape;
+										Interactable = true;
 										Parent = {
 											[1] = 14;
 										};
-										Position = UDim2.new(0.5, 0, 1, 0);
-										Size = UDim2.new(1, 0, 0, 0);
+										Style = Enum.FrameStyle.Custom;
+										SizeConstraint = Enum.SizeConstraint.RelativeXY;
 										AnchorPoint = Vector2.new(0.5, 1);
-										Transparency = 0.10000000149011612;
-										BackgroundTransparency = 0.10000000149011612;
+										Visible = true;
+										BorderMode = Enum.BorderMode.Outline;
 										BorderColor = BrickColor.new("Really black");
+										SelectionBehaviorDown = Enum.SelectionBehavior.Escape;
+										ZIndex = 1;
+										Archivable = true;
+										Size = UDim2.new(1, 0, 0, 0);
+										Localize = true;
+										SelectionOrder = 0;
+										AutoLocalize = true;
+										SelectionBehaviorUp = Enum.SelectionBehavior.Escape;
+										BorderColor3 = Color3.new(0, 0, 0);
 										BorderSizePixel = 0;
-										Name = "Fill";
+										AutomaticSize = Enum.AutomaticSize.None;
 										BackgroundColor = BrickColor.new("Olivine");
+										Rotation = 0;
+										Transparency = 0.10000000149011612;
+										Name = "Fill";
+										Position = UDim2.new(0.5, 0, 1, 0);
+										SelectionBehaviorRight = Enum.SelectionBehavior.Escape;
+										BackgroundTransparency = 0.10000000149011612;
+										InputSink = Enum.InputSink.None;
 										BackgroundColor3 = Color3.new(0.5411764979362488, 1, 0.4901961088180542);
 									};
 									children = {
@@ -327,13 +523,19 @@ local item = {
 											tags = {};
 											id = 17;
 											properties = {
+												Offset = Vector2.new(0, 0);
+												Type = Enum.GradientType.Linear;
+												Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.15294118225574493, 0.5058823823928833, 0.054901961237192154))});
+												TileMode = Enum.GradientTileMode.Clamp;
 												Rotation = 90;
 												Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.20000000298023224, 0), NumberSequenceKeypoint.new(1, 0.20000000298023224, 0)});
 												Name = "Gradiant";
-												Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.15294118225574493, 0.5058823823928833, 0.054901961237192154))});
 												Parent = {
 													[1] = 16;
 												};
+												Enabled = true;
+												Archivable = true;
+												Scale = 1;
 											};
 											children = {};
 										};
@@ -345,14 +547,21 @@ local item = {
 									tags = {};
 									id = 18;
 									properties = {
-										Thickness = 0.10000000149011612;
-										LineJoinMode = Enum.LineJoinMode.Miter;
-										Name = "Stroke";
-										StrokeSizingMode = Enum.StrokeSizingMode.ScaledSize;
+										Enabled = true;
+										BorderOffset = UDim.new(0, 0);
+										Color = Color3.new(0.33725491166114807, 0.33725491166114807, 0.33725491166114807);
 										Parent = {
 											[1] = 14;
 										};
-										Color = Color3.new(0.33725491166114807, 0.33725491166114807, 0.33725491166114807);
+										StrokeSizingMode = Enum.StrokeSizingMode.ScaledSize;
+										ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual;
+										LineJoinMode = Enum.LineJoinMode.Miter;
+										Name = "Stroke";
+										Transparency = 0;
+										Thickness = 0.10000000149011612;
+										ZIndex = 1;
+										Archivable = true;
+										BorderStrokePosition = Enum.BorderStrokePosition.Outer;
 									};
 									children = {};
 								};
@@ -368,17 +577,33 @@ local item = {
 			tags = {};
 			id = 19;
 			properties = {
-				ClipsDescendants = true;
-				ResetOnSpawn = false;
-				MaxDistance = 70;
-				Name = "Counters";
-				ZIndexBehavior = Enum.ZIndexBehavior.Sibling;
-				StudsOffsetWorldSpace = Vector3.new(0, 3, 0);
+				Active = true;
 				Parent = {
 					[1] = 0;
 				};
-				Active = true;
+				ExtentsOffset = Vector3.new(0, 0, 0);
+				LightInfluence = 0;
+				DistanceStep = 0;
+				SelectionBehaviorDown = Enum.SelectionBehavior.Escape;
+				Brightness = 1;
+				Archivable = true;
 				Size = UDim2.new(6, 0, 2, 0);
+				Enabled = true;
+				StudsOffsetWorldSpace = Vector3.new(0, 3, 0);
+				AutoLocalize = true;
+				SelectionBehaviorUp = Enum.SelectionBehavior.Escape;
+				ClipsDescendants = true;
+				SizeOffset = Vector2.new(0, 0);
+				SelectionBehaviorLeft = Enum.SelectionBehavior.Escape;
+				ExtentsOffsetWorldSpace = Vector3.new(0, 0, 0);
+				Localize = true;
+				MaxDistance = 70;
+				Name = "Counters";
+				ZIndexBehavior = Enum.ZIndexBehavior.Sibling;
+				SelectionBehaviorRight = Enum.SelectionBehavior.Escape;
+				DistanceUpperLimit = -1;
+				DistanceLowerLimit = 0;
+				StudsOffset = Vector3.new(0, 0, 0);
 			};
 			children = {
 				[1] = {
@@ -387,36 +612,56 @@ local item = {
 					tags = {};
 					id = 20;
 					properties = {
-						Visible = false;
+						LayoutOrder = 0;
 						FontSize = Enum.FontSize.Size14;
-						TextStrokeColor3 = Color3.new(0.2039215862751007, 0.1568627506494522, 0.8392157554626465);
+						LineHeight = 1;
+						SelectionBehaviorLeft = Enum.SelectionBehavior.Escape;
+						Interactable = true;
 						TextStrokeTransparency = 0;
-						AnchorPoint = Vector2.new(0.5, 0.5);
+						TextTruncate = Enum.TextTruncate.None;
+						SizeConstraint = Enum.SizeConstraint.RelativeXY;
+						ZIndex = 1;
+						BorderSizePixel = 0;
+						Localize = true;
+						AutoLocalize = true;
+						Transparency = 1;
+						SelectionOrder = 0;
+						TextYAlignment = Enum.TextYAlignment.Center;
+						TextScaled = true;
+						BackgroundColor3 = Color3.new(1, 1, 1);
+						FontFace = Font.new("rbxassetid://12187368843", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
 						Parent = {
 							[1] = 19;
 						};
+						BorderMode = Enum.BorderMode.Outline;
+						TextStrokeColor3 = Color3.new(0.2039215862751007, 0.1568627506494522, 0.8392157554626465);
+						TextXAlignment = Enum.TextXAlignment.Center;
+						OpenTypeFeatures = "";
 						TextWrapped = true;
-						BorderColor = BrickColor.new("Really black");
+						AnchorPoint = Vector2.new(0.5, 0.5);
 						TextWrap = true;
+						TextTransparency = 0;
+						BorderColor = BrickColor.new("Really black");
+						SelectionBehaviorDown = Enum.SelectionBehavior.Escape;
 						TextSize = 14;
 						BackgroundColor = BrickColor.new("Institutional white");
 						Size = UDim2.new(1, 0, 0.6000000238418579, 0);
-						BorderSizePixel = 0;
-						TextBounds = Vector2.new(0.9056603908538818, 0.9056603908538818);
-						TextColor = BrickColor.new("Cyan");
+						TextDirection = Enum.TextDirection.Auto;
 						TextColor3 = Color3.new(0.07450980693101883, 0.6705882549285889, 0.8901961445808411);
+						TextColor = BrickColor.new("Cyan");
+						SelectionBehaviorUp = Enum.SelectionBehavior.Escape;
 						BorderColor3 = Color3.new(0, 0, 0);
 						Text = "Counter";
-						LocalizedText = "Counter";
-						FontFace = Font.new("rbxassetid://12187368843", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
-						ContentText = "Counter";
-						Transparency = 1;
+						BackgroundTransparency = 1;
+						Archivable = true;
+						Rotation = 0;
+						Font = Enum.Font.Unknown;
 						Name = "Counter";
 						Position = UDim2.new(0.5, 0, 0.5, 0);
-						Font = Enum.Font.Unknown;
-						BackgroundTransparency = 1;
-						TextScaled = true;
-						BackgroundColor3 = Color3.new(1, 1, 1);
+						SelectionBehaviorRight = Enum.SelectionBehavior.Escape;
+						MaxVisibleGraphemes = -1;
+						InputSink = Enum.InputSink.None;
+						AutomaticSize = Enum.AutomaticSize.None;
 					};
 					children = {};
 				};
@@ -426,36 +671,56 @@ local item = {
 					tags = {};
 					id = 21;
 					properties = {
-						Visible = false;
+						LayoutOrder = 0;
 						FontSize = Enum.FontSize.Size14;
-						TextStrokeColor3 = Color3.new(0.38823533058166504, 0, 0.007843137718737125);
+						LineHeight = 1;
+						SelectionBehaviorLeft = Enum.SelectionBehavior.Escape;
+						Interactable = true;
 						TextStrokeTransparency = 0;
-						AnchorPoint = Vector2.new(0.5, 0.5);
+						TextTruncate = Enum.TextTruncate.None;
+						SizeConstraint = Enum.SizeConstraint.RelativeXY;
+						ZIndex = 1;
+						BorderSizePixel = 0;
+						Localize = true;
+						AutoLocalize = true;
+						Transparency = 1;
+						SelectionOrder = 0;
+						TextYAlignment = Enum.TextYAlignment.Center;
+						TextScaled = true;
+						BackgroundColor3 = Color3.new(1, 1, 1);
+						FontFace = Font.new("rbxassetid://12187368843", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
 						Parent = {
 							[1] = 19;
 						};
+						BorderMode = Enum.BorderMode.Outline;
+						TextStrokeColor3 = Color3.new(0.38823533058166504, 0, 0.007843137718737125);
+						TextXAlignment = Enum.TextXAlignment.Center;
+						OpenTypeFeatures = "";
 						TextWrapped = true;
-						BorderColor = BrickColor.new("Really black");
+						AnchorPoint = Vector2.new(0.5, 0.5);
 						TextWrap = true;
+						TextTransparency = 0;
+						BorderColor = BrickColor.new("Really black");
+						SelectionBehaviorDown = Enum.SelectionBehavior.Escape;
 						TextSize = 14;
 						BackgroundColor = BrickColor.new("Institutional white");
 						Size = UDim2.new(1, 0, 1, 0);
-						BorderSizePixel = 0;
-						TextBounds = Vector2.new(1.8113207817077637, 0.9056603908538818);
-						TextColor = BrickColor.new("Really red");
+						TextDirection = Enum.TextDirection.Auto;
 						TextColor3 = Color3.new(0.8901961445808411, 0, 0.01568627543747425);
+						TextColor = BrickColor.new("Really red");
+						SelectionBehaviorUp = Enum.SelectionBehavior.Escape;
 						BorderColor3 = Color3.new(0, 0, 0);
 						Text = "Death Counter";
-						LocalizedText = "Death Counter";
-						FontFace = Font.new("rbxassetid://12187368843", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
-						ContentText = "Death Counter";
-						Transparency = 1;
+						BackgroundTransparency = 1;
+						Archivable = true;
+						Rotation = 0;
+						Font = Enum.Font.Unknown;
 						Name = "Death";
 						Position = UDim2.new(0.5, 0, 0.5, 0);
-						Font = Enum.Font.Unknown;
-						BackgroundTransparency = 1;
-						TextScaled = true;
-						BackgroundColor3 = Color3.new(1, 1, 1);
+						SelectionBehaviorRight = Enum.SelectionBehavior.Escape;
+						MaxVisibleGraphemes = -1;
+						InputSink = Enum.InputSink.None;
+						AutomaticSize = Enum.AutomaticSize.None;
 					};
 					children = {};
 				};
@@ -468,9 +733,12 @@ local item = {
 			id = 22;
 			properties = {
 				Name = "Highlights";
+				WorldPivot = CFrame.new(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1);
 				Parent = {
 					[1] = 0;
 				};
+				Archivable = true;
+				ModelStreamingMode = Enum.ModelStreamingMode.Default;
 			};
 			children = {
 				[1] = {
@@ -483,14 +751,15 @@ local item = {
 					id = 23;
 					properties = {
 						FillColor = Color3.new(1, 0.8549020290374756, 0.125490203499794);
-						Name = "Counter";
-						DepthMode = Enum.HighlightDepthMode.Occluded;
 						Parent = {
 							[1] = 22;
 						};
+						Name = "Counter";
+						DepthMode = Enum.HighlightDepthMode.Occluded;
+						OutlineColor = Color3.new(1, 1, 1);
 						OutlineTransparency = 1;
+						Archivable = true;
 						FillTransparency = 1;
-						Enabled = false;
 					};
 					children = {};
 				};
@@ -504,14 +773,15 @@ local item = {
 					id = 24;
 					properties = {
 						FillColor = Color3.new(1, 0, 0.01568627543747425);
-						Name = "Death";
 						Parent = {
 							[1] = 22;
 						};
+						Name = "Death";
+						DepthMode = Enum.HighlightDepthMode.AlwaysOnTop;
 						OutlineColor = Color3.new(1, 0, 0.01568627543747425);
 						OutlineTransparency = 1;
+						Archivable = true;
 						FillTransparency = 1;
-						Enabled = false;
 					};
 					children = {};
 				};
@@ -525,14 +795,15 @@ local item = {
 					id = 25;
 					properties = {
 						FillColor = Color3.new(0.2352941334247589, 0.6313725709915161, 1);
-						Name = "Silent";
 						Parent = {
 							[1] = 22;
 						};
+						Name = "Silent";
+						DepthMode = Enum.HighlightDepthMode.AlwaysOnTop;
 						OutlineColor = Color3.new(0, 0, 1);
 						OutlineTransparency = 1;
+						Archivable = true;
 						FillTransparency = 1;
-						Enabled = false;
 					};
 					children = {};
 				};
@@ -544,32 +815,62 @@ local item = {
 			tags = {};
 			id = 26;
 			properties = {
-				FontFace = Font.new("rbxassetid://12187360881", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
-				TextStrokeColor3 = Color3.new(0.23137255012989044, 0.29411765933036804, 0.37254902720451355);
+				Visible = true;
+				FontSize = Enum.FontSize.Size8;
+				LineHeight = 1;
+				Active = true;
+				Interactable = true;
 				TextStrokeTransparency = 0;
-				AnchorPoint = Vector2.new(0.5, 0.5);
-				BorderColor = BrickColor.new("Really black");
+				TextTruncate = Enum.TextTruncate.None;
+				SizeConstraint = Enum.SizeConstraint.RelativeXY;
+				ZIndex = 1;
+				BorderSizePixel = 0;
+				Localize = true;
+				RichText = true;
+				AutoLocalize = true;
+				AutoButtonColor = true;
 				Parent = {
 					[1] = 0;
 				};
-				BackgroundColor = BrickColor.new("Institutional white");
-				Size = UDim2.new(0.8500000238418579, 0, 0.05999999865889549, 0);
-				TextWrapped = true;
-				RichText = true;
-				TextWrap = true;
-				TextColor3 = Color3.new(1, 1, 1);
-				BorderColor3 = Color3.new(0, 0, 0);
-				Text = "Auto Tech: <font color = 'rgb(0, 255, 0)'>Enabled</font>";
-				BorderSizePixel = 0;
-				TextColor = BrickColor.new("Institutional white");
-				ContentText = "Auto Tech: Enabled";
 				Transparency = 1;
-				Name = "Tech";
-				Font = Enum.Font.Unknown;
-				LocalizedText = "Auto Tech: <font color = 'rgb(0, 255, 0)'>Enabled</font>";
-				BackgroundTransparency = 1;
+				TextWrapped = true;
+				SelectionOrder = 0;
+				TextXAlignment = Enum.TextXAlignment.Center;
+				TextYAlignment = Enum.TextYAlignment.Center;
 				TextScaled = true;
 				BackgroundColor3 = Color3.new(1, 1, 1);
+				TextWrap = true;
+				FontFace = Font.new("rbxassetid://12187360881", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+				TextTransparency = 0;
+				BorderMode = Enum.BorderMode.Outline;
+				Selectable = true;
+				TextStrokeColor3 = Color3.new(0.23137255012989044, 0.29411765933036804, 0.37254902720451355);
+				OpenTypeFeatures = "";
+				TextSize = 8;
+				AnchorPoint = Vector2.new(0.5, 0.5);
+				TextDirection = Enum.TextDirection.Auto;
+				TextColor3 = Color3.new(1, 1, 1);
+				BorderColor = BrickColor.new("Really black");
+				SelectionBehaviorDown = Enum.SelectionBehavior.Escape;
+				TextColor = BrickColor.new("Institutional white");
+				BackgroundColor = BrickColor.new("Institutional white");
+				Size = UDim2.new(0.8500000238418579, 0, 0.05999999865889549, 0);
+				LayoutOrder = 0;
+				BackgroundTransparency = 1;
+				Archivable = true;
+				SelectionBehaviorUp = Enum.SelectionBehavior.Escape;
+				BorderColor3 = Color3.new(0, 0, 0);
+				Text = "Auto Tech: <font color = 'rgb(0, 255, 0)'>Enabled</font>";
+				Style = Enum.ButtonStyle.Custom;
+				SelectionBehaviorLeft = Enum.SelectionBehavior.Escape;
+				Rotation = 0;
+				Font = Enum.Font.Unknown;
+				Name = "Tech";
+				Position = UDim2.new(0, 0, 0, 0);
+				SelectionBehaviorRight = Enum.SelectionBehavior.Escape;
+				MaxVisibleGraphemes = -1;
+				InputSink = Enum.InputSink.None;
+				AutomaticSize = Enum.AutomaticSize.None;
 			};
 			children = {
 				[1] = {
@@ -578,12 +879,19 @@ local item = {
 					tags = {};
 					id = 27;
 					properties = {
+						Offset = Vector2.new(0, 0);
+						Type = Enum.GradientType.Linear;
 						Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.4901960790157318, 0.47843137383461, 0.6470588445663452))});
+						TileMode = Enum.GradientTileMode.Clamp;
+						Rotation = 90;
+						Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0, 0), NumberSequenceKeypoint.new(1, 0, 0)});
+						Name = "Gradiant";
 						Parent = {
 							[1] = 26;
 						};
-						Name = "Gradiant";
-						Rotation = 90;
+						Enabled = true;
+						Archivable = true;
+						Scale = 1;
 					};
 					children = {};
 				};
@@ -595,10 +903,11 @@ local item = {
 			tags = {};
 			id = 28;
 			properties = {
-				Name = "Events";
 				Parent = {
 					[1] = 0;
 				};
+				Name = "Events";
+				Archivable = true;
 			};
 			children = {};
 		};
@@ -608,34 +917,62 @@ local item = {
 			tags = {};
 			id = 29;
 			properties = {
-				FontFace = Font.new("rbxassetid://12187372382", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
-				TextStrokeColor3 = Color3.new(0.2039215862751007, 0.27843138575553894, 0.7058823704719543);
+				Visible = true;
+				FontSize = Enum.FontSize.Size8;
+				LineHeight = 1;
+				Active = true;
+				Interactable = true;
 				TextStrokeTransparency = 0;
-				AnchorPoint = Vector2.new(0.5, 0.5);
+				TextTruncate = Enum.TextTruncate.None;
+				SizeConstraint = Enum.SizeConstraint.RelativeXY;
+				ZIndex = 1;
+				BorderSizePixel = 0;
+				Localize = true;
+				RichText = true;
+				AutoLocalize = true;
+				AutoButtonColor = true;
 				Parent = {
 					[1] = 0;
 				};
-				BorderColor = BrickColor.new("Really black");
-				TextWrapped = true;
-				TextWrap = true;
-				BackgroundColor = BrickColor.new("Institutional white");
-				Size = UDim2.new(0.8500000238418579, 0, 0.05999999865889549, 0);
-				BorderSizePixel = 0;
-				RichText = true;
-				TextFits = true;
-				TextColor3 = Color3.new(0.44705885648727417, 0.8705883026123047, 1);
-				BorderColor3 = Color3.new(0, 0, 0);
-				AbsolutePosition = Vector2.new(15.405220031738281, 0);
-				TextColor = BrickColor.new("Pastel light blue");
-				Text = "Select Target";
-				ContentText = "Select Target";
 				Transparency = 1;
-				BackgroundTransparency = 1;
-				LocalizedText = "Select Target";
-				Font = Enum.Font.Unknown;
-				Name = "Target";
+				TextWrapped = true;
+				SelectionOrder = 0;
+				TextXAlignment = Enum.TextXAlignment.Center;
+				TextYAlignment = Enum.TextYAlignment.Center;
 				TextScaled = true;
 				BackgroundColor3 = Color3.new(1, 1, 1);
+				TextWrap = true;
+				FontFace = Font.new("rbxassetid://12187372382", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+				TextTransparency = 0;
+				BorderMode = Enum.BorderMode.Outline;
+				Selectable = true;
+				TextStrokeColor3 = Color3.new(0.2039215862751007, 0.27843138575553894, 0.7058823704719543);
+				OpenTypeFeatures = "";
+				TextSize = 8;
+				AnchorPoint = Vector2.new(0.5, 0.5);
+				TextDirection = Enum.TextDirection.Auto;
+				TextColor3 = Color3.new(0.44705885648727417, 0.8705883026123047, 1);
+				BorderColor = BrickColor.new("Really black");
+				SelectionBehaviorDown = Enum.SelectionBehavior.Escape;
+				TextColor = BrickColor.new("Pastel light blue");
+				BackgroundColor = BrickColor.new("Institutional white");
+				Size = UDim2.new(0.8500000238418579, 0, 0.05999999865889549, 0);
+				LayoutOrder = 0;
+				BackgroundTransparency = 1;
+				Archivable = true;
+				SelectionBehaviorUp = Enum.SelectionBehavior.Escape;
+				BorderColor3 = Color3.new(0, 0, 0);
+				Text = "Select Target";
+				Style = Enum.ButtonStyle.Custom;
+				SelectionBehaviorLeft = Enum.SelectionBehavior.Escape;
+				Rotation = 0;
+				Font = Enum.Font.Unknown;
+				Name = "Target";
+				Position = UDim2.new(0, 0, 0, 0);
+				SelectionBehaviorRight = Enum.SelectionBehavior.Escape;
+				MaxVisibleGraphemes = -1;
+				InputSink = Enum.InputSink.None;
+				AutomaticSize = Enum.AutomaticSize.None;
 			};
 			children = {
 				[1] = {
@@ -644,12 +981,19 @@ local item = {
 					tags = {};
 					id = 30;
 					properties = {
+						Offset = Vector2.new(0, 0);
+						Type = Enum.GradientType.Linear;
 						Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.4901960790157318, 0.47843137383461, 0.6470588445663452))});
+						TileMode = Enum.GradientTileMode.Clamp;
+						Rotation = 90;
+						Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0, 0), NumberSequenceKeypoint.new(1, 0, 0)});
+						Name = "Gradiant";
 						Parent = {
 							[1] = 29;
 						};
-						Name = "Gradiant";
-						Rotation = 90;
+						Enabled = true;
+						Archivable = true;
+						Scale = 1;
 					};
 					children = {};
 				};
@@ -678,19 +1022,12 @@ scan = function(objectData)
 			continue
 		end
 
-		for property, value in pairs(objectData.properties) do
-			local ok, err = pcall(function()
-					object[property] = value
-			end)
+		local success, err = pcall(function()
+			object[property] = value
+		end)
 
-			if not ok then
-				warn(
-					"Failed property:",
-					object.ClassName,
-					property,
-					err
-				)
-			end
+		if not success then
+			continue
 		end
 	end
 
@@ -705,7 +1042,7 @@ scan = function(objectData)
 	for _, child in pairs(objectData.children) do
 		scan(child)
 	end
-	
+
 	if objectData.properties.__Scale then
 		local scale = tonumber(objectData.properties.__Scale)
 		object:ScaleTo(scale)
