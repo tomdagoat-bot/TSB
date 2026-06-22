@@ -211,9 +211,11 @@ ConnectionService.Disconnect = function(Name : string | {string},object : any)
 	local Container = Connection(object)
 	
 	for ConnectionName, Connection in Container do
-		if Name[ConnectionName] then
-			Connection:Disconnect()
-			Container[ConnectionName] = nil
+		if Name then
+			if Name[ConnectionName] then
+				Connection:Disconnect()
+				Container[ConnectionName] = nil
+			end
 		else
 			Connection:Disconnect()
 			Container[ConnectionName] = nil
