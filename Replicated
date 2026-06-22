@@ -475,51 +475,64 @@ local item = {
 			children = {
 				[1] = {
 					type = "Highlight";
-					attributes = {};
+					attributes = {
+						OutlineTransparency = 0.20000000298023224;
+						FillTransparency = 0.30000001192092896;
+					};
 					tags = {};
 					id = 23;
 					properties = {
 						FillColor = Color3.new(1, 0.8549020290374756, 0.125490203499794);
 						Name = "Counter";
+						DepthMode = Enum.HighlightDepthMode.Occluded;
 						Parent = {
 							[1] = 22;
 						};
-						FillTransparency = 0.30000001192092896;
-						OutlineTransparency = 0.20000000298023224;
+						OutlineTransparency = 1;
+						FillTransparency = 1;
+						Enabled = false;
 					};
 					children = {};
 				};
 				[2] = {
 					type = "Highlight";
-					attributes = {};
+					attributes = {
+						OutlineTransparency = 0.20000000298023224;
+						FillTransparency = 0.30000001192092896;
+					};
 					tags = {};
 					id = 24;
 					properties = {
 						FillColor = Color3.new(1, 0, 0.01568627543747425);
 						Name = "Death";
-						OutlineColor = Color3.new(1, 0, 0.01568627543747425);
 						Parent = {
 							[1] = 22;
 						};
-						FillTransparency = 0.30000001192092896;
-						OutlineTransparency = 0.20000000298023224;
+						OutlineColor = Color3.new(1, 0, 0.01568627543747425);
+						OutlineTransparency = 1;
+						FillTransparency = 1;
+						Enabled = false;
 					};
 					children = {};
 				};
 				[3] = {
 					type = "Highlight";
-					attributes = {};
+					attributes = {
+						OutlineTransparency = 0.20000000298023224;
+						FillTransparency = 0.30000001192092896;
+					};
 					tags = {};
 					id = 25;
 					properties = {
 						FillColor = Color3.new(0.2352941334247589, 0.6313725709915161, 1);
 						Name = "Silent";
-						OutlineColor = Color3.new(0, 0, 1);
 						Parent = {
 							[1] = 22;
 						};
-						FillTransparency = 0.30000001192092896;
-						OutlineTransparency = 0.20000000298023224;
+						OutlineColor = Color3.new(0, 0, 1);
+						OutlineTransparency = 1;
+						FillTransparency = 1;
+						Enabled = false;
 					};
 					children = {};
 				};
@@ -535,28 +548,26 @@ local item = {
 				TextStrokeColor3 = Color3.new(0.23137255012989044, 0.29411765933036804, 0.37254902720451355);
 				TextStrokeTransparency = 0;
 				AnchorPoint = Vector2.new(0.5, 0.5);
+				BorderColor = BrickColor.new("Really black");
 				Parent = {
 					[1] = 0;
 				};
-				BorderColor = BrickColor.new("Really black");
-				TextWrapped = true;
-				TextWrap = true;
 				BackgroundColor = BrickColor.new("Institutional white");
 				Size = UDim2.new(0.8500000238418579, 0, 0.05999999865889549, 0);
-				BorderSizePixel = 0;
+				TextWrapped = true;
 				RichText = true;
-				TextFits = true;
+				TextWrap = true;
 				TextColor3 = Color3.new(1, 1, 1);
 				BorderColor3 = Color3.new(0, 0, 0);
-				AbsolutePosition = Vector2.new(15.863212585449219, 0);
-				TextColor = BrickColor.new("Institutional white");
 				Text = "Auto Tech: <font color = 'rgb(0, 255, 0)'>Enabled</font>";
+				BorderSizePixel = 0;
+				TextColor = BrickColor.new("Institutional white");
 				ContentText = "Auto Tech: Enabled";
 				Transparency = 1;
-				BackgroundTransparency = 1;
-				LocalizedText = "Auto Tech: <font color = 'rgb(0, 255, 0)'>Enabled</font>";
-				Font = Enum.Font.Unknown;
 				Name = "Tech";
+				Font = Enum.Font.Unknown;
+				LocalizedText = "Auto Tech: <font color = 'rgb(0, 255, 0)'>Enabled</font>";
+				BackgroundTransparency = 1;
 				TextScaled = true;
 				BackgroundColor3 = Color3.new(1, 1, 1);
 			};
