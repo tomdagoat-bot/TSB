@@ -476,8 +476,8 @@ local item = {
 				[1] = {
 					type = "Highlight";
 					attributes = {
-						OutlineTransparency = 0.20000000298023224;
 						FillTransparency = 0.30000001192092896;
+						OutlineTransparency = 0.20000000298023224;
 					};
 					tags = {};
 					id = 23;
@@ -497,8 +497,8 @@ local item = {
 				[2] = {
 					type = "Highlight";
 					attributes = {
-						OutlineTransparency = 0.20000000298023224;
 						FillTransparency = 0.30000001192092896;
+						OutlineTransparency = 0.20000000298023224;
 					};
 					tags = {};
 					id = 24;
@@ -518,8 +518,8 @@ local item = {
 				[3] = {
 					type = "Highlight";
 					attributes = {
-						OutlineTransparency = 0.20000000298023224;
 						FillTransparency = 0.30000001192092896;
+						OutlineTransparency = 0.20000000298023224;
 					};
 					tags = {};
 					id = 25;
@@ -601,6 +601,59 @@ local item = {
 				};
 			};
 			children = {};
+		};
+		[6] = {
+			type = "TextButton";
+			attributes = {};
+			tags = {};
+			id = 29;
+			properties = {
+				FontFace = Font.new("rbxassetid://12187372382", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+				TextStrokeColor3 = Color3.new(0.2039215862751007, 0.27843138575553894, 0.7058823704719543);
+				TextStrokeTransparency = 0;
+				AnchorPoint = Vector2.new(0.5, 0.5);
+				Parent = {
+					[1] = 0;
+				};
+				BorderColor = BrickColor.new("Really black");
+				TextWrapped = true;
+				TextWrap = true;
+				BackgroundColor = BrickColor.new("Institutional white");
+				Size = UDim2.new(0.8500000238418579, 0, 0.05999999865889549, 0);
+				BorderSizePixel = 0;
+				RichText = true;
+				TextFits = true;
+				TextColor3 = Color3.new(0.44705885648727417, 0.8705883026123047, 1);
+				BorderColor3 = Color3.new(0, 0, 0);
+				AbsolutePosition = Vector2.new(15.405220031738281, 0);
+				TextColor = BrickColor.new("Pastel light blue");
+				Text = "Select Target";
+				ContentText = "Select Target";
+				Transparency = 1;
+				BackgroundTransparency = 1;
+				LocalizedText = "Select Target";
+				Font = Enum.Font.Unknown;
+				Name = "Target";
+				TextScaled = true;
+				BackgroundColor3 = Color3.new(1, 1, 1);
+			};
+			children = {
+				[1] = {
+					type = "UIGradient";
+					attributes = {};
+					tags = {};
+					id = 30;
+					properties = {
+						Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.4901960790157318, 0.47843137383461, 0.6470588445663452))});
+						Parent = {
+							[1] = 29;
+						};
+						Name = "Gradiant";
+						Rotation = 90;
+					};
+					children = {};
+				};
+			};
 		};
 	};
 }
