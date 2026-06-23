@@ -208,19 +208,21 @@ ConnectionService.Disconnect = function(Name : string | {string},object : any)
 	if next(Container) == nil then
 		return
 	end
+
+	local Lookup = {}
 	
 	if typeof(Name) == "string" then
 		Name = {Name}
 	end
 
-	local Lookup = {}
+	if Name ~= nil then
+		for _, Event in Name do
+			Lookup[Event] = true
+		end
 
-	for _, Event in Name do
-		Lookup[Event] = true
+		Name = Lookup
 	end
 
-	Name = Lookup
-	
 	for ConnectionName, Connection in Container do
 		if Name then
 			if Name[ConnectionName] then
