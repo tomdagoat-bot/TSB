@@ -102,13 +102,26 @@ MathService.Nearest = function(Origin : BasePart) : Model
 		if Model == LocalPlayer.Character then continue end
 		local ROOT = Model:FindFirstChild("HumanoidRootPart")
 		if not ROOT then continue end
-		
+
 		local Distance = MathService.GetDistance(ROOT,Origin)
 		if Distance > MaxDistance then continue end
 		Nearest = Model
 		MaxDistance = Distance
 	end
 	return Nearest,MaxDistance
+end
+
+MathService.Lerp = function(Origin : BasePart,Goal,Lerp : number)
+	Goal = MathService.GetCFrame(Goal)
+	
+	Lerp = Lerp or 1
+	if Lerp < 0 then 
+		Lerp = 0.1 
+	elseif Lerp > 1 then 
+		Lerp = 1
+	end 
+	
+	Origin.CFrame = Origin.CFrame:Lerp(Goal,Lerp)
 end
 
 function MathService:Behind(Origin,Goal)
@@ -174,12 +187,12 @@ export type CT = "Connect" | "Yield" | "Once"
 
 ConnectionService.Connect = function(Name : string,object : any,Signal : RBXScriptSignal,Duration,ConnectionType : CT,Callback : () -> ())
 	object = object or ConnectionType
-	
+
 	local Container = Connection(object)
 	if Container[Name] then
 		Container[Name]:Disconnect()
 	end
-	
+
 	local Connection
 	if ConnectionType == "Once" then
 		Connection = Signal:Once(function(...)
@@ -192,14 +205,14 @@ ConnectionService.Connect = function(Name : string,object : any,Signal : RBXScri
 	else
 		Connection = Signal:Connect(Callback)
 	end
-	
+
 	Container[Name] = Connection
-	
+
 	DelayService.Delay(Name,Duration,function()
 		Connection:Disconnect()
 		Container[Name] = nil
 	end)
-	
+
 	return Connection
 end
 
@@ -210,7 +223,7 @@ ConnectionService.Disconnect = function(Name : string | {string},object : any)
 	end
 
 	local Lookup = {}
-	
+
 	if typeof(Name) == "string" then
 		Name = {Name}
 	end
@@ -261,15 +274,15 @@ OnEvent.new = function(Name)
 		return OnEvent.Binds[Name]
 	end
 	OnEvent.Binds[Name] = {}
-	
+
 	local Bindable = Event(Name)
-	
+
 	Bindable.Event:Connect(function(...)
 		for _, Bind in pairs(OnEvent.Binds[Name]) do
 			Bind(...)
 		end
 	end)
-	
+
 	return OnEvent.Binds[Name]
 end
 
@@ -311,14 +324,14 @@ function OnEvent:Init()
 	end
 	Players.PlayerAdded:Connect(Joined)
 	Players.PlayerRemoving:Connect(Left)
-	
+
 	local function MyCharAdded(Character)
 		local MyCharacterAdded = OnEvent.new("MyCharacterAdded")
 		for _, Bind in MyCharacterAdded do
 			Bind(Character)
 		end
 	end
-	
+
 	local function MyCharRemoving(Character)
 		local MyCharacterRemoving = OnEvent.new("MyCharacterRemoving")
 		for _, Bind in MyCharacterRemoving do
@@ -326,13 +339,13 @@ function OnEvent:Init()
 		end
 		ConnectionService.Disconnect(nil,Character)
 	end
-	
+
 	if LocalPlayer.Character then
 		MyCharAdded(LocalPlayer.Character)
 	end
 	LocalPlayer.CharacterRemoving:Connect(MyCharRemoving)
 	LocalPlayer.CharacterAdded:Connect(MyCharAdded)
-	
+
 	local function CharAdded(Character)
 		if Character == LocalPlayer.Character then return end
 		local CharacterAdded = OnEvent.new("CharacterAdded")
@@ -340,7 +353,7 @@ function OnEvent:Init()
 			Bind(Character)
 		end
 	end
-	
+
 	local function CharRemoving(Character)
 		if Character == LocalPlayer.Character then return end
 		local CharacterRemoving = OnEvent.new("CharacterRemoving")
@@ -348,14 +361,14 @@ function OnEvent:Init()
 			Bind(Character)
 		end
 	end
-	
+
 	for _, Character in Live:GetChildren() do
 		CharAdded(Character)
 	end
-	
+
 	Live.ChildAdded:Connect(CharAdded)
 	Live.ChildRemoved:Connect(CharRemoving)
-	
+
 end
 
 -- [[ HIGHLIGHT SERVICE ]]
@@ -377,14 +390,14 @@ HighlightService.new = function(Highlight : string | Highlight,Adornee : Instanc
 		if not H:IsA("Highlight") then continue end
 		H:Destroy()
 	end
-	
+
 	Highlight = Highlights:FindFirstChild(Highlight):Clone()
 	Highlight.Enabled = true
 	Highlight.Parent = Adornee
 	Highlight.Adornee = Adornee
-	
+
 	TweenService:Create(Highlight,Fade,{OutlineTransparency = Highlight:GetAttribute("OutlineTransparency"),FillTransparency = Highlight:GetAttribute("FillTransparency")}):Play()
-	
+
 	DelayService.Delay(Highlight,Duration,function()
 		HighlightService.FadeOut(Highlight)
 	end)
