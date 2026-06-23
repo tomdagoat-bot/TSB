@@ -125,7 +125,7 @@ MathService.Lerp = function(Origin : BasePart,Goal,Lerp : number)
 end
 
 function MathService:Behind(Origin,Goal)
-	return MathService.Dot(Origin,Goal) <= 0
+	return MathService.Dot(Origin,Goal) < 0
 end
 
 -- [[ DELAY SERVICE ]]
@@ -162,6 +162,31 @@ DelayService.Cancel = function(Name)
 		task.cancel(_G.Delays[Name])
 		_G.Delays[Name] = nil
 	end
+end
+
+DelayService.CountDown = function(Name,Duration,Rate,Callback,Ended)
+	Rate = Rate or 1
+	local Elapsed = 0
+	local Current = Duration
+	ConnectionService.Connect(Name.."-Countdown",LocalPlayer,RunService.RenderStepped,Duration,"Connect",function(dt)
+		Elapsed += dt
+		if Elapsed == Rate then
+			Elapsed = 0
+		else
+			return
+		end	
+		Current -= Rate
+		Current = math.floor(Current * 10) / 10
+
+		CallBack(Current)	
+
+		if Current <= 0 then
+			if Ended then
+				Ended()
+			end
+		end
+
+	end)
 end
 
 -- [[ CONNECTION SERVICE ]]
