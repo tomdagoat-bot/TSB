@@ -23,6 +23,7 @@ local item = {
 		ZIndexBehavior = Enum.ZIndexBehavior.Sibling;
 		SelectionBehaviorRight = Enum.SelectionBehavior.Escape;
 		SelectionBehaviorUp = Enum.SelectionBehavior.Escape;
+		ResetOnSpawn = false;
 		Archivable = true;
 		SelectionBehaviorDown = Enum.SelectionBehavior.Escape;
 	};
