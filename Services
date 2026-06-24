@@ -32,6 +32,8 @@ MathService.GetCFrame = function(object : CFrame | Vector3 | Part) : CFrame
 		return CFrame.new(object)
 	elseif typeof(object) == "Instance" and object:IsA("BasePart") then
 		return object.CFrame
+	elseif typeof(object) == "function" then
+		return object()
 	end
 	return CFrame.new(0,0,0)
 end
@@ -43,6 +45,8 @@ MathService.GetPosition = function(object : CFrame | Vector3 | Part) : Vector3
 		return object
 	elseif typeof(object) == "Instance" and object:IsA("BasePart") then
 		return object.Position
+	elseif typeof(object) == "function" then
+		return object()
 	end
 	return Vector3.zero
 end
@@ -128,6 +132,15 @@ function MathService:Behind(Origin,Goal)
 	return MathService.Dot(Origin,Goal) < 0
 end
 
+function MathService:Tween(Origin,Goal,Duration)
+	local elapsed = 0
+	ConnectionService.Connect("CFrameLerp",Origin,RunService.RenderStepped,Duration,"Connect",function(DeltaTime)
+		elapsed += DeltaTime
+		local Lerp = MathService.Alpha(elapsed,Duration)
+		MathService.Lerp(Origin,Goal,Lerp)
+	end)
+end
+
 -- [[ DELAY SERVICE ]]
 
 _G.Delays = setmetatable({}, {__mode = 'v'})
@@ -173,6 +186,7 @@ DelayService.CountDown = function(Name,Duration,Rate,Callback,Ended)
 		if Elapsed == Rate then
 			Elapsed = 0
 		else
+			print(Elapsed)
 			return
 		end	
 		Current -= Rate
