@@ -1,5 +1,3 @@
--- [[ ROBLOX SERVICES ]] --
-
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local Debris = game:GetService("Debris")
@@ -132,12 +130,16 @@ function MathService:Behind(Origin,Goal)
 	return MathService.Dot(Origin,Goal) < 0
 end
 
-function MathService:Tween(Origin,Goal,Duration)
+function MathService:Tween(Origin,Goal,Duration,LookAt)
 	local elapsed = 0
-	ConnectionService.Connect("CFrameLerp",Origin,RunService.RenderStepped,Duration,"Connect",function(DeltaTime)
+	ConnectionService.Connect("CFrameLerp",Origin:FindFirstAncestorOfClass("Model"),RunService.RenderStepped,Duration,"Connect",function(DeltaTime)
 		elapsed += DeltaTime
 		local Lerp = MathService.Alpha(elapsed,Duration)
 		MathService.Lerp(Origin,Goal,Lerp)
+
+		if LookAt then
+			MathService.LookAt(Origin,Goal,Lerp)
+		end
 	end)
 end
 
@@ -186,7 +188,6 @@ DelayService.CountDown = function(Name,Duration,Rate,Callback,Ended)
 		if Elapsed == Rate then
 			Elapsed = 0
 		else
-			print(Elapsed)
 			return
 		end	
 		Current -= Rate
