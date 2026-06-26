@@ -185,6 +185,7 @@ DelayService.CountDown = function(Name,Duration,Rate,Callback,Ended)
 	Rate = Rate or 1
 	local Elapsed = 0
 	local Current = Duration
+    Callback(Current)
 	ConnectionService.Connect(Name.."-Countdown",LocalPlayer,RunService.RenderStepped,Duration,"Connect",function(dt)
 		Elapsed += dt
 		if Elapsed >= Rate then
