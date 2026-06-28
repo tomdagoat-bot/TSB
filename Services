@@ -106,6 +106,9 @@ MathService.Nearest = function(Origin : BasePart) : Model
 		if Model == LocalPlayer.Character then continue end
 		local ROOT = Model:FindFirstChild("HumanoidRootPart")
 		if not ROOT then continue end
+        local HUM = Model:FindFirstChildOfClass("Humanoid")
+        if not HUM then return end
+        if HUM.Health <= 0 then return end
 
 		local Distance = MathService.GetDistance(ROOT,Origin)
 		if Distance > MaxDistance then continue end
@@ -430,8 +433,8 @@ HighlightService.FadeOut = function(Highlight)
 end
 
 HighlightService.new = function(Highlight : string | Highlight,Adornee : Instance,Duration)
-	for _, H in Adornee:GetChildren() do
-		if not H:IsA("Highlight") then continue end
+	for _, H in Adornee:GetDescendants() do
+		if not H:IsA("Highlight") or H.Name == "Silent" then continue end
 		H:Destroy()
 	end
 
