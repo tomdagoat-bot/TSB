@@ -869,103 +869,10 @@ local item = {
 			};
 		};
 		[4] = {
-			type = "TextButton";
-			attributes = {};
-			tags = {};
-			id = 26;
-			properties = {
-				Visible = true;
-				FontSize = Enum.FontSize.Size8;
-				LineHeight = 1;
-				Active = true;
-				Interactable = true;
-				TextStrokeTransparency = 0;
-				TextTruncate = Enum.TextTruncate.None;
-				SizeConstraint = Enum.SizeConstraint.RelativeXY;
-				ZIndex = 1;
-				BorderSizePixel = 0;
-				Parent = {
-					[1] = 0;
-				};
-				Draggable = false;
-				RichText = true;
-				AutoLocalize = true;
-				Modal = false;
-				TextSize = 8;
-				TextXAlignment = Enum.TextXAlignment.Center;
-				TextWrapped = true;
-				AutoButtonColor = true;
-				TextWrap = true;
-				Transparency = 1;
-				TextTransparency = 0;
-				SelectionOrder = 0;
-				TextStrokeColor3 = Color3.new(0.23137255012989044, 0.29411765933036804, 0.37254902720451355);
-				TextYAlignment = Enum.TextYAlignment.Center;
-				TextScaled = true;
-				BackgroundColor3 = Color3.new(1, 1, 1);
-				TextDirection = Enum.TextDirection.Auto;
-				FontFace = Font.new("rbxassetid://12187360881", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
-				TextColor3 = Color3.new(1, 1, 1);
-				BorderMode = Enum.BorderMode.Outline;
-				Selectable = true;
-				TextColor = BrickColor.new("Institutional white");
-				OpenTypeFeatures = "";
-				InputSink = Enum.InputSink.None;
-				AnchorPoint = Vector2.new(0.5, 0.5);
-				Localize = true;
-				Archivable = true;
-				BorderColor = BrickColor.new("Really black");
-				SelectionBehaviorDown = Enum.SelectionBehavior.Escape;
-				Selected = false;
-				BackgroundColor = BrickColor.new("Institutional white");
-				Size = UDim2.new(0.8500000238418579, 0, 0.05999999865889549, 0);
-				Style = Enum.ButtonStyle.Custom;
-				LayoutOrder = 0;
-				SelectionBehaviorLeft = Enum.SelectionBehavior.Escape;
-				ClipsDescendants = false;
-				BorderColor3 = Color3.new(0, 0, 0);
-				Text = "Auto Tech: <font color = 'rgb(0, 255, 0)'>Enabled</font>";
-				AutomaticSize = Enum.AutomaticSize.None;
-				BackgroundTransparency = 1;
-				Rotation = 0;
-				Font = Enum.Font.Unknown;
-				Name = "Tech";
-				Position = UDim2.new(0, 0, 0, 0);
-				SelectionBehaviorRight = Enum.SelectionBehavior.Escape;
-				MaxVisibleGraphemes = -1;
-				SelectionGroup = false;
-				SelectionBehaviorUp = Enum.SelectionBehavior.Escape;
-			};
-			children = {
-				[1] = {
-					type = "UIGradient";
-					attributes = {};
-					tags = {};
-					id = 27;
-					properties = {
-						Offset = Vector2.new(0, 0);
-						Type = Enum.GradientType.Linear;
-						Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.4901960790157318, 0.47843137383461, 0.6470588445663452))});
-						TileMode = Enum.GradientTileMode.Clamp;
-						Rotation = 90;
-						Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0, 0), NumberSequenceKeypoint.new(1, 0, 0)});
-						Name = "Gradiant";
-						Parent = {
-							[1] = 26;
-						};
-						Enabled = true;
-						Archivable = true;
-						Scale = 1;
-					};
-					children = {};
-				};
-			};
-		};
-		[5] = {
 			type = "Folder";
 			attributes = {};
 			tags = {};
-			id = 28;
+			id = 26;
 			properties = {
 				Parent = {
 					[1] = 0;
@@ -975,11 +882,11 @@ local item = {
 			};
 			children = {};
 		};
-		[6] = {
+		[5] = {
 			type = "TextButton";
 			attributes = {};
 			tags = {};
-			id = 29;
+			id = 27;
 			properties = {
 				Visible = true;
 				FontSize = Enum.FontSize.Size8;
@@ -1048,7 +955,7 @@ local item = {
 					type = "UIGradient";
 					attributes = {};
 					tags = {};
-					id = 30;
+					id = 28;
 					properties = {
 						Offset = Vector2.new(0, 0);
 						Type = Enum.GradientType.Linear;
@@ -1058,7 +965,7 @@ local item = {
 						Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0, 0), NumberSequenceKeypoint.new(1, 0, 0)});
 						Name = "Gradiant";
 						Parent = {
-							[1] = 29;
+							[1] = 27;
 						};
 						Enabled = true;
 						Archivable = true;
@@ -1068,13 +975,13 @@ local item = {
 				};
 			};
 		};
-		[7] = {
+		[6] = {
 			type = "BillboardGui";
 			attributes = {
 				Size = UDim2.new(6, 0, 1.5, 0);
 			};
 			tags = {};
-			id = 31;
+			id = 29;
 			properties = {
 				Active = true;
 				ResetOnSpawn = false;
@@ -1112,7 +1019,7 @@ local item = {
 					type = "TextLabel";
 					attributes = {};
 					tags = {};
-					id = 32;
+					id = 30;
 					properties = {
 						Visible = true;
 						FontSize = Enum.FontSize.Size14;
@@ -1128,7 +1035,7 @@ local item = {
 						RichText = false;
 						AutoLocalize = true;
 						Parent = {
-							[1] = 31;
+							[1] = 29;
 						};
 						TextTransparency = 0;
 						TextXAlignment = Enum.TextXAlignment.Center;
@@ -1177,7 +1084,7 @@ local item = {
 							type = "UIGradient";
 							attributes = {};
 							tags = {};
-							id = 33;
+							id = 31;
 							properties = {
 								Offset = Vector2.new(0, 0);
 								Type = Enum.GradientType.Linear;
@@ -1187,7 +1094,7 @@ local item = {
 								Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0, 0), NumberSequenceKeypoint.new(1, 0, 0)});
 								Name = "Gradiant";
 								Parent = {
-									[1] = 32;
+									[1] = 30;
 								};
 								Enabled = true;
 								Archivable = true;
@@ -1196,6 +1103,99 @@ local item = {
 							children = {};
 						};
 					};
+				};
+			};
+		};
+		[7] = {
+			type = "TextButton";
+			attributes = {};
+			tags = {};
+			id = 32;
+			properties = {
+				Visible = true;
+				FontSize = Enum.FontSize.Size8;
+				LineHeight = 1;
+				Active = true;
+				Interactable = true;
+				TextStrokeTransparency = 0;
+				TextTruncate = Enum.TextTruncate.None;
+				SizeConstraint = Enum.SizeConstraint.RelativeXY;
+				ZIndex = 1;
+				BorderSizePixel = 0;
+				Parent = {
+					[1] = 0;
+				};
+				Draggable = false;
+				RichText = true;
+				AutoLocalize = true;
+				Modal = false;
+				TextSize = 8;
+				TextXAlignment = Enum.TextXAlignment.Center;
+				TextWrapped = true;
+				AutoButtonColor = true;
+				TextWrap = true;
+				Transparency = 1;
+				TextTransparency = 0;
+				SelectionOrder = 0;
+				TextStrokeColor3 = Color3.new(0.23137255012989044, 0.29411765933036804, 0.37254902720451355);
+				TextYAlignment = Enum.TextYAlignment.Center;
+				TextScaled = true;
+				BackgroundColor3 = Color3.new(1, 1, 1);
+				TextDirection = Enum.TextDirection.Auto;
+				FontFace = Font.new("rbxasset://fonts/families/RomanAntique.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+				TextColor3 = Color3.new(1, 1, 1);
+				BorderMode = Enum.BorderMode.Outline;
+				Selectable = true;
+				TextColor = BrickColor.new("Institutional white");
+				OpenTypeFeatures = "";
+				InputSink = Enum.InputSink.None;
+				AnchorPoint = Vector2.new(0.5, 0.5);
+				Localize = true;
+				Archivable = true;
+				BorderColor = BrickColor.new("Really black");
+				SelectionBehaviorDown = Enum.SelectionBehavior.Escape;
+				Selected = false;
+				BackgroundColor = BrickColor.new("Institutional white");
+				Size = UDim2.new(0.8500000238418579, 0, 0.05999999865889549, 0);
+				Style = Enum.ButtonStyle.Custom;
+				LayoutOrder = 0;
+				SelectionBehaviorLeft = Enum.SelectionBehavior.Escape;
+				ClipsDescendants = false;
+				BorderColor3 = Color3.new(0, 0, 0);
+				Text = "Auto Tech: <font color = 'rgb(0, 255, 0)'>Enabled</font>";
+				AutomaticSize = Enum.AutomaticSize.None;
+				BackgroundTransparency = 1;
+				Rotation = 0;
+				Font = Enum.Font.Antique;
+				Name = "Tech";
+				Position = UDim2.new(0.5, 0, 0.5, 0);
+				SelectionBehaviorRight = Enum.SelectionBehavior.Escape;
+				MaxVisibleGraphemes = -1;
+				SelectionGroup = false;
+				SelectionBehaviorUp = Enum.SelectionBehavior.Escape;
+			};
+			children = {
+				[1] = {
+					type = "UIGradient";
+					attributes = {};
+					tags = {};
+					id = 33;
+					properties = {
+						Offset = Vector2.new(0, 0);
+						Type = Enum.GradientType.Linear;
+						Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(0.4901960790157318, 0.47843137383461, 0.6470588445663452))});
+						TileMode = Enum.GradientTileMode.Clamp;
+						Rotation = 90;
+						Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0, 0), NumberSequenceKeypoint.new(1, 0, 0)});
+						Name = "Gradiant";
+						Parent = {
+							[1] = 32;
+						};
+						Enabled = true;
+						Archivable = true;
+						Scale = 1;
+					};
+					children = {};
 				};
 			};
 		};
