@@ -107,8 +107,8 @@ MathService.Nearest = function(Origin : BasePart) : Model
 		local ROOT = Model:FindFirstChild("HumanoidRootPart")
 		if not ROOT then continue end
         local HUM = Model:FindFirstChildOfClass("Humanoid")
-        if not HUM then return end
-        if HUM.Health <= 0 then return end
+        if not HUM then continue end
+        if HUM.Health <= 0 then continue end
 
 		local Distance = MathService.GetDistance(ROOT,Origin)
 		if Distance > MaxDistance then continue end
