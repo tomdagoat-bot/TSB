@@ -132,7 +132,7 @@ MathService.Lerp = function(Origin : BasePart,Goal,Lerp : number)
 end
 
 function MathService:Behind(Origin,Goal)
-	return MathService.Dot(Origin,Goal) < 0
+	return MathService.Dot(Origin,Goal) <= 0
 end
 
 function MathService:Tween(Origin,Goal,Duration,LookAt)
