@@ -184,30 +184,26 @@ DelayService.Cancel = function(Name)
 	end
 end
 
-DelayService.CountDown = function(Name,Duration,Rate,Callback,Ended)
+DelayService.CountDown = function(Name, Duration, Rate, Callback, Ended)
 	Rate = Rate or 1
 	local Elapsed = 0
 	local Current = Duration
-    Callback(Current)
-	ConnectionService.Connect(Name.."-Countdown",LocalPlayer,RunService.RenderStepped,Duration,"Connect",function(dt)
-		Elapsed += dt
-		if Elapsed >= Rate then
-			Elapsed = 0
-		else
-			return
-		end	
-		Current -= Rate
-		Current = math.floor(Current * 10) / 10
+	Callback(Current)
 
-		Callback(Current)	
+	local Key = Name.."-Countdown"
+	ConnectionService.Connect(Key, LocalPlayer, RunService.RenderStepped, nil, "Connect", function(dt)
+		Elapsed += dt
+		if Elapsed < Rate then return end
+		Elapsed -= Rate
+
+		Current = math.max(0, math.floor((Current - Rate) * 10) / 10)
+		Callback(Current)
 
 		if Current <= 0 then
-            ConnectionService.Disconnect(Name.."-Countdown",LocalPlayer)
-			if Ended then
-				Ended()
-			end
+			ConnectionService.Disconnect(Key, LocalPlayer)
+			DelayService.Cancel(Key)  
+			if Ended then Ended() end
 		end
-
 	end)
 end
 
