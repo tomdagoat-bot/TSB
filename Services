@@ -23,6 +23,7 @@ local HighlightService = {}
 
 -- [[ MATH SERVICE ]] --
 
+
 MathService.Pitch = false
 
 MathService.GetCFrame = function(object : CFrame | Vector3 | Part) : CFrame
@@ -93,10 +94,27 @@ MathService.LookAt = function(Part : BasePart,Goal : CFrame,Lerp : number)
 end
 
 MathService.Dot = function(Origin,Goal) : number
-	Origin = MathService.GetCFrame(Origin)
+	Origin = MathService.GetPosition(Origin)
 	local Direction = MathService.GetDirection(Origin,Goal)
-	local Dot = Origin.LookVector:Dot(Direction)
+	local Dot = CFrame.new(Origin).LookVector:Dot(Direction)
 	return Dot
+end
+
+MathService.Lerp = function(Origin : BasePart,Goal,Lerp : number)
+	Goal = MathService.GetCFrame(Goal)
+	
+	Lerp = Lerp or 1
+	if Lerp < 0 then 
+		Lerp = 0.1 
+	elseif Lerp > 1 then 
+		Lerp = 1
+	end 
+	
+	Origin.CFrame = Origin.CFrame:Lerp(Goal,Lerp)
+end
+
+function MathService:Behind(Origin,Goal)
+	return MathService.Dot(Origin,Goal) >= 0
 end
 
 MathService.Nearest = function(Origin : BasePart) : Model
@@ -116,23 +134,6 @@ MathService.Nearest = function(Origin : BasePart) : Model
 		MaxDistance = Distance
 	end
 	return Nearest,MaxDistance
-end
-
-MathService.Lerp = function(Origin : BasePart,Goal,Lerp : number)
-	Goal = MathService.GetCFrame(Goal)
-	
-	Lerp = Lerp or 1
-	if Lerp < 0 then 
-		Lerp = 0.1 
-	elseif Lerp > 1 then 
-		Lerp = 1
-	end 
-	
-	Origin.CFrame = Origin.CFrame:Lerp(Goal,Lerp)
-end
-
-function MathService:Behind(Origin,Goal)
-	return MathService.Dot(Origin,Goal) <= 0
 end
 
 function MathService:Tween(Origin,Goal,Duration,LookAt)
