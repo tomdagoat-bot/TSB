@@ -6,6 +6,7 @@ local Debris = game:GetService("Debris")
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local VirtualInputManager = game:GetService("VirtualInputManager")
+local SoundService = game:GetService("SoundService")
 
 -- [[ EXTRA ]]
 
@@ -434,7 +435,7 @@ HighlightService.new = function(Highlight : string | Highlight,Adornee : Instanc
 		if Highlights:FindFirstChild(H.Name) then continue end
 		H:Destroy()
 	end
-	
+
 	Highlight = Highlights:FindFirstChild(Highlight):Clone()
 	Highlight.Enabled = true
 	Highlight.Parent = Adornee
@@ -457,7 +458,8 @@ local SERVICES = {
 		["DB"] = Debris,
 		["PLRS"] = Players,
 		["UIS"] = UserInputService,
-		["VIM"] = VirtualInputManager
+		["VIM"] = VirtualInputManager,
+		["S"] = SoundService
 	},
 	["Gerp"] = {
 		["M"] = MathService,
