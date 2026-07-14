@@ -102,14 +102,14 @@ end
 
 MathService.Lerp = function(Origin : BasePart,Goal,Lerp : number)
 	Goal = MathService.GetCFrame(Goal)
-	
+
 	Lerp = Lerp or 1
 	if Lerp < 0 then 
 		Lerp = 0.1 
 	elseif Lerp > 1 then 
 		Lerp = 1
 	end 
-	
+
 	Origin.CFrame = Origin.CFrame:Lerp(Goal,Lerp)
 end
 
@@ -124,9 +124,9 @@ MathService.Nearest = function(Origin : BasePart) : Model
 		if Model == LocalPlayer.Character then continue end
 		local ROOT = Model:FindFirstChild("HumanoidRootPart")
 		if not ROOT then continue end
-        local HUM = Model:FindFirstChildOfClass("Humanoid")
-        if not HUM then continue end
-        if HUM.Health <= 0 then continue end
+		local HUM = Model:FindFirstChildOfClass("Humanoid")
+		if not HUM then continue end
+		if HUM.Health <= 0 then continue end
 
 		local Distance = MathService.GetDistance(ROOT,Origin)
 		if Distance > MaxDistance then continue end
@@ -430,11 +430,11 @@ HighlightService.FadeOut = function(Highlight)
 end
 
 HighlightService.new = function(Highlight : string | Highlight,Adornee : Instance,Duration)
-	for _, H in Adornee:GetDescendants() do
-		if not H:IsA("Highlight") or H.Name == "Silent" then continue end
+	for _, H in Adornee:QueryDescendants("Highlight") do
+		if Highlights:FindFirstChild(H.Name) then continue end
 		H:Destroy()
 	end
-
+	
 	Highlight = Highlights:FindFirstChild(Highlight):Clone()
 	Highlight.Enabled = true
 	Highlight.Parent = Adornee
