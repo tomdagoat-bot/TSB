@@ -150,6 +150,44 @@ function MathService:Tween(Origin,Goal,Duration,LookAt)
 	end)
 end
 
+function MathService:CircleTween(Part : BasePart, Radius : number, Origin, Duration : number, StopAt : number?, LookAt)
+	Origin = MathService.GetPosition(Origin)
+
+	StopAt = StopAt or 1
+
+	local Elapsed = 0
+	local StartAngle = math.atan2(
+		Part.Position.Z - Origin.Z,
+		Part.Position.X - Origin.X
+	)
+
+	ConnectionService.Connect(
+		"CircleTween",
+		Part:FindFirstAncestorOfClass("Model"),
+		RunService.RenderStepped,
+		Duration,
+		"Connect",
+		function(DeltaTime)
+			Elapsed += DeltaTime
+
+			local Alpha = MathService.Alpha(Elapsed, Duration)
+			local Angle = StartAngle + Alpha * StopAt * math.pi * 2
+
+			local Position = Origin + Vector3.new(
+				math.cos(Angle) * Radius,
+				Part.Position.Y - Origin.Y,
+				math.sin(Angle) * Radius
+			)
+
+			if LookAt then
+				Part.CFrame = CFrame.lookAt(Position, MathService.GetPosition(LookAt))
+			else
+				Part.Position = Position
+			end
+		end
+	)
+end
+
 -- [[ DELAY SERVICE ]]
 
 _G.Delays = setmetatable({}, {__mode = 'v'})
