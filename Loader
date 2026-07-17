@@ -1,0 +1,1391 @@
+if not getgenv then
+	function getgenv()
+		return _G
+	end
+end
+
+if getgenv().GerpLoaded then return end
+getgenv().GerpLoaded = true
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/tomdagoat-bot/TSB/refs/heads/main/Gui"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/tomdagoat-bot/TSB/refs/heads/main/Replicated"))()
+
+local Services = loadstring(game:HttpGet("https://raw.githubusercontent.com/tomdagoat-bot/TSB/refs/heads/main/Services"))()
+
+local RobloxAnimationIds = {
+	["125750702"] = true,
+	["7807831448"] = true,
+	["14516273501"] = true,
+	["7815618175"] = true
+}
+
+local RobloxAnimationNames = {
+	["WalkAnim"] = true,
+	["JumpAnim"] = true,
+	["FallAnim"] = true,
+	["ClimbAnim"] = true
+}
+
+local GerpServices = Services.Gerp
+local BobloxServices = Services.Roblox -- boblox :D
+
+local MathService = GerpServices.M
+local ConnectionService = GerpServices.CS
+local DelayService = GerpServices.DS
+local OnEvent = GerpServices.OE
+local HighlightService = GerpServices.HS
+
+local Players = BobloxServices.PLRS
+local TweenService = BobloxServices.TS
+local RunService = BobloxServices.RS
+local Debris = BobloxServices.DB
+local UserInputService = BobloxServices.UIS
+local VirtualInputManager = BobloxServices.VIM
+local SoundService = BobloxServices.S
+
+local StarterGui = game:GetService("StarterGui")
+local ReplicatedFirst = game:GetService("ReplicatedFirst") 
+
+local Storage = game:GetService("ReplicatedStorage").Gerp
+local Audios = Storage:WaitForChild("Sounds")
+local Player = Players.LocalPlayer
+local PlayerGui = Player.PlayerGui
+local Mouse = Player:GetMouse()
+
+local UI = PlayerGui:WaitForChild("TSB")
+
+local Appear = TweenInfo.new(0.6,Enum.EasingStyle.Quad,Enum.EasingDirection.Out)
+
+for _, v in UI:GetChildren() do
+	if v.Name == "Target" then continue end
+	TweenService:Create(v,Appear,{Position = v:GetAttribute("Position")}):Play()
+end
+
+local AnimIDS = {
+	Uppercut = {
+		["rbxassetid://10503381238"] = true,
+		["rbxassetid://13379003796"] = true,
+	},
+	Forth = {
+		["rbxassetid://13294471966"] = true,
+		["rbxassetid://10469643643"] = true,
+		["rbxassetid://13295936866"] = true,
+		["rbxassetid://13378708199"] = true,
+		["rbxassetid://15162694192"] = true,
+		["rbxassetid://16552234590"] = true,
+		["rbxassetid://17889290569"] = true,
+		["rbxassetid://134775406437626"] = true,
+		["rbxassetid://17325537719"] = true,
+	},
+	SideDash = {
+		["rbxassetid://10480793962"] = true,
+		["rbxassetid://10480796021"] = true,
+	},
+	FrontDash = {
+		["rbxassetid://10479335397"] = true,
+		["rbxassetid://10491993682"] = true,
+		["rbxassetid://13380255751"] = true,
+	},
+	Counters = {
+		["rbxassetid://12351854556"] = true,
+		["rbxassetid://15311685628"] = true,
+		["rbxassetid://78521642007560"] = true,
+		["rbxassetid://118270485922095"] = true
+	},
+	Saitama = {
+		["rbxassetid://11365563255"] = true,
+		["rbxassetid://12983333733"] = true,
+		["rbxassetid://13927612951"] = true,
+	},
+	Lethal = {
+		["rbxassetid://12296113986"] = true
+	},
+	Flowing = {
+		["rbxassetid://12273188754"] = true
+	},
+	Block = {
+		["rbxassetid://10470389827"] = true,
+		["rbxassetid://14357943487"] = true
+	}
+}
+
+local MovesetTranslation = { 
+	["Blade"] = "Atomic Samurai", 
+	["CUSTOM"] = "WAITING", 
+	["Ninja"] = "Sonic", 
+	["KJ"] = "Kj", 
+	["Purple"] = "Suiryu", 
+	["Esper"] = "Tatsumaki", 
+	["Sorcerer"] = "Gojo", 
+	["Zombie"] = "Zombie Man", 
+	["Tech"] = "Child Empereor", 
+	["Bald"] = "Saitama", 
+	["Hunter"] = "Garou", 
+	["Batter"] = "Metal Bat", 
+	["Cyborg"] = "Genos", 
+	["Monster"] = "Monster Garou",
+}
+
+local function Me()
+	local Character = Player.Character or Player.CharacterAdded:Wait()
+	local Hum = Character:WaitForChild("Humanoid")
+	local Root = Character:WaitForChild("HumanoidRootPart")
+	local Anim = Hum:WaitForChild("Animator")
+	return Character,Hum,Root,Anim
+end
+
+local function Things(Target)
+	local Target = Target or _G.Target
+	if not Target then return end
+	local TargetHum = Target:WaitForChild("Humanoid")
+	local TargetHrp = Target:WaitForChild("HumanoidRootPart")
+	local TargetPlayer = Players:GetPlayerFromCharacter(Target)
+	local TargetAnim = TargetHum:WaitForChild("Animator")
+	return Target,TargetHum,TargetHrp,TargetPlayer,TargetAnim
+end
+
+local TechService = {}
+TechService.__index = TechService
+
+local Inputs = {}
+
+TechService.Techs = {
+	["Animations"] = {},
+	["Others"] = {}
+}
+
+TechService.Storage = {}
+
+local TechButton = Storage:FindFirstChild("Tech")
+
+local function ToggledString(bool : boolean)
+	return bool and [[<font color = 'rgb(0, 255, 0)'>Enabled</font>]] or [[<font color = 'rgb(255, 0, 0)'>Disabled</font>]]
+end
+
+local PopUp = TweenInfo.new(0.2,Enum.EasingStyle.Linear,Enum.EasingDirection.Out,0,true)
+
+function PlaySound(Sound)
+	SoundService:PlayLocalSound(Audios:FindFirstChild(Sound))
+end
+
+function TechAttributes()
+	return {
+		Name = "Tech",
+		Input = "E",
+		Signal = "swingreg",
+		Condition = "Animation",
+		Enabled = false,
+		OnEnable = nil,
+		OnDisable = nil,
+		Display = true,
+		Priority = 0,
+		DisableOthers = true,
+		AutoToggle = true,
+		requiresPlayer = false,
+		requiresTarget = true,
+		MarkerReached = nil, -- animations
+		OnPlayed = nil, -- animations
+		OnChanged = nil, -- attributes
+		ConditionName = "Uppercut",
+		UsesSkill = false,
+		Skill = nil,
+	}
+end
+
+TechService.new = function(Attributes : typeof(TechAttributes()))
+	local self = setmetatable({}, TechService)
+	local Properties = TechAttributes()
+
+	for key, value in pairs(Attributes) do
+		Properties[key] = value
+	end
+
+	self.Name = Properties.Name
+	self.Input = Enum.KeyCode[Properties.Input]
+	self.Condition = Properties.Condition
+	self.AutoToggle = Properties.AutoToggle
+
+	self.RequiresTarget = Properties.requiresTarget
+
+	self.DisablesOthers = Properties.DisableOthers
+
+	self.Enabled = Properties.Enabled
+
+	self.OnEnable = Properties.OnEnable 
+	self.OnDisable = Properties.OnDisable
+
+	self.CD = false
+	self.RequiresPlayer = Properties.requiresPlayer
+
+	self.Priority = Properties.Priority
+	self.Displays = Properties.Display
+
+	self.UsesSkill = Properties.UsesSkill
+	self.Skill = Properties.Skill
+
+	self.Animation = Properties.ConditionName
+	self.Marker = Properties.Signal
+	self.OnPlayed = Properties.OnPlayed
+	self.MarkerReached = Properties.MarkerReached
+
+	OnEvent.new(self.Name)
+
+	OnEvent.Bind(self.Name,function()
+		if self.CD then return end -- if true
+		self.CD = not self.CD -- not false --> true
+
+		if self.AutoToggle then
+			self.Enabled = not self.Enabled
+		end
+
+		if self.Enabled and self.OnEnable then
+			task.spawn(self.OnEnable)
+		elseif not self.Enabled and self.OnDisable then
+			task.spawn(self.OnDisable)
+		end
+
+		self:UpdateButton()
+
+		if self.DisablesOthers and self.Enabled then
+			task.wait(0.15)
+			for _, Tech in pairs(TechService.Techs[self.Condition.."s"]) do
+				if Tech == self then continue end
+				if Tech.Animation ~= self.Animation then continue end
+				if Tech.Priority > self.Priority then continue end
+
+				if Tech.Enabled then
+					Tech.CD = not Tech.CD
+					Tech.Enabled = not Tech.Enabled
+
+					Tech:UpdateButton()
+
+					DelayService.Delay(Tech.Name.."-AutoDisabled",0.5,function()
+						Tech.CD = not Tech.CD
+					end)
+				end
+			end
+		end
+
+		task.wait(0.5)
+
+		self.CD = not self.CD -- not true --> false
+
+	end)
+
+	Inputs[self.Input] = function()
+		self:Toggle()
+	end
+
+	if self.Displays then
+		local Button = TechButton:Clone()
+		Button.Parent = UI.Options
+		Button.Text = self.Name..": "..ToggledString(self.Enabled)
+
+		self.Button = Button
+
+		Button.MouseButton1Click:Connect(function()
+			self:Toggle()
+		end)
+	end
+
+	TechService.Techs[self.Condition.."s"][self.Name] = self
+	TechService.Storage[self.Name] = self
+
+	Properties = nil
+
+	return self
+end
+
+function TechService:Toggle()
+	OnEvent.Fire(self.Name)
+end
+
+function TechService:UpdateButton()
+	if self.Button then
+		TweenService:Create(self.Button,PopUp,{Size = UDim2.fromScale(self.Button.Size.X.Scale * 1.2,self.Button.Size.Y.Scale * 1.3)}):Play()
+		self.Button.Text = self.Name..": "..ToggledString(self.Enabled)
+		PlaySound("Button")
+	end
+end
+
+local function StopStare()
+	local Char, _, _ = Me()
+	ConnectionService.Disconnect("Stare",Char)
+end
+
+local function StareConnection(Object)
+	if not _G.Target and not Object then warn("Please Select A Target.") return end
+	local Hum = _G.Target and _G.Target:FindFirstChild("Humanoid")
+
+	if not Hum or Hum.Health <= 0 then
+		return
+	end
+
+	local Char, _, Hrp = Me()
+	local Goal = Object or _G.Target:WaitForChild("HumanoidRootPart")
+
+	DelayService.Yield(function()
+		return not Char:FindFirstChild("Ragdoll") or not Char:FindFirstChild("RagdollSim")
+	end,20)
+
+	ConnectionService.Connect("Stare",Char,RunService.PreRender,nil,"Connect",function()
+		if UserInputService.MouseBehavior == Enum.MouseBehavior.LockCenter then return end
+		MathService.LookAt(Hrp,Goal,_G.Lerp)
+	end)
+end
+
+local TargetUI = UI.Target
+local TargetBars = TargetUI.Bars
+
+local Teleporter = TargetUI:FindFirstChild("Teleport")
+
+function SetTarget(value,name)
+	local OldTarget = _G.Target
+
+	if OldTarget and OldTarget:FindFirstChild("Silent") then
+		HighlightService.FadeOut(OldTarget:FindFirstChild("Silent"))
+	end
+
+	_G.Target = value
+	_G.TargetName = name
+	if not value then
+		TweenService:Create(UI.Target,Appear,{Position = UI.Target:GetAttribute("Hidden")}):Play()
+		TargetBars.Health.Fill.Size = UDim2.fromScale(1, 1)
+		StopStare()
+		ConnectionService.Disconnect(nil,"Target")
+	else
+		TweenService:Create(UI.Target,Appear,{Position = UI.Target:GetAttribute("Position")}):Play()
+		UpdateTarget()
+		HighlightService.new("Silent",_G.Target)
+		SilentAim()
+	end
+
+	PlaySound("Open")
+end
+
+local IsMobile = UserInputService.TouchEnabled
+
+local function GetNearest(Origin)
+	local _, _, Hrp = Me()
+	return MathService.Nearest(Origin ~= nil and Origin or IsMobile and Hrp or Mouse.Hit)
+end
+
+function NearestDude()
+	local Nearest = GetNearest()
+
+	if not Nearest then
+		SetTarget(nil)
+		return 
+	end
+
+	if _G.Target == Nearest then
+		SetTarget(nil,nil)
+	else
+		SetTarget(Nearest)
+	end
+end
+
+function Silent(Object)
+	DelayService.Yield(function() return _G.Target ~= nil end,60)
+	StareConnection(Object) 
+end
+
+function SilentAim(Object)
+	if TechService.Storage["Silent Aim"].Enabled then
+		Silent(Object)
+	else
+		StopStare()
+	end
+end
+
+Player:SetAttribute("S_CDINDICATOR", true)
+
+Player:GetAttributeChangedSignal("S_CDINDICATOR"):Connect(function()
+	if Player:GetAttribute("S_CDINDICATOR") then return end
+
+	Player:SetAttribute("S_CDINDICATOR", true)
+end)
+
+_G.Target = nil
+_G.TargetName = nil
+_G.Lerp = 0.4
+
+local Bar = TweenInfo.new(0.3,Enum.EasingStyle.Sine,Enum.EasingDirection.Out)
+
+local function GetProfile(player)
+	if player then
+		local ok, content = pcall(function()
+			return Players:GetUserThumbnailAsync(
+				player.UserId,
+				Enum.ThumbnailType.HeadShot,
+				Enum.ThumbnailSize.Size420x420
+			)
+		end)
+		if ok then return content end
+	end
+	return "rbxassetid://132975398557010"
+end
+
+local function Evasive(Target)
+	local Evasive = Target:GetAttribute("Evasive")
+
+	TargetBars.Ragdoll.Visible = Evasive ~= nil
+
+	if Evasive then
+		TargetBars.Ragdoll.Value.Text = Evasive .. "s"
+		Evasive = MathService.Alpha(tonumber(Evasive),30)
+		TweenService:Create(TargetBars.Ragdoll.Fill,Bar,{Size = UDim2.fromScale(Evasive,1)}):Play()
+	end
+end
+
+local function Kills(TargetPlayer)
+	local Kills = TargetPlayer:WaitForChild("leaderstats"):FindFirstChild("Kills")
+
+	if Kills then
+		TargetUI.Kills.Text = "Kills: ".. Kills.Value
+		ConnectionService.Connect("Kills","Target",Kills:GetPropertyChangedSignal("Value"),nil,"Connect",function()
+			TargetUI.Kills.Text = "Kills: ".. Kills.Value
+		end)
+	else
+		TargetUI.Kills.Text = "HIDDEN"
+		ConnectionService.Disconnect("Kills","Target")
+	end
+end
+
+local function DeathCounter(Target)
+	if Target:GetAttribute("DC_") then
+		TargetUI.Death.Visible = true
+		DelayService.Delay("TDCD",Target:GetAttribute("DC_"),function() -- tdcd : target death counter display
+			TargetUI.Death.Visible = false
+		end)
+	else
+		TargetUI.Death.Visible = false
+	end
+end
+
+local function TotalKills(TargetPlayer)
+	local TK = TargetPlayer:GetAttribute("TotalKillsFrb")
+
+	if TK then
+		TargetUI["Total Kills"].Text = "Total Kills: "..TK
+	else
+		TargetUI["Total Kills"].Text = "HIDDEN"
+	end
+
+end
+
+local function Streak(Target)
+	local s = Target:GetAttribute("CurrentStreak") or 0
+	if s < 0 then
+		s = 0
+	end
+	TargetUI.Streak.Text = "Streak: ".. s
+end
+
+local function Ultimate(TargetPlayer)
+	local ult = TargetPlayer:GetAttribute("Ultimate") or 0
+	ult = MathService.Alpha(ult,100)
+
+	TweenService:Create(TargetBars.Ultimate.Fill,Bar,{Size = UDim2.fromScale(ult,1)}):Play()
+	TargetBars.Ultimate.Value.Text = tostring(math.round(ult * 100)).."%"
+end
+
+local function Health(TargetHum,Target)
+	local hp = MathService.Alpha(TargetHum.Health,TargetHum.MaxHealth)
+	TweenService:Create(TargetBars.Health.Fill,Bar,{Size = UDim2.fromScale(hp,1)}):Play()
+
+	TargetBars.Health.Value.Text = tostring(math.floor(hp * 100)).."%"
+
+	if hp <= 0 then
+		SetTarget(nil,Target.Name)
+	end
+end
+
+function UpdateTarget()
+	local Target : Model,TargetHum : Humanoid,TargetRoot,TargetPlayer : Player,_ = Things()
+
+	TargetUI.Username.Text = TargetPlayer and TargetPlayer.DisplayName or Target.Name
+	TargetUI.Username.Profile:FindFirstChildOfClass("ImageLabel").Image = GetProfile(TargetPlayer)
+
+	if TargetPlayer then
+
+		Evasive(Target)
+
+		ConnectionService.Connect("Evasive","Target",Target:GetAttributeChangedSignal("Evasive"),nil,"Connect",function()
+			Evasive(Target)
+		end)
+
+		Kills(TargetPlayer)
+
+		ConnectionService.Connect("KillsAdded","Target",TargetPlayer:WaitForChild("leaderstats").ChildAdded,nil,"Connect",function(DataStored)
+			if DataStored.Name == "Kills" then
+				Kills(TargetPlayer)
+			end
+		end)
+
+		ConnectionService.Connect("KillsRemoved","Target",TargetPlayer:WaitForChild("leaderstats").ChildRemoved,nil,"Connect",function(DataStored)
+			if DataStored.Name == "Kills" then
+				Kills(TargetPlayer)
+			end
+		end)
+
+		DeathCounter(Target)
+
+		ConnectionService.Connect("DeathCountered","Target",Target:GetAttributeChangedSignal("DC_"),nil,"Connect",function()
+			DeathCounter(Target)
+		end)
+
+		TotalKills(TargetPlayer)
+
+		ConnectionService.Connect("Total Kills","Target",TargetPlayer:GetAttributeChangedSignal("TotalKillsFrb"),nil,"Connect",function()
+			TotalKills(TargetPlayer)
+		end)
+
+		Streak(Target)
+
+		ConnectionService.Connect("Streak","Target",Target:GetAttributeChangedSignal("CurrentStreak"),nil,"Connect",function()
+			Streak(Target)
+		end)
+
+		Ultimate(TargetPlayer)
+
+		ConnectionService.Connect("Ultimate","Target",TargetPlayer:GetAttributeChangedSignal("Ultimate"),nil,"Connect",function()
+			Ultimate(TargetPlayer)
+		end)
+
+		TargetUI.Moveset.Text = "Moveset: "..MovesetTranslation[Target:GetAttribute("Character") or "CUSTOM"]
+
+		ConnectionService.Connect("Moveset","Target",Target:GetAttributeChangedSignal("Character"),nil,"Connect",function()
+			TargetUI.Moveset.Text = "Moveset: "..MovesetTranslation[Target:GetAttribute("Character") or "CUSTOM"]
+		end)
+	end
+
+	TargetBars.Ragdoll.Visible = TargetPlayer ~= nil
+	TargetBars.Ultimate.Visible = TargetPlayer ~= nil
+	TargetUI.Moveset.Visible = TargetPlayer ~= nil
+	TargetUI.Kills.Visible = TargetPlayer ~= nil
+	TargetUI["Total Kills"].Visible = TargetPlayer ~= nil
+	TargetUI.Streak.Visible = TargetPlayer ~= nil
+
+	Health(TargetHum,Target)
+
+	ConnectionService.Connect("Health","Target",TargetHum.HealthChanged,nil,"Connect",function()
+		Health(TargetHum,Target)
+	end)
+
+	ConnectionService.Connect("Teleportation","Target",Teleporter.MouseButton1Click,nil,"Connect",function()
+		local _,_,Root = Me()
+		Root.CFrame = TargetRoot.CFrame * CFrame.new(0,0,5)
+	end)
+
+end
+
+function Communicate(Args)
+	local Character = select(1, Me())
+	local RE = Character:FindFirstChild("Communicate")
+	RE:FireServer(Args)
+end
+
+local function FrontDash()
+	Communicate({Dash = Enum.KeyCode.W, Key = Enum.KeyCode.Q, Goal = "KeyPress"})
+end
+
+local function Unblock()
+	Communicate({Key = Enum.KeyCode.F, Goal = "KeyRelease"})
+end
+
+local function Block(duration)
+	Communicate({Key = Enum.KeyCode.F, Goal = "KeyPress"})
+	DelayService.Delay("Blocking",duration or 0.2,function()
+		Unblock()		
+	end)
+end
+
+local function StopM1()
+	Communicate({Goal = "LeftClickRelease"})
+end
+
+local function M1(duration)
+	Communicate({Goal = "LeftClick"})
+	DelayService.Delay("M1ing",duration or 0.2,function()
+		StopM1()		
+	end)
+end
+
+local function UseMove(Move)
+	local BackPack = Player:FindFirstChild("Backpack")
+	Communicate({IsAutoActivate = true, Goal = "Console Move", Tool = BackPack:FindFirstChild(Move), ToolName = Move})
+end
+
+local function StopDash()
+	local _,_,Root,_ = Me()
+	local moveme = Root:FindFirstChild("moveme")
+
+	Communicate({BV = moveme, Goal = "delete bv"})
+end
+
+if IsMobile then
+	local SelectButton = Storage.Target:Clone()
+	SelectButton.Parent = UI.Options
+	SelectButton.MouseButton1Click:Connect(NearestDude)
+end
+
+local CounterUI = Storage:FindFirstChild("Counters")
+local TechDisplay = Storage:FindFirstChild("TechFx")
+
+local TechTween = TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+
+function UsedTech(Tech,char)
+	local TechUI = char:FindFirstChild("TechFx")
+	TechUI.Tech.Text = Tech
+
+	TweenService:Create(TechUI,TechTween,{Size = TechUI:GetAttribute("Size")}):Play()
+
+	HighlightService.new("Tech",char,1)
+
+	DelayService.Delay(Tech.."-TechFx",1,function()
+		TweenService:Create(TechUI,TechTween,{Size = UDim2.fromScale(0, 0)}):Play()
+	end)
+end
+
+function StareAtOpposite(Root,Hrp,Duration)
+	--[[ Root : Our HumanoidRootPart, Hrp : Their HumanoidRootPart ]]
+	if Root == Hrp then
+		return
+	end
+	local char = Root.Parent
+	ConnectionService.Connect("Near",char,RunService.PreRender,Duration,"Connect",function()
+		if MathService.GetDistance(Root,Hrp) <= 20 then
+			StopStare()
+			MathService.LookAt(Root, Root.Position * 2 - Hrp.Position)
+		else
+			SilentAim()
+		end
+	end)
+
+	DelayService.Delay(Hrp.Parent.Name.."-CounteredStare",Duration + 0.2,function()
+		SilentAim()
+	end)
+end
+
+OnEvent.new("Counter")
+
+OnEvent.Bind("Counter",function(char,Hrp,Duration,CounterDisplay)
+	local _,_,Root,_ = Me()
+
+	if MathService.GetDistance(Root,Hrp) <= 20 then
+		PlaySound("Counter")
+	end
+
+	HighlightService.new("Counter",char,Duration)
+
+	if CounterDisplay then
+		CounterDisplay.Counter.Visible = true
+
+		DelayService.Delay(char.Name.."-Counter",Duration,function()
+			CounterDisplay.Counter.Visible = false
+		end)
+	end
+
+	StareAtOpposite(Root,Hrp,Duration)
+end)
+
+OnEvent.new("Death Counter")
+
+OnEvent.Bind("Death Counter",function(char,Hrp,CounterDisplay)
+
+	local _,_,Root,_ = Me()
+
+	if MathService.GetDistance(Root,Hrp) <= 20 then
+		PlaySound("Death")
+	end
+
+	HighlightService.new("Death",char,10)
+
+	if CounterDisplay then
+		CounterDisplay.Death.Visible = true
+
+		DelayService.CountDown(char.Name.."-DeathCounterState",10,1,function(elapsed)
+			char:SetAttribute("DC_", elapsed)
+		end,function()
+			CounterDisplay.Death.Visible = false
+			char:SetAttribute("DC_", nil)
+		end)
+
+	end
+
+	StareAtOpposite(Root,Hrp,10)
+end)
+
+OnEvent.Bind("CharacterAdded",function(char : Model)
+	local _,Hum,Hrp,plr,Animator = Things(char)
+
+	task.wait(0.2)
+
+	if _G.TargetName == char.Name then
+		SetTarget(char)
+	end
+
+	ConnectionService.Connect("Died",char,Hum.Died,nil,"Once",function()
+		if _G.Target == char then
+			SetTarget(nil,char.Name)
+		end
+		ConnectionService.Disconnect(nil,char)
+	end)
+
+	local CounterDisplay = CounterUI:Clone()
+	CounterDisplay.Parent = Hrp
+
+	ConnectionService.Connect("AnimPlayed",char,Animator.AnimationPlayed,nil,"Connect",function(Track)
+		local Animation = Track.Animation
+		local ID = Animation.AnimationId
+
+		if AnimIDS["Counters"][ID] then
+			local ActualCounter = false
+
+			for _, c in char:GetChildren() do
+				if c.Name:find("Counter") and c.Name ~= "Counter" then
+					ActualCounter = true
+					break
+				end
+			end
+
+			if not ActualCounter then print(char.Name,"is exploiting btw") return end
+
+			local Duration = Track.Length - 0.6
+			OnEvent.Fire("Counter",char,Hrp,Duration,CounterDisplay)
+		elseif AnimIDS["SideDash"][ID] then
+			if not char:GetAttribute("Ragdolled_") then return end
+
+			DelayService.CountDown(char.Name.."-Evasive",30,1,function(elapsed)
+				char:SetAttribute("Evasive", elapsed)
+			end,function()
+				char:SetAttribute("Evasive", nil)
+			end)
+		end
+	end)
+
+	ConnectionService.Connect("ChildAdded",char,char.ChildAdded,nil,"Connect",function(r)
+		if r.Name == "Ragdoll" or r.Name == "RagdollSim" then
+			char:SetAttribute("Ragdolled_", true)
+		elseif r.Name == "Counter" and (char:FindFirstChild("Death Counter") or plr and plr.Backpack:FindFirstChild("Death Counter")) then 
+			OnEvent.Fire("Death Counter",char,Hrp,CounterDisplay)
+		end
+	end)
+
+	ConnectionService.Connect("UnRagdolled",char,char.ChildRemoved,nil,"Connect",function(r)
+		if r.Name == "Ragdoll" or r.Name == "RagdollSim" then
+			DelayService.Delay(char.Name.."-Unragdoll",0.2,function()
+				char:SetAttribute("Ragdolled_", false)
+			end)
+		end
+	end)
+end)
+
+OnEvent.Bind("CharacterRemoving",function(char)
+	if _G.Target == char then
+		SetTarget(nil,char.Name)
+	end
+end)
+
+OnEvent.Bind("PlayerRemoving",function(plr : Player)
+	if _G.TargetName == plr.Name then
+		SetTarget(nil,plr.Name)
+	end
+end)
+
+local function ShowKills(plr)
+	local Leaderstats = plr:FindFirstChild("leaderstats")
+
+	if not Leaderstats then
+		Leaderstats = Instance.new("Folder")
+		Leaderstats.Parent = plr
+		Leaderstats.Name = "leaderstats"
+	end
+
+	local TotalKills = Leaderstats:FindFirstChild("Total Kills")
+
+	if TotalKills then 
+		return
+	else
+		TotalKills = Instance.new("NumberValue")
+		TotalKills.Parent = Leaderstats
+		TotalKills.Name = "Total Kills"
+	end
+
+	TotalKills.Value = plr:GetAttribute("TotalKillsFrb")
+
+	ConnectionService.Connect("Total Kills",plr,plr:GetAttributeChangedSignal("TotalKillsFrb"),nil,"Connect",function()
+		TotalKills.Value = plr:GetAttribute("TotalKillsFrb")
+	end)
+end
+
+ShowKills(Player)
+
+OnEvent.Bind("PlayerAdded",function(plr : Player)
+
+	local Leaderstats = plr:WaitForChild("leaderstats")
+
+	ShowKills(plr)
+
+	Leaderstats.ChildRemoved:Connect(function()
+		ShowKills(plr)
+	end)
+
+end)
+
+local LocalHealth = UI.Health
+
+function Off(Duration)
+	StopStare()
+
+	DelayService.Cancel("On")
+
+	DelayService.Delay("Off",Duration,function()
+		SilentAim()
+	end)
+end
+
+function On(Duration,Object)
+	StopStare()
+	StareConnection(Object)
+
+	DelayService.Cancel("Off")
+
+	DelayService.Delay("On",Duration,function()
+		SilentAim()
+	end)
+end
+
+function OnCD(Skill,CD)
+	local Frame = UI.Cooldowns:FindFirstChild(Skill, true)
+	if not Frame then
+		return
+	end
+
+	local Fill = Frame.Fill
+	local Value = Frame:FindFirstChildOfClass("TextLabel")
+
+	Fill.Size = UDim2.fromScale(1, 1)
+	TweenService:Create(Fill,TweenInfo.new(CD, Enum.EasingStyle.Linear, Enum.EasingDirection.In),{Size = UDim2.fromScale(0, 1)}):Play()
+
+	DelayService.CountDown(Skill,CD,1,function(elapsed)
+		Value.Text = Skill..": "..tostring(elapsed)
+	end,function()
+		Value.Text = Skill
+	end)
+end
+
+local function CanDash(Compare)
+	return tick() - _G.LastDash > (Compare or 5)
+end
+
+local function MoveOnCD(Move)
+	local HotBar = PlayerGui.Hotbar.Backpack.Hotbar
+	local Frame
+	for _, Object in HotBar:QueryDescendants("TextLabel") do
+		if Object.Text:find(Move) then
+			Frame = Object.Parent
+			break
+		end
+	end
+
+	if not Frame then return true end
+	local CD = Frame:FindFirstChild("Cooldown")
+
+	return CD ~= nil
+end
+
+_G.LastDash = 0
+
+local ColorShift = TweenInfo.new(0.6,Enum.EasingStyle.Linear,Enum.EasingDirection.In)
+local RNG = Random.new()
+
+OnEvent.Bind("MyCharacterAdded",function(char)
+	local _,Hum,Hrp,Anim = Me()
+
+	char:SetAttribute("UltimateName","GERP HUB")
+
+	ConnectionService.Connect("UltName",char,char:GetAttributeChangedSignal("UltimateName"),nil,"Connect",function() 
+		if char:GetAttribute("UltimateName") == "GERP HUB" then return end
+		char:SetAttribute("UltimateName","GERP HUB")
+	end)
+
+	local TechEffect = TechDisplay:Clone()
+	TechEffect.Parent = char
+
+	local UltimateUI = PlayerGui:WaitForChild("Bar")
+	local UltHolder = UltimateUI.MagicHealth.Health
+
+	local UltimateBar = UltHolder.Bar.Bar
+
+	TweenService:Create(UltimateBar,ColorShift,{ImageColor3 = Color3.fromRGB(0, 0, 255)}):Play()
+
+	task.wait(0.2)
+
+	for _, CD in UI.Cooldowns:GetDescendants() do
+		if CD.Name:find("Dash") or CD.Name == "Evasive" then
+			local label = CD:FindFirstChildOfClass("TextLabel")
+			if not label then continue end
+
+			label.Text = CD.Name
+		end
+	end
+
+	SilentAim()
+
+	ConnectionService.Connect("Ragdolled",char,char.ChildAdded,nil,"Connect",function(r)
+		if r.Name == "Ragdoll" or r.Name == "RagdollSim" then
+			char:SetAttribute("Ragdolled_", true)
+			StopStare()
+		end
+	end)
+
+	ConnectionService.Connect("UnRagdolled",char,char.ChildRemoved,nil,"Connect",function(r)
+		if r.Name == "Ragdoll" or r.Name == "RagdollSim" then
+			DelayService.Delay(char.Name.."-Unragdoll",0.2,function()
+				char:SetAttribute("Ragdolled_", false)
+			end)
+			SilentAim()
+		end
+	end)
+
+	local alpha = MathService.Alpha(Hum.Health,Hum.MaxHealth)
+	TweenService:Create(LocalHealth.Fill,Bar,{Size = UDim2.fromScale(alpha,1)}):Play()
+	LocalHealth:FindFirstChildOfClass("TextLabel").Text = tostring(math.round(alpha * 100)).."%"
+
+	ConnectionService.Connect("Health",char,Hum.HealthChanged,nil,"Connect",function()
+		alpha = MathService.Alpha(Hum.Health,Hum.MaxHealth)
+		TweenService:Create(LocalHealth.Fill,Bar,{Size = UDim2.fromScale(alpha,1)}):Play()
+		LocalHealth:FindFirstChildOfClass("TextLabel").Text = tostring(math.round(alpha * 100)).."%"
+
+		if alpha <= 0 then
+			ConnectionService.Disconnect(nil,char)
+			if RNG:NextInteger(0,5) == 0 then
+				PlaySound("Skill-Issue")
+			end
+		end
+	end)
+
+	ConnectionService.Connect("Died",char,Hum.Died,nil,"Once",function()
+		ConnectionService.Disconnect(nil,char)
+	end)
+
+	ConnectionService.Connect("Animation",char,Anim.AnimationPlayed,nil,"Connect",function(Track : AnimationTrack)
+		local Animation = Track.Animation
+		local ID = Animation.AnimationId
+
+		local Success = false
+		local Condition
+
+		for AnimName, AnimArray in AnimIDS do
+			if AnimArray[ID] then
+				Success = true
+				Condition = AnimName
+				break
+			end
+		end
+
+		if not Success then return end
+
+		if Condition == "FrontDash" then
+			_G.LastDash = tick()
+			OnCD("Front Dash",5)
+		elseif Condition == "SideDash" then
+			if char:GetAttribute("Ragdolled_") then
+				OnCD("Evasive",30)
+			end
+			OnCD("Side Dash",2)
+		elseif Condition == "Lethal" then
+			Off(Track.Length)
+		end
+
+		local Nearest = GetNearest(Hrp)
+		if not Nearest then return end
+
+		local _,TargetHum,Origin,TargetPlayer,_ = Things(Nearest)
+
+		local ChoosenTech
+		local LastPriority = -1
+
+		for _, Tech in pairs(TechService.Techs["Animations"]) do
+			if not Tech.Enabled then
+				continue
+			end
+
+			if Tech.Animation ~= Condition then
+				continue
+			end
+
+			if Tech.RequiresPlayer and not TargetPlayer then
+				continue
+			end
+
+			if Tech.UsesSkill and MoveOnCD(Tech.Skill) then
+				continue
+			end
+
+			if Tech.Priority > LastPriority then
+				LastPriority = Tech.Priority
+				ChoosenTech = Tech
+			end
+		end
+
+		if not ChoosenTech then return end
+
+		if ChoosenTech.RequiresTarget then
+			if MathService.GetDistance(Hrp,Origin) > 8 or TargetHum.Health <= 3 then return end
+
+			if Condition == "Uppercut" or Condition == "Forth" then
+				if UserInputService.MouseBehavior == Enum.MouseBehavior.LockCenter then return end
+				if not CanDash(5 - 0.433) then return end
+				ConnectionService.Connect(ChoosenTech.Name,char,Track:GetMarkerReachedSignal(ChoosenTech.Marker),Track.Length + 1,"Connect",function()
+					if ChoosenTech.Marker == "swingreg" then
+						task.wait(Condition == "Uppercut" and 0.11 or 0.07)
+					end
+					task.spawn(UsedTech,ChoosenTech.Name,char)
+					ChoosenTech.MarkerReached(Origin,Hrp,Track)
+				end)
+			elseif Condition == "Lethal" then
+				if not CanDash(5 - Track.Length) then return end
+				Off(Track.Length)
+				ConnectionService.Connect("Lethal",char,Track:GetMarkerReachedSignal(ChoosenTech.Marker),Track.Length + 1,"Connect",function()
+					if UserInputService.MouseBehavior == Enum.MouseBehavior.LockCenter then return end
+					if TargetHum.Health <= 15 then return end
+					task.spawn(UsedTech,ChoosenTech.Name,char)
+					ChoosenTech.MarkerReached(Origin,Hrp,Track)
+				end)
+			end
+		end
+
+		if ChoosenTech.OnPlayed then
+			ChoosenTech.OnPlayed(Origin,Hrp,Track)
+		end
+	end)
+
+end)
+
+--[[
+
+	pov: 
+	le lastlarp2017 be like: BOIIIIII WHY U USE OOP
+	
+	3 heart reactions for part 2 :joy:
+
+]]
+
+TechService.new({
+	Name = "Boomy Twisted",
+	AutoToggle = true,
+	Enabled = true,
+	Input = "R",
+	Condition = "Animation",
+	ConditionName = "Forth",
+	Priority = 1,
+	Signal = "swingreg",
+	OnPlayed = function(Goal,Hrp,_)
+		task.wait(0.15)
+
+		Hrp.AssemblyLinearVelocity = -Hrp.CFrame.LookVector * 50
+		Off(1.5)
+
+		MathService.LookAt(Hrp,Goal)
+	end,
+	MarkerReached = function(Goal,Hrp,Track)
+		Off(1.5)
+
+		FrontDash()
+
+		local Origin = Hrp.CFrame
+
+		Hrp.AssemblyLinearVelocity = Hrp.CFrame.LookVector * 55
+
+		MathService.LookAt(Hrp,Origin * CFrame.new(-6,  0,   -4))      
+		task.wait(0.2)
+		MathService.LookAt(Hrp,Origin * CFrame.new(0,  0,  -25))
+		task.wait(0.23)
+		MathService.LookAt(Hrp,Goal)
+	end,
+})
+
+TechService.new({
+	Name = "Supa Dash",
+	AutoToggle = true,
+	Enabled = true,
+	Input = "Z",
+	Condition = "Animation",
+	ConditionName = "Uppercut",
+	Priority = 3,
+	Signal = "swingreg",
+	OnPlayed = function(Goal,Hrp,_)
+		task.wait(0.1)
+
+		MathService.LookAt(Hrp,Goal,1)
+
+		task.wait(0.1)
+
+		Hrp.AssemblyLinearVelocity = -Hrp.CFrame.LookVector * 100
+	end,
+	MarkerReached = function(Goal,Hrp,_)
+		Off(1)
+
+		FrontDash()
+
+		Hrp.AssemblyLinearVelocity += Vector3.new(0,45,0)
+
+		On(1,Goal)
+
+		DelayService.Delay("Supa-DashStop",0.3,StopDash)
+
+		task.wait(1)
+
+		Off(0.5)
+	end,
+})
+
+TechService.new({
+	Name = "Loop Dash",
+	AutoToggle = true,
+	Input = "V",
+	Condition = "Animation",
+	ConditionName = "Uppercut",
+	Priority = 3,
+	Signal = "swingreg",
+	OnPlayed = function(Goal,Hrp,_)
+		task.wait(0.1)
+
+		MathService.LookAt(Hrp,Goal,1)
+
+		task.wait(0.1)
+
+		Hrp.AssemblyLinearVelocity = -Hrp.CFrame.LookVector * 40
+	end,
+	MarkerReached = function(Goal,Hrp,_)
+
+		Off(0.2)
+
+		MathService.LookAt(Hrp,Hrp.CFrame * CFrame.new(6,0,-2))
+
+		DelayService.Delay("Loop-DashStop",0.5,StopDash)
+
+		FrontDash()
+
+		task.wait(0.1)
+
+		_G.Lerp = 0.12 -- higher --> smaller radius ( 0.1 Lerp Is Approximatly 7 Radius ) 
+
+		On(1,Goal)
+
+		task.wait(0.3)
+
+		Hrp.AssemblyLinearVelocity += Vector3.new(0,30,0)
+
+		task.wait(0.3)
+
+		_G.Lerp = 0.4
+	end,
+})
+
+TechService.new({
+	Name = "Kiba Dash",
+	AutoToggle = true,
+	Input = "K",
+	Condition = "Animation",
+	ConditionName = "Uppercut",
+	Priority = 3,
+	Signal = "swingreg",
+	OnPlayed = function(Goal,Hrp,_)
+		task.wait(0.15)
+
+		MathService.LookAt(Hrp,Goal,1)
+
+		Off(1)
+	end,
+	MarkerReached = function(Goal,Hrp,_)
+		FrontDash()
+
+		MathService.Pitch = true
+
+		task.wait(0.1)
+
+		ConnectionService.Connect("StickTo",Hrp.Parent,RunService.RenderStepped,0.4,"Connect",function()
+			Hrp.CFrame = MathService.GetCFrame(Goal.Position) + Vector3.new(0,-4,0)
+			MathService.LookAt(Hrp,Hrp.CFrame * CFrame.new(0,10,0))
+		end)
+
+		task.wait(0.3)
+
+		StopDash()
+
+		task.wait(0.1)
+
+		MathService.Pitch = false
+
+		Hrp.CFrame = Hrp.CFrame * CFrame.new(0,-3,0)
+		Hrp.AssemblyLinearVelocity = Vector3.zero
+	end,
+})
+
+TechService.new({
+	Name = "Silent Aim",
+	AutoToggle = true,
+	Input = "T",
+	Condition = "Other",
+	DisableOthers = false,
+	Priority = 100,
+	OnEnable = Silent,
+	OnDisable = StopStare
+})
+
+TechService.new({
+	Name = "Grasp Tech",
+	AutoToggle = true,
+	Enabled = true,
+	Input = "X",
+	Condition = "Animation",
+	ConditionName = "Uppercut",
+	Priority = 5,
+	Signal = "swingreg",
+	UsesSkill = true,
+	requiresPlayer = true,
+	DisableOthers = false,
+	Skill = "Hunter's Grasp",
+	OnPlayed = function(Goal,Hrp,Track)
+		Off(Track.Length + 0.5)
+
+		MathService:Tween(Hrp,function()
+			return MathService.GetCFrame(Goal.Position) + Vector3.new(0,5.2,0.85)
+		end,0.3,Goal)
+
+		Hrp.Anchored = true
+	end,
+	MarkerReached = function(Goal,Hrp,_)
+		Hrp.Anchored = false
+
+		UseMove("Hunter's Grasp")
+
+		MathService.LookAt(Hrp,Goal)
+	end,
+})
+
+TechService.new({
+	Name = "Hide Block",
+	AutoToggle = true,
+	Input = "H",
+	Condition = "Animation",
+	ConditionName = "Block",
+	requiresTarget = false,
+	OnPlayed = function(_,_,Track)
+		print(Track)
+		Track:Stop()
+	end,
+})
+
+TechService.new({
+	Name = "Boomy Lethal",
+	AutoToggle = true,
+	Enabled = true,
+	Input = "L",
+	Condition = "Animation",
+	ConditionName = "Lethal",
+	Priority = 2,
+	Signal = "finalslam",
+	MarkerReached = function(Goal,Hrp,_)
+		Off(1)
+
+		Hrp.AssemblyLinearVelocity = Hrp.CFrame.LookVector * 60 + Vector3.new(0,55,0)
+
+		FrontDash()
+
+		MathService.LookAt(Hrp,Hrp.CFrame * CFrame.new(0,0,-5))
+
+		task.wait(0.2)
+
+		MathService.LookAt(Hrp,Goal,1)
+
+		task.wait(0.13)
+
+		StopDash()
+
+		On(0.4,Goal)
+
+		task.wait(0.4)
+
+		Off(1)
+
+	end,
+	OnPlayed = function()
+		task.wait(1.3)
+
+		VirtualInputManager:SendKeyEvent(true,Enum.KeyCode.Space,false,game)
+
+		task.wait(0.4)
+
+		VirtualInputManager:SendKeyEvent(false,Enum.KeyCode.Space,false,game)
+	end
+})
+
+TechService.new({
+	Name = "Select Target",
+	AutoToggle = false,
+	Enabled = true,
+	Condition = "Other",
+	DisableOthers = false,
+	Input = "Y",
+	Priority = 100,
+	OnEnable = NearestDude,
+	Display = false
+})
+
+local Emotes = PlayerGui.Emotes:FindFirstChildOfClass("ImageLabel")
+
+local Positioning = {
+	[5] = UDim2.fromScale(0.8,0.23),
+	[6] = UDim2.fromScale(0.2,0.23),
+	[7] = UDim2.fromScale(0.2,0.83),
+	[8] = UDim2.fromScale(0.8,0.83),
+}
+
+for i = 5, 8 do
+	local Emote = Emotes:FindFirstChild(tostring(i))
+	if not Emote then continue end
+
+	Emote.Visible = true
+
+	Emote:FindFirstChildOfClass("UIAspectRatioConstraint").AspectRatio = 1
+	Emote.Position = Positioning[i]
+
+	Emote:FindFirstChildOfClass("TextButton").Visible = true
+end
+
+for _, Emote in Emotes:GetChildren() do
+	if not tonumber(Emote.Name) then continue end
+
+	Emote.Radial.Visible = false
+	Emote.Radial:GetPropertyChangedSignal("Visible"):Connect(function()
+		if not Emote.Radial.Visible then return end
+
+		Emote.Radial.Visible = false
+	end)
+
+	Emote.Button.MouseButton1Click:Connect(function()
+		if Emote.Radial:FindFirstChildOfClass("ImageLabel") then
+			Communicate({Goal = "Emote",Emote = Emote.EmoteName.Text})
+		end
+	end)
+end
+
+UserInputService.InputBegan:Connect(function(Input,GameProcessed)
+	if GameProcessed then return end
+	if Inputs[Input.KeyCode] then
+		Inputs[Input.KeyCode]()
+	end
+end)
+
+OnEvent:Init()
+
+while getgenv().GerpLoaded do
+	StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Health,false)
+	StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat,true)
+	task.wait(0.2)
+end
