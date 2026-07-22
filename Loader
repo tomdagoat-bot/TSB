@@ -411,7 +411,7 @@ end)
 _G.Target = nil
 _G.TargetName = nil
 _G.Lerp = 0.4
-_G.Prediction = 0.3
+_G.Prediction = 0.4
 
 local Bar = TweenInfo.new(0.3,Enum.EasingStyle.Sine,Enum.EasingDirection.Out)
 
@@ -735,7 +735,7 @@ OnEvent.Bind("Counter",function(char,Hrp,Duration,CounterDisplay)
 
 	if Distance <= 20 then
 		PlaySound("Counter")
-		if Distance <= 9 then
+		if Distance <= 10 then
 			Communicate({Dash = Enum.KeyCode.S, Key = Enum.KeyCode.Q, Goal = "KeyPress"})
 			Root.AssemblyLinearVelocity = -Hrp.CFrame.LookVector * 90
 		end
@@ -1199,13 +1199,13 @@ TechService.new({
 
 		FrontDash()
 
-		DelayService.Delay("TwistedV1-DashStop",0.25,StopDash)
+		DelayService.Delay("TwistedV1-DashStop",0.26,StopDash)
 
 		local Origin = Hrp.CFrame
 
 		Hrp.AssemblyLinearVelocity = Hrp.CFrame.LookVector * 55
 
-		MathService.LookAt(Hrp,Origin * CFrame.new(-7,  0,   -7))      
+		MathService.LookAt(Hrp,Origin * CFrame.new(-10,  0,   -6))      
 		task.wait(0.2)
 		MathService.LookAt(Hrp,Origin * CFrame.new(0,  0,  -16))
 	end,
@@ -1275,7 +1275,7 @@ TechService.new({
 	end,
 	MarkerReached = function(Goal,Hrp,_)
 
-		DelayService.Delay("Dripz-DashStop",0.28,StopDash)
+		DelayService.Delay("Dripz-DashStop",0.27,StopDash)
 
 		MathService.LookAt(Hrp,Hrp.CFrame * CFrame.new(0,0,5))
 
@@ -1293,11 +1293,11 @@ TechService.new({
 
 		On(0.2,Goal)
 
-		_G.Lerp = 0.6
+		_G.Lerp = 0.7
 
 		local v = Hrp.AssemblyLinearVelocity
 
-		Hrp.AssemblyLinearVelocity = Vector3.new(v.X,55,v.Z * 1.2)
+		Hrp.AssemblyLinearVelocity = Vector3.new(v.X,40,v.Z * 1.2)
 
 		task.wait(0.2)
 
@@ -1373,7 +1373,7 @@ TechService.new({
 
 		MathService.LookAt(Hrp,Hrp.CFrame * CFrame.new(5,0,0))
 
-		_G.Lerp = 0.13
+		_G.Lerp = 0.14
 
 		task.wait(0.1)
 
@@ -1387,7 +1387,7 @@ TechService.new({
 
 		On(1,Goal)
 	
-		task.wait(0.55)
+		task.wait(0.5)
 
 		StopDash()
 
@@ -1440,7 +1440,7 @@ TechService.new({
 
 		UseMove("Hunter's Grasp")
 
-		Hrp.AssemblyLinearVelocity = -Hrp.CFrame.LookVector * 30
+		Hrp.AssemblyLinearVelocity = -Hrp.CFrame.LookVector * 25
 
 		MathService.LookAt(Hrp,Goal)
 
