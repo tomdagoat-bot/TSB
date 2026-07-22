@@ -56,6 +56,8 @@ local UI = PlayerGui:WaitForChild("TSB")
 
 local Appear = TweenInfo.new(0.6,Enum.EasingStyle.Quad,Enum.EasingDirection.Out)
 
+local AttributeUPDATE = false
+
 for _, v in UI:GetChildren() do
 	if v.Name == "Target" then continue end
 	TweenService:Create(v,Appear,{Position = v:GetAttribute("Position")}):Play()
@@ -172,23 +174,23 @@ function TechAttributes()
 	return {
 		Name = "Tech",
 		Input = "E",
-		Signal = "swingreg",
+		Marker = "swingreg",
 		Condition = "Animation",
 		Enabled = false,
 		OnEnable = nil,
 		OnDisable = nil,
 		Display = true,
 		Priority = 0,
-		DisableOthers = true,
+		DisablesOthers = true,
 		AutoToggle = true,
-		requiresPlayer = false,
-		requiresTarget = true,
-		MarkerReached = nil, -- animations
-		OnPlayed = nil, -- animations
-		OnChanged = nil, -- attributes
-		ConditionName = "Uppercut",
+		RequiresTarget = true,
+		RequiresPlayer = false,
+		MarkersReached = {["swingreg"] = function() print("e") end},
+		OnPlayed = nil,
+		Animation = "Uppercut",
 		UsesSkill = false,
 		Skill = nil,
+		UsesDash = true
 	}
 end
 
@@ -200,33 +202,21 @@ TechService.new = function(Attributes : typeof(TechAttributes()))
 		Properties[key] = value
 	end
 
-	self.Name = Properties.Name
-	self.Input = Enum.KeyCode[Properties.Input]
-	self.Condition = Properties.Condition
-	self.AutoToggle = Properties.AutoToggle
-
-	self.RequiresTarget = Properties.requiresTarget
-
-	self.DisablesOthers = Properties.DisableOthers
-
-	self.Enabled = Properties.Enabled
-
-	self.OnEnable = Properties.OnEnable 
-	self.OnDisable = Properties.OnDisable
-
 	self.CD = false
-	self.RequiresPlayer = Properties.requiresPlayer
 
-	self.Priority = Properties.Priority
-	self.Displays = Properties.Display
+	for key, value in Properties do
+		self[key] = value
+	end
 
-	self.UsesSkill = Properties.UsesSkill
-	self.Skill = Properties.Skill
+	local Signal = self.Marker
 
-	self.Animation = Properties.ConditionName
-	self.Marker = Properties.Signal
-	self.OnPlayed = Properties.OnPlayed
-	self.MarkerReached = Properties.MarkerReached
+	if typeof(self.Markers) ~= "table" then
+		self.Markers = {self.Marker}
+	end
+
+	if self.MarkerReached and #self.Markers == 1 then
+		self.MarkersReached[Signal] = self.MarkerReached
+	end
 
 	OnEvent.new(self.Name)
 
@@ -266,17 +256,17 @@ TechService.new = function(Attributes : typeof(TechAttributes()))
 			end
 		end
 
-		task.wait(0.5)
+		task.wait(0.35)
 
 		self.CD = not self.CD -- not true --> false
 
 	end)
 
-	Inputs[self.Input] = function()
+	Inputs[Enum.KeyCode[self.Input]] = function()
 		self:Toggle()
 	end
 
-	if self.Displays then
+	if self.Display then
 		local Button = TechButton:Clone()
 		Button.Parent = UI.Options
 		Button.Text = self.Name..": "..ToggledString(self.Enabled)
@@ -292,6 +282,7 @@ TechService.new = function(Attributes : typeof(TechAttributes()))
 	TechService.Storage[self.Name] = self
 
 	Properties = nil
+	Attributes = nil
 
 	return self
 end
@@ -313,6 +304,11 @@ local function StopStare()
 	ConnectionService.Disconnect("Stare",Char)
 end
 
+local function PredictCFrame(hrp, t)
+    local Pos = hrp.Position + hrp.AssemblyLinearVelocity * t
+    return CFrame.new(Pos, Pos + hrp.CFrame.LookVector)
+end
+
 local function StareConnection(Object)
 	if not _G.Target and not Object then warn("Please Select A Target.") return end
 	local Hum = _G.Target and _G.Target:FindFirstChild("Humanoid")
@@ -321,7 +317,12 @@ local function StareConnection(Object)
 		return
 	end
 
-	local Char, _, Hrp = Me()
+	local Char, MyHum, Hrp = Me()
+	
+	if not Char or not MyHum or not Hrp or MyHum.Health <= 0 then
+		return
+	end
+
 	local Goal = Object or _G.Target:WaitForChild("HumanoidRootPart")
 
 	DelayService.Yield(function()
@@ -330,7 +331,8 @@ local function StareConnection(Object)
 
 	ConnectionService.Connect("Stare",Char,RunService.PreRender,nil,"Connect",function()
 		if UserInputService.MouseBehavior == Enum.MouseBehavior.LockCenter then return end
-		MathService.LookAt(Hrp,Goal,_G.Lerp)
+		local Where = _G.PredictionEnabled and PredictCFrame(Goal,_G.Prediction) or Goal
+		MathService.LookAt(Hrp,Where,_G.Lerp)
 	end)
 end
 
@@ -409,6 +411,7 @@ end)
 _G.Target = nil
 _G.TargetName = nil
 _G.Lerp = 0.4
+_G.Prediction = 0.3
 
 local Bar = TweenInfo.new(0.3,Enum.EasingStyle.Sine,Enum.EasingDirection.Out)
 
@@ -427,14 +430,29 @@ local function GetProfile(player)
 end
 
 local function Evasive(Target)
-	local Evasive = Target:GetAttribute("Evasive")
-
-	TargetBars.Ragdoll.Visible = Evasive ~= nil
-
-	if Evasive then
-		TargetBars.Ragdoll.Value.Text = Evasive .. "s"
-		Evasive = MathService.Alpha(tonumber(Evasive),30)
-		TweenService:Create(TargetBars.Ragdoll.Fill,Bar,{Size = UDim2.fromScale(Evasive,1)}):Play()
+	if Target:GetAttribute("JustEvasived") then
+		local endtime = Target:GetAttribute("JustEvasived") + 30
+		if endtime - tick() <= 0 then
+			TargetBars.Ragdoll.Visible = false
+		else
+			TargetBars.Ragdoll.Visible = true
+		
+			local timeleft = endtime - tick()
+		
+			local alpha = MathService.Alpha(timeleft,30)
+		
+			DelayService.CountDown("Targetation-Evasivation",timeleft,1,function(elapsed)
+				TargetBars.Ragdoll.Value.Text = "Evasive: "..tostring(math.floor(elapsed)).."s"
+			end,function()
+				TargetBars.Ragdoll.Visible = false
+			end)
+		
+			TweenService:Create(TargetBars.Ragdoll.Fill,Bar,{Size = UDim2.fromScale(alpha,1)}):Play()
+			task.wait(Bar.Time)
+			TweenService:Create(TargetBars.Ragdoll.Fill,TweenInfo.new(timeleft - Bar.Time,Enum.EasingStyle.Linear,Enum.EasingDirection.In),{Size = UDim2.fromScale(0,1)}):Play()
+		end
+	else
+		TargetBars.Ragdoll.Visible = false
 	end
 end
 
@@ -447,7 +465,7 @@ local function Kills(TargetPlayer)
 			TargetUI.Kills.Text = "Kills: ".. Kills.Value
 		end)
 	else
-		TargetUI.Kills.Text = "HIDDEN"
+		TargetUI.Kills.Text = "Kills: HIDDEN"
 		ConnectionService.Disconnect("Kills","Target")
 	end
 end
@@ -464,14 +482,9 @@ local function DeathCounter(Target)
 end
 
 local function TotalKills(TargetPlayer)
-	local TK = TargetPlayer:GetAttribute("TotalKillsFrb")
+	local TK = TargetPlayer:GetAttribute("TotalKillsFrb") or "HIDDEN"
 
-	if TK then
-		TargetUI["Total Kills"].Text = "Total Kills: "..TK
-	else
-		TargetUI["Total Kills"].Text = "HIDDEN"
-	end
-
+	TargetUI["Total Kills"].Text = "Total Kills: "..TK
 end
 
 local function Streak(Target)
@@ -487,17 +500,43 @@ local function Ultimate(TargetPlayer)
 	ult = MathService.Alpha(ult,100)
 
 	TweenService:Create(TargetBars.Ultimate.Fill,Bar,{Size = UDim2.fromScale(ult,1)}):Play()
-	TargetBars.Ultimate.Value.Text = tostring(math.round(ult * 100)).."%"
+	TargetBars.Ultimate.Value.Text = "Ultimate: "..tostring(math.round(ult * 100)).."%"
 end
 
 local function Health(TargetHum,Target)
 	local hp = MathService.Alpha(TargetHum.Health,TargetHum.MaxHealth)
 	TweenService:Create(TargetBars.Health.Fill,Bar,{Size = UDim2.fromScale(hp,1)}):Play()
 
-	TargetBars.Health.Value.Text = tostring(math.floor(hp * 100)).."%"
+	TargetBars.Health.Value.Text = "Health: "..tostring(math.floor(hp * 100)).."%"
 
 	if hp <= 0 then
 		SetTarget(nil,Target.Name)
+	end
+end
+
+local function InUlt(Target)
+	DelayService.Yield(function() return not Target:FindFirstChildOfClass("ForceField") end,20)
+	if Target:GetAttribute("UltimateTime") then
+		local endtime = Target:GetAttribute("JustUltimate") + Target:GetAttribute("UltimateTime")
+		if endtime - tick() <= 0 then
+			TargetBars.Ultimate.Value.Text = "0%"
+		else
+			local timeleft = endtime - tick()
+
+			local alpha = MathService.Alpha(timeleft,Target:GetAttribute("UltimateTime"))
+			TweenService:Create(TargetBars.Ultimate.Fill,Bar,{Size = UDim2.fromScale(alpha,1)}):Play()
+
+			DelayService.CountDown("Targetation-Ultimation",timeleft,1,function(elapsed)
+				TargetBars.Ultimate.Value.Text = "Ultimate: "..tostring(math.floor(elapsed)).."s"
+				alpha = MathService.Alpha(elapsed,Target:GetAttribute("UltimateTime"))
+				TweenService:Create(TargetBars.Ultimate.Fill,Bar,{Size = UDim2.fromScale(alpha,1)}):Play()
+			end,function()
+				TargetBars.Ultimate.Value.Text = "Ultimate: 0%"
+			end)
+		end
+	else
+		TargetBars.Ultimate.Value.Text = "IN ULTIMATE"
+		TweenService:Create(TargetBars.Ultimate.Fill,Bar,{Size = UDim2.fromScale(1,1)}):Play()
 	end
 end
 
@@ -507,11 +546,24 @@ function UpdateTarget()
 	TargetUI.Username.Text = TargetPlayer and TargetPlayer.DisplayName or Target.Name
 	TargetUI.Username.Profile:FindFirstChildOfClass("ImageLabel").Image = GetProfile(TargetPlayer)
 
+	ConnectionService.Disconnect("TargetInUlt",Player)
+
+	TargetBars.Ultimate.Visible = TargetPlayer ~= nil
+	TargetBars.Ragdoll.Visible = TargetPlayer ~= nil
+	TargetUI.Moveset.Visible = TargetPlayer ~= nil
+	TargetUI.Kills.Visible = TargetPlayer ~= nil
+	TargetUI["Total Kills"].Visible = TargetPlayer ~= nil
+	TargetUI.Streak.Visible = TargetPlayer ~= nil
+
 	if TargetPlayer then
 
 		Evasive(Target)
 
-		ConnectionService.Connect("Evasive","Target",Target:GetAttributeChangedSignal("Evasive"),nil,"Connect",function()
+		ConnectionService.Connect("Evasive","Target",Target:GetAttributeChangedSignal("JustEvasived"),nil,"Connect",function()
+			if AttributeUPDATE then return end
+			AttributeUPDATE = true
+			Target:SetAttribute("JustEvasived",tick())
+			AttributeUPDATE = false
 			Evasive(Target)
 		end)
 
@@ -553,19 +605,21 @@ function UpdateTarget()
 			Ultimate(TargetPlayer)
 		end)
 
+		if Target:GetAttribute("Ulted") then
+			InUlt(Target)
+		end
+
+		ConnectionService.Connect("UltimateIn","Target",Target:GetAttributeChangedSignal("Ulted"),nil,"Connect",function()
+			if not Target:GetAttribute("Ulted") then return end
+			InUlt(Target)
+		end)
+
 		TargetUI.Moveset.Text = "Moveset: "..MovesetTranslation[Target:GetAttribute("Character") or "CUSTOM"]
 
 		ConnectionService.Connect("Moveset","Target",Target:GetAttributeChangedSignal("Character"),nil,"Connect",function()
 			TargetUI.Moveset.Text = "Moveset: "..MovesetTranslation[Target:GetAttribute("Character") or "CUSTOM"]
 		end)
 	end
-
-	TargetBars.Ragdoll.Visible = TargetPlayer ~= nil
-	TargetBars.Ultimate.Visible = TargetPlayer ~= nil
-	TargetUI.Moveset.Visible = TargetPlayer ~= nil
-	TargetUI.Kills.Visible = TargetPlayer ~= nil
-	TargetUI["Total Kills"].Visible = TargetPlayer ~= nil
-	TargetUI.Streak.Visible = TargetPlayer ~= nil
 
 	Health(TargetHum,Target)
 
@@ -610,6 +664,10 @@ local function M1(duration)
 	DelayService.Delay("M1ing",duration or 0.2,function()
 		StopM1()		
 	end)
+end
+
+local function WallCombo()
+	Communicate({Goal = "Wall Combo"})
 end
 
 local function UseMove(Move)
@@ -673,8 +731,14 @@ OnEvent.new("Counter")
 OnEvent.Bind("Counter",function(char,Hrp,Duration,CounterDisplay)
 	local _,_,Root,_ = Me()
 
-	if MathService.GetDistance(Root,Hrp) <= 20 then
+	local Distance = MathService.GetDistance(Root,Hrp)
+
+	if Distance <= 20 then
 		PlaySound("Counter")
+		if Distance <= 9 then
+			Communicate({Dash = Enum.KeyCode.S, Key = Enum.KeyCode.Q, Goal = "KeyPress"})
+			Root.AssemblyLinearVelocity = -Hrp.CFrame.LookVector * 90
+		end
 	end
 
 	HighlightService.new("Counter",char,Duration)
@@ -741,45 +805,41 @@ OnEvent.Bind("CharacterAdded",function(char : Model)
 		local ID = Animation.AnimationId
 
 		if AnimIDS["Counters"][ID] then
-			local ActualCounter = false
-
-			for _, c in char:GetChildren() do
-				if c.Name:find("Counter") and c.Name ~= "Counter" then
-					ActualCounter = true
-					break
-				end
-			end
-
-			if not ActualCounter then print(char.Name,"is exploiting btw") return end
-
 			local Duration = Track.Length - 0.6
 			OnEvent.Fire("Counter",char,Hrp,Duration,CounterDisplay)
-		elseif AnimIDS["SideDash"][ID] then
-			if not char:GetAttribute("Ragdolled_") then return end
-
-			DelayService.CountDown(char.Name.."-Evasive",30,1,function(elapsed)
-				char:SetAttribute("Evasive", elapsed)
-			end,function()
-				char:SetAttribute("Evasive", nil)
-			end)
 		end
 	end)
 
 	ConnectionService.Connect("ChildAdded",char,char.ChildAdded,nil,"Connect",function(r)
-		if r.Name == "Ragdoll" or r.Name == "RagdollSim" then
-			char:SetAttribute("Ragdolled_", true)
-		elseif r.Name == "Counter" and (char:FindFirstChild("Death Counter") or plr and plr.Backpack:FindFirstChild("Death Counter")) then 
+		if r.Name == "Counter" and (char:FindFirstChild("Death Counter") or plr and plr.Backpack:FindFirstChild("Death Counter")) then 
 			OnEvent.Fire("Death Counter",char,Hrp,CounterDisplay)
 		end
 	end)
 
-	ConnectionService.Connect("UnRagdolled",char,char.ChildRemoved,nil,"Connect",function(r)
-		if r.Name == "Ragdoll" or r.Name == "RagdollSim" then
-			DelayService.Delay(char.Name.."-Unragdoll",0.2,function()
-				char:SetAttribute("Ragdolled_", false)
-			end)
-		end
+	if char:FindFirstChild("Counter") then
+		OnEvent.Fire("Death Counter",char,Hrp,CounterDisplay)
+	end
+
+	if char:GetAttribute("JustEvasived") then
+		char:SetAttribute("JustEvasived",char:GetAttribute("JustEvasived") + 3599)
+	end
+
+	if char:GetAttribute("JustUltimate") then
+		char:SetAttribute("JustUltimate",char:GetAttribute("JustUltimate") + 3599)
+	end
+
+	ConnectionService.Connect("Evasive",char,char:GetAttributeChangedSignal("JustEvasived"),nil,"Connect",function()
+		if AttributeUPDATE then return end
+		AttributeUPDATE = true
+		char:SetAttribute("JustEvasived",tick())
+		AttributeUPDATE = false
 	end)
+
+	ConnectionService.Connect("Ulted",char,char:GetAttributeChangedSignal("Ulted"),nil,"Connect",function()
+		DelayService.Yield(function() return not char:FindFirstChildOfClass("ForceField") end,20)
+		char:SetAttribute("JustUltimate",tick())
+	end)
+
 end)
 
 OnEvent.Bind("CharacterRemoving",function(char)
@@ -828,7 +888,7 @@ OnEvent.Bind("PlayerAdded",function(plr : Player)
 
 	ShowKills(plr)
 
-	Leaderstats.ChildRemoved:Connect(function()
+	ConnectionService.Connect("LeaderstatRemoved",plr,Leaderstats.ChildRemoved,nil,"Connect",function()
 		ShowKills(plr)
 	end)
 
@@ -877,7 +937,11 @@ function OnCD(Skill,CD)
 end
 
 local function CanDash(Compare)
-	return tick() - _G.LastDash > (Compare or 5)
+	local Character = select(1,Me())
+	if not Character:GetAttribute("JustForwardDashed") then
+		return true
+	end
+	return tick() - Character:GetAttribute("JustForwardDashed") > (Compare or 5)
 end
 
 local function MoveOnCD(Move)
@@ -896,10 +960,16 @@ local function MoveOnCD(Move)
 	return CD ~= nil
 end
 
-_G.LastDash = 0
-
 local ColorShift = TweenInfo.new(0.6,Enum.EasingStyle.Linear,Enum.EasingDirection.In)
 local RNG = Random.new()
+
+local function ChangeLocalHP(Hum)
+	local alpha = MathService.Alpha(Hum.Health,Hum.MaxHealth)
+	TweenService:Create(LocalHealth.Fill,Bar,{Size = UDim2.fromScale(alpha,1)}):Play()
+	LocalHealth:FindFirstChildOfClass("TextLabel").Text = tostring(math.round(alpha * 100)).."%"
+
+	return alpha
+end
 
 OnEvent.Bind("MyCharacterAdded",function(char)
 	local _,Hum,Hrp,Anim = Me()
@@ -907,7 +977,6 @@ OnEvent.Bind("MyCharacterAdded",function(char)
 	char:SetAttribute("UltimateName","GERP HUB")
 
 	ConnectionService.Connect("UltName",char,char:GetAttributeChangedSignal("UltimateName"),nil,"Connect",function() 
-		if char:GetAttribute("UltimateName") == "GERP HUB" then return end
 		char:SetAttribute("UltimateName","GERP HUB")
 	end)
 
@@ -928,6 +997,8 @@ OnEvent.Bind("MyCharacterAdded",function(char)
 			local label = CD:FindFirstChildOfClass("TextLabel")
 			if not label then continue end
 
+			ConnectionService.Disconnect(CD.Name,Player)
+
 			label.Text = CD.Name
 		end
 	end
@@ -936,32 +1007,25 @@ OnEvent.Bind("MyCharacterAdded",function(char)
 
 	ConnectionService.Connect("Ragdolled",char,char.ChildAdded,nil,"Connect",function(r)
 		if r.Name == "Ragdoll" or r.Name == "RagdollSim" then
-			char:SetAttribute("Ragdolled_", true)
 			StopStare()
 		end
 	end)
 
 	ConnectionService.Connect("UnRagdolled",char,char.ChildRemoved,nil,"Connect",function(r)
 		if r.Name == "Ragdoll" or r.Name == "RagdollSim" then
-			DelayService.Delay(char.Name.."-Unragdoll",0.2,function()
-				char:SetAttribute("Ragdolled_", false)
-			end)
 			SilentAim()
 		end
 	end)
 
-	local alpha = MathService.Alpha(Hum.Health,Hum.MaxHealth)
-	TweenService:Create(LocalHealth.Fill,Bar,{Size = UDim2.fromScale(alpha,1)}):Play()
-	LocalHealth:FindFirstChildOfClass("TextLabel").Text = tostring(math.round(alpha * 100)).."%"
+	ChangeLocalHP(Hum)
 
 	ConnectionService.Connect("Health",char,Hum.HealthChanged,nil,"Connect",function()
-		alpha = MathService.Alpha(Hum.Health,Hum.MaxHealth)
-		TweenService:Create(LocalHealth.Fill,Bar,{Size = UDim2.fromScale(alpha,1)}):Play()
-		LocalHealth:FindFirstChildOfClass("TextLabel").Text = tostring(math.round(alpha * 100)).."%"
+
+		local alpha = ChangeLocalHP(Hum)
 
 		if alpha <= 0 then
 			ConnectionService.Disconnect(nil,char)
-			if RNG:NextInteger(0,5) == 0 then
+			if RNG:NextInteger(1,5) == 1 then -- 20% chance
 				PlaySound("Skill-Issue")
 			end
 		end
@@ -988,15 +1052,13 @@ OnEvent.Bind("MyCharacterAdded",function(char)
 
 		if not Success then return end
 
-		if Condition == "FrontDash" then
-			_G.LastDash = tick()
-			OnCD("Front Dash",5)
-		elseif Condition == "SideDash" then
-			if char:GetAttribute("Ragdolled_") then
-				OnCD("Evasive",30)
-			end
-			OnCD("Side Dash",2)
+		if Condition == "Uppercut" and char:GetAttribute("DragonUppercut") then
+			return
 		elseif Condition == "Lethal" then
+			Off(Track.Length)		
+		end
+
+		if Condition == "Lethal" then
 			Off(Track.Length)
 		end
 
@@ -1034,34 +1096,76 @@ OnEvent.Bind("MyCharacterAdded",function(char)
 		if not ChoosenTech then return end
 
 		if ChoosenTech.RequiresTarget then
-			if MathService.GetDistance(Hrp,Origin) > 8 or TargetHum.Health <= 3 then return end
+			if MathService.GetDistance(Hrp,Origin) > 9 or TargetHum.Health <= 3 then return end
+
+			local was = _G.PredictionEnabled
+
+			_G.PredictionEnabled = false
 
 			if Condition == "Uppercut" or Condition == "Forth" then
 				if UserInputService.MouseBehavior == Enum.MouseBehavior.LockCenter then return end
-				if not CanDash(5 - 0.433) then return end
-				ConnectionService.Connect(ChoosenTech.Name,char,Track:GetMarkerReachedSignal(ChoosenTech.Marker),Track.Length + 1,"Connect",function()
-					if ChoosenTech.Marker == "swingreg" then
-						task.wait(Condition == "Uppercut" and 0.11 or 0.07)
-					end
-					task.spawn(UsedTech,ChoosenTech.Name,char)
-					ChoosenTech.MarkerReached(Origin,Hrp,Track)
-				end)
+				for _, Marker in ChoosenTech.Markers do
+					Hum.WalkSpeed = 0
+					Hum.JumpPower = 0
+					ConnectionService.Connect(ChoosenTech.Name,char,Track:GetMarkerReachedSignal(Marker),Track.Length,"Connect",function()
+						if TargetHum.Health <= 4 then return end
+						if not CanDash(4.5) and ChoosenTech.UsesDash then return end
+						local yield = Condition == "Uppercut" and 0.13 or 0.07
+						if Marker == "swingreg" then
+							task.wait(yield)
+						end
+						task.spawn(UsedTech,ChoosenTech.Name,char)
+						ChoosenTech.MarkersReached[Marker](Origin,Hrp,Track)
+						_G.PredictionEnabled = was
+						Hum.WalkSpeed = 16
+						Hum.JumpPower = 50
+					end)
+				end
 			elseif Condition == "Lethal" then
-				if not CanDash(5 - Track.Length) then return end
-				Off(Track.Length)
-				ConnectionService.Connect("Lethal",char,Track:GetMarkerReachedSignal(ChoosenTech.Marker),Track.Length + 1,"Connect",function()
-					if UserInputService.MouseBehavior == Enum.MouseBehavior.LockCenter then return end
-					if TargetHum.Health <= 15 then return end
-					task.spawn(UsedTech,ChoosenTech.Name,char)
-					ChoosenTech.MarkerReached(Origin,Hrp,Track)
-				end)
+				for _, Marker in ChoosenTech.Markers do
+					ConnectionService.Connect(ChoosenTech.Name,char,Track:GetMarkerReachedSignal(Marker),Track.Length,"Connect",function()
+						if UserInputService.MouseBehavior == Enum.MouseBehavior.LockCenter then print("bc of focking shitlock") return end
+						if TargetHum.Health <= 14 then return end
+						if not CanDash(4) and ChoosenTech.UsesDash then return end
+						task.spawn(UsedTech,ChoosenTech.Name,char)
+						ChoosenTech.MarkersReached[Marker](Origin,Hrp,Track)
+						_G.PredictionEnabled = was
+					end)
+				end
 			end
 		end
 
 		if ChoosenTech.OnPlayed then
+			if (Condition == "Lethal" or Condition == "Uppercut" or Condition == "Forth") and ChoosenTech.UsesDash then
+				if not CanDash(5 - Track.Length) then return end
+			end
 			ChoosenTech.OnPlayed(Origin,Hrp,Track)
 		end
 	end)
+
+	ConnectionService.Connect("Evasived",char,char:GetAttributeChangedSignal("JustEvasived"),nil,"Connect",function()
+		OnCD("Evasive",30)
+	end)
+
+	for _, Con in {"JustRightDashed","JustLeftDashed"} do
+		ConnectionService.Connect(Con,char,char:GetAttributeChangedSignal(Con),nil,"Connect",function()
+			OnCD("Side Dash",2)
+			if AttributeUPDATE then return end
+			AttributeUPDATE = true
+			char:SetAttribute(Con,tick())
+			AttributeUPDATE = false
+		end)
+	end
+
+	for _, Con in {"JustForwardDashed","JustBackDashed"} do
+		ConnectionService.Connect(Con,char,char:GetAttributeChangedSignal(Con),nil,"Connect",function()
+			OnCD("Front Dash",5)
+			if AttributeUPDATE then return end
+			AttributeUPDATE = true
+			char:SetAttribute(Con,tick())
+			AttributeUPDATE = false
+		end)
+	end
 
 end)
 
@@ -1070,7 +1174,7 @@ end)
 	pov: 
 	le lastlarp2017 be like: BOIIIIII WHY U USE OOP
 	
-	3 heart reactions for part 2 :joy:
+	3 heart reactions for part 2
 
 ]]
 
@@ -1078,33 +1182,32 @@ TechService.new({
 	Name = "Boomy Twisted",
 	AutoToggle = true,
 	Enabled = true,
-	Input = "R",
+	Input = "U",
 	Condition = "Animation",
-	ConditionName = "Forth",
+	Animation = "Forth",
 	Priority = 1,
-	Signal = "swingreg",
+	Marker = "swingreg",
 	OnPlayed = function(Goal,Hrp,_)
 		task.wait(0.15)
 
-		Hrp.AssemblyLinearVelocity = -Hrp.CFrame.LookVector * 50
+		Hrp.AssemblyLinearVelocity = -Hrp.CFrame.LookVector * 60
 		Off(1.5)
 
 		MathService.LookAt(Hrp,Goal)
 	end,
 	MarkerReached = function(Goal,Hrp,Track)
-		Off(1.5)
 
 		FrontDash()
+
+		DelayService.Delay("TwistedV1-DashStop",0.25,StopDash)
 
 		local Origin = Hrp.CFrame
 
 		Hrp.AssemblyLinearVelocity = Hrp.CFrame.LookVector * 55
 
-		MathService.LookAt(Hrp,Origin * CFrame.new(-6,  0,   -4))      
+		MathService.LookAt(Hrp,Origin * CFrame.new(-7,  0,   -7))      
 		task.wait(0.2)
-		MathService.LookAt(Hrp,Origin * CFrame.new(0,  0,  -25))
-		task.wait(0.23)
-		MathService.LookAt(Hrp,Goal)
+		MathService.LookAt(Hrp,Origin * CFrame.new(0,  0,  -16))
 	end,
 })
 
@@ -1114,9 +1217,9 @@ TechService.new({
 	Enabled = true,
 	Input = "Z",
 	Condition = "Animation",
-	ConditionName = "Uppercut",
+	Animation = "Uppercut",
 	Priority = 3,
-	Signal = "swingreg",
+	Marker = "swingreg",
 	OnPlayed = function(Goal,Hrp,_)
 		task.wait(0.1)
 
@@ -1127,62 +1230,82 @@ TechService.new({
 		Hrp.AssemblyLinearVelocity = -Hrp.CFrame.LookVector * 100
 	end,
 	MarkerReached = function(Goal,Hrp,_)
-		Off(1)
 
 		FrontDash()
 
-		Hrp.AssemblyLinearVelocity += Vector3.new(0,45,0)
+		_G.Lerp = 0.6
 
 		On(1,Goal)
 
-		DelayService.Delay("Supa-DashStop",0.3,StopDash)
+		DelayService.Delay("Supa-DashStop",0.26,StopDash)
 
-		task.wait(1)
+		Hrp.AssemblyLinearVelocity += Vector3.new(0,45,0)
+
+		task.wait(0.3)
+
+		Hrp.AssemblyLinearVelocity = Vector3.zero
+
+		task.wait(0.5)
+
+		Hrp.AssemblyLinearVelocity += Vector3.new(0,-20,0)
+
+		task.wait(0.2)
+
+		_G.Lerp = 0.4
 
 		Off(0.5)
 	end,
 })
 
 TechService.new({
-	Name = "Loop Dash",
+	Name = "Dripz Dash",
 	AutoToggle = true,
-	Input = "V",
+	Enabled = false,
+	Input = "J",
 	Condition = "Animation",
-	ConditionName = "Uppercut",
+	Animation = "Uppercut",
 	Priority = 3,
-	Signal = "swingreg",
-	OnPlayed = function(Goal,Hrp,_)
-		task.wait(0.1)
+	Marker = "swingreg",
+	OnPlayed = function(Goal,Hrp)
+		task.wait(0.15)
+
+		Off(1.5)
 
 		MathService.LookAt(Hrp,Goal,1)
-
-		task.wait(0.1)
-
-		Hrp.AssemblyLinearVelocity = -Hrp.CFrame.LookVector * 40
 	end,
 	MarkerReached = function(Goal,Hrp,_)
 
-		Off(0.2)
+		DelayService.Delay("Dripz-DashStop",0.28,StopDash)
 
-		MathService.LookAt(Hrp,Hrp.CFrame * CFrame.new(6,0,-2))
-
-		DelayService.Delay("Loop-DashStop",0.5,StopDash)
+		MathService.LookAt(Hrp,Hrp.CFrame * CFrame.new(0,0,5))
 
 		FrontDash()
+		
+		for _, part in Hrp.Parent:QueryDescendants("BasePart") do
+			part.CanCollide = false
+		end
 
-		task.wait(0.1)
+		for _, part in Goal.Parent:QueryDescendants("BasePart") do
+			part.CanCollide = false
+		end
 
-		_G.Lerp = 0.12 -- higher --> smaller radius ( 0.1 Lerp Is Approximatly 7 Radius ) 
+		task.wait(0.16)
 
-		On(1,Goal)
+		On(0.2,Goal)
 
-		task.wait(0.3)
+		_G.Lerp = 0.6
 
-		Hrp.AssemblyLinearVelocity += Vector3.new(0,30,0)
+		local v = Hrp.AssemblyLinearVelocity
 
-		task.wait(0.3)
+		Hrp.AssemblyLinearVelocity = Vector3.new(v.X,55,v.Z * 1.2)
+
+		task.wait(0.2)
+
+		Hrp.AssemblyLinearVelocity = Vector3.zero
 
 		_G.Lerp = 0.4
+
+		Off(0.5)
 	end,
 })
 
@@ -1191,9 +1314,9 @@ TechService.new({
 	AutoToggle = true,
 	Input = "K",
 	Condition = "Animation",
-	ConditionName = "Uppercut",
+	Animation = "Uppercut",
 	Priority = 3,
-	Signal = "swingreg",
+	Marker = "swingreg",
 	OnPlayed = function(Goal,Hrp,_)
 		task.wait(0.15)
 
@@ -1209,15 +1332,15 @@ TechService.new({
 		task.wait(0.1)
 
 		ConnectionService.Connect("StickTo",Hrp.Parent,RunService.RenderStepped,0.4,"Connect",function()
-			Hrp.CFrame = MathService.GetCFrame(Goal.Position) + Vector3.new(0,-4,0)
+			Hrp.CFrame = MathService.GetCFrame(Goal.Position)
 			MathService.LookAt(Hrp,Hrp.CFrame * CFrame.new(0,10,0))
 		end)
 
-		task.wait(0.3)
+		task.wait(0.2)
 
 		StopDash()
 
-		task.wait(0.1)
+		task.wait(0.2)
 
 		MathService.Pitch = false
 
@@ -1227,45 +1350,105 @@ TechService.new({
 })
 
 TechService.new({
+	Name = "Loop Dash",
+	AutoToggle = true,
+	Input = "Plus",
+	Condition = "Animation",
+	Animation = "Uppercut",
+	Priority = 3,
+	Marker = "swingreg",
+	OnPlayed = function(Goal,Hrp,_)
+		Off(1)
+
+		task.wait(0.15)
+
+		MathService.LookAt(Hrp,Goal,1)
+
+		Hrp.AssemblyLinearVelocity = Hrp.CFrame.LookVector * -50
+	end,
+	MarkerReached = function(Goal,Hrp,_)
+		Off(1)
+
+		FrontDash()
+
+		MathService.LookAt(Hrp,Hrp.CFrame * CFrame.new(5,0,0))
+
+		_G.Lerp = 0.13
+
+		task.wait(0.1)
+
+		for _, part in Hrp.Parent:QueryDescendants("BasePart") do
+			part.CanCollide = false
+		end
+
+		for _, part in Goal.Parent:QueryDescendants("BasePart") do
+			part.CanCollide = false
+		end
+
+		On(1,Goal)
+	
+		task.wait(0.55)
+
+		StopDash()
+
+		task.wait(0.1)
+
+		Hrp.AssemblyLinearVelocity = Vector3.zero
+
+		_G.Lerp = 0.4
+	end,
+})
+
+TechService.new({
 	Name = "Silent Aim",
 	AutoToggle = true,
 	Input = "T",
 	Condition = "Other",
-	DisableOthers = false,
+	DisablesOthers = false,
 	Priority = 100,
 	OnEnable = Silent,
 	OnDisable = StopStare
 })
 
 TechService.new({
-	Name = "Grasp Tech",
+	Name = "Humbled Tech",
 	AutoToggle = true,
 	Enabled = true,
 	Input = "X",
 	Condition = "Animation",
-	ConditionName = "Uppercut",
+	Animation = "Uppercut",
 	Priority = 5,
-	Signal = "swingreg",
+	Marker = "swingreg",
 	UsesSkill = true,
-	requiresPlayer = true,
-	DisableOthers = false,
+	RequiresPlayer = true,
+	DisablesOthers = false,
 	Skill = "Hunter's Grasp",
 	OnPlayed = function(Goal,Hrp,Track)
-		Off(Track.Length + 0.5)
+		On(0.5,Goal)
 
 		MathService:Tween(Hrp,function()
-			return MathService.GetCFrame(Goal.Position) + Vector3.new(0,5.2,0.85)
-		end,0.3,Goal)
+			return MathService.GetCFrame(Goal.Position) + Vector3.new(0,5,0)
+		end,0.25)
 
 		Hrp.Anchored = true
+
+		task.wait(0.4)
+
+		Hrp.Anchored = false
 	end,
 	MarkerReached = function(Goal,Hrp,_)
-		Hrp.Anchored = false
 
 		UseMove("Hunter's Grasp")
 
+		Hrp.AssemblyLinearVelocity = -Hrp.CFrame.LookVector * 30
+
 		MathService.LookAt(Hrp,Goal)
+
+		task.wait(0.1)
+
+		Off(0.8) 
 	end,
+	UsesDash = false
 })
 
 TechService.new({
@@ -1273,8 +1456,8 @@ TechService.new({
 	AutoToggle = true,
 	Input = "H",
 	Condition = "Animation",
-	ConditionName = "Block",
-	requiresTarget = false,
+	Animation = "Block",
+	RequiresTarget = false,
 	OnPlayed = function(_,_,Track)
 		print(Track)
 		Track:Stop()
@@ -1287,29 +1470,33 @@ TechService.new({
 	Enabled = true,
 	Input = "L",
 	Condition = "Animation",
-	ConditionName = "Lethal",
+	Animation = "Lethal",
 	Priority = 2,
-	Signal = "finalslam",
+	Marker = "finalslam",
 	MarkerReached = function(Goal,Hrp,_)
 		Off(1)
 
-		Hrp.AssemblyLinearVelocity = Hrp.CFrame.LookVector * 60 + Vector3.new(0,55,0)
+		Hrp.AssemblyLinearVelocity = Hrp.CFrame.LookVector * 60 + Vector3.new(0,60,0)
 
 		FrontDash()
 
 		MathService.LookAt(Hrp,Hrp.CFrame * CFrame.new(0,0,-5))
 
-		task.wait(0.2)
+		_G.Lerp = 0.6
+
+		task.wait(0.18)
 
 		MathService.LookAt(Hrp,Goal,1)
 
-		task.wait(0.13)
+		task.wait(0.12)
 
 		StopDash()
 
 		On(0.4,Goal)
 
 		task.wait(0.4)
+
+		_G.Lerp = 0.4
 
 		Off(1)
 
@@ -1330,11 +1517,96 @@ TechService.new({
 	AutoToggle = false,
 	Enabled = true,
 	Condition = "Other",
-	DisableOthers = false,
+	DisablesOthers = false,
 	Input = "Y",
 	Priority = 100,
 	OnEnable = NearestDude,
 	Display = false
+})
+
+_G.PredictionEnabled = false
+
+local PredictionDebug = Instance.new("Part")
+PredictionDebug.Name = "Gerp-Debug"
+PredictionDebug.Anchored = true
+PredictionDebug.CanCollide = false
+PredictionDebug.Size = Vector3.one * 3
+PredictionDebug.Transparency = 0.8
+PredictionDebug.Color = Color3.new(1,0,0)
+PredictionDebug.Material = Enum.Material.Neon
+
+PredictionDebug.Parent = _G.PredictionEnabled and workspace or ReplicatedStorage
+
+TechService.new({
+    Name = "Prediction",
+    AutoToggle = true,
+    Enabled = _G.PredictionEnabled,
+    Input = "Zero",
+    Condition = "Other",
+    DisablesOthers = false,
+
+    OnEnable = function()
+        _G.PredictionEnabled = true
+		PredictionDebug.Parent = workspace
+
+		ConnectionService.Connect("Prediction-Debug",game,RunService.RenderStepped,nil,"Connect",function() 
+			if _G.Target then
+				local Goal = _G.Target:FindFirstChild("HumanoidRootPart")
+				PredictionDebug.CFrame = PredictCFrame(Goal,_G.Prediction)
+			end
+		end)
+    end,
+    OnDisable = function()
+        _G.PredictionEnabled = false
+		PredictionDebug.Parent = ReplicatedStorage
+
+		ConnectionService.Disconnect("Prediction-Debug",game)
+    end,
+})
+
+local FX = {BasePart = true,MeshPart = true,Beam = true,Trail = true,Part = true,Decal = true,ParticleEmitter = true}
+
+TechService.new({
+	Name = "No VFX",
+	Condition = "Other",
+	DisablesOthers = false,
+	Input = "O",
+	Priority = 100,
+	OnEnable = function()
+		for _, Particle in workspace:QueryDescendants("ParticleEmitter") do
+			Particle:Clear()
+		end
+		for _, Part in workspace.Thrown:GetChildren() do
+			if not Part:IsA("Part") then continue end
+			Part.Transparency = 1
+		end
+		ConnectionService.Connect("No-Debris",game,workspace.Thrown.ChildAdded,nil,"Connect",function(Fx)
+			task.wait()
+			if Fx:IsA("Part") then
+				Fx.Transparency = 1
+			end
+		end)
+		ConnectionService.Connect("No-VFX",game,workspace.DescendantAdded,nil,"Connect",function(Fx)
+			task.wait()
+			local Ancestor = Fx:FindFirstAncestorOfClass("Model")
+			if Ancestor then
+				if Ancestor.Name ~= "Thrown" and (Fx:IsA("BasePart") or Fx:IsA("Decal")) then
+					return
+				end
+			end
+			if FX[Fx.ClassName] then
+				Fx:Destroy()
+			end
+		end)
+	end,
+	OnDisable = function()
+		for _, Part in workspace.Thrown:GetChildren() do
+			if not Part:IsA("Part") then continue end
+			Part.Transparency = 0
+		end
+		ConnectionService.Disconnect("No-VFX",game)
+		ConnectionService.Disconnect("No-Debris",game)
+	end,
 })
 
 local Emotes = PlayerGui.Emotes:FindFirstChildOfClass("ImageLabel")
@@ -1387,5 +1659,5 @@ OnEvent:Init()
 while getgenv().GerpLoaded do
 	StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Health,false)
 	StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat,true)
-	task.wait(0.2)
+	task.wait(0.1)
 end
