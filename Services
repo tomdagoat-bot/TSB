@@ -1,29 +1,31 @@
+if not getgenv then
+	-- returns a global table
+	getgenv = function()
+		return _G
+	end
+end
+
 -- [[ ROBLOX SERVICES ]] --
 
-local TweenService = game:GetService("TweenService")
-local RunService = game:GetService("RunService")
-local Debris = game:GetService("Debris")
-local Players = game:GetService("Players")
-local UserInputService = game:GetService("UserInputService")
-local VirtualInputManager = game:GetService("VirtualInputManager")
-local SoundService = game:GetService("SoundService")
+const TweenService = game:GetService("TweenService")
+const RunService = game:GetService("RunService")
+const Players = game:GetService("Players")
 
 -- [[ EXTRA ]]
 
-local Storage = game:GetService("ReplicatedStorage").Gerp
-local LocalPlayer = Players.LocalPlayer
-local Live : Folder = workspace.Live
+const Storage = game:GetService("ReplicatedStorage").Gerp
+const LocalPlayer = Players.LocalPlayer
+const Live : Folder = getgenv().Live
 
 -- [[ GERP SERVICES ]] --
 
-local MathService = {}
-local ConnectionService = {}
-local DelayService = {}
-local OnEvent = {}
-local HighlightService = {}
+const MathService = {}
+const ConnectionService = {}
+const DelayService = {}
+const OnEvent = {}
+const HighlightService = {}
 
 -- [[ MATH SERVICE ]] --
-
 
 MathService.Pitch = false
 
@@ -95,7 +97,6 @@ MathService.LookAt = function(Part : BasePart,Goal : CFrame,Lerp : number)
 end
 
 MathService.Dot = function(Origin,Goal) : number
-	Origin = MathService.GetPosition(Origin)
 	local Direction = MathService.GetDirection(Origin,Goal)
 	local Dot = CFrame.new(Origin).LookVector:Dot(Direction)
 	return Dot
@@ -121,7 +122,7 @@ end
 MathService.Nearest = function(Origin : BasePart) : Model
 	local Nearest = nil
 	local MaxDistance = math.huge
-	for _,Model in pairs(Live:GetChildren()) do
+	for _,Model in pairs(getgenv().Live:GetChildren()) do
 		if Model == LocalPlayer.Character then continue end
 		local ROOT = Model:FindFirstChild("HumanoidRootPart")
 		if not ROOT then continue end
@@ -152,20 +153,21 @@ end
 
 -- [[ DELAY SERVICE ]]
 
-_G.Delays = setmetatable({}, {__mode = 'v'})
+getgenv().CountDowns = {}
+getgenv().Delays = setmetatable({}, {__mode = 'v'})
 
 DelayService.Delay = function(Name,Seconds,Function)
 	if not Seconds then return end
-	if _G.Delays[Name] then
-		task.cancel(_G.Delays[Name])
+	if getgenv().Delays[Name] then
+		task.cancel(getgenv().Delays[Name])
 	end
-	_G.Delays[Name] = task.delay(Seconds,Function)
-	if typeof(Name) == "Instance" then
+	getgenv().Delays[Name] = task.delay(Seconds,Function)
+	if typeof(Name) == "Instance" and Name ~= game then
 		Name.AncestryChanged:Once(function()
-			_G.Delays[Name] = nil
+			getgenv().Delays[Name] = nil
 		end)
 	end
-	return _G.Delays[Name]
+	return getgenv().Delays[Name]
 end
 
 DelayService.Yield = function(Condition : () -> (boolean),Timeout)
@@ -180,9 +182,9 @@ DelayService.Yield = function(Condition : () -> (boolean),Timeout)
 end
 
 DelayService.Cancel = function(Name)
-	if _G.Delays[Name] then
-		task.cancel(_G.Delays[Name])
-		_G.Delays[Name] = nil
+	if getgenv().Delays[Name] then
+		task.cancel(getgenv().Delays[Name])
+		getgenv().Delays[Name] = nil
 	end
 end
 
@@ -190,10 +192,11 @@ DelayService.CountDown = function(Name, Duration, Rate, Callback, Ended)
 	Rate = Rate or 1
 	local Elapsed = 0
 	local Current = Duration
+	
 	Callback(Current)
+	getgenv().CountDowns[Name] = Ended
 
-	local Key = Name.."-Countdown"
-	ConnectionService.Connect(Key, LocalPlayer, RunService.RenderStepped, nil, "Connect", function(dt)
+	ConnectionService.Connect(Name.."-Countdown", game, RunService.RenderStepped, nil, "Connect", function(dt)
 		Elapsed += dt
 		if Elapsed < Rate then return end
 		Elapsed -= Rate
@@ -202,30 +205,37 @@ DelayService.CountDown = function(Name, Duration, Rate, Callback, Ended)
 		Callback(Current)
 
 		if Current <= 0 then
-			ConnectionService.Disconnect(Key, LocalPlayer)
-			DelayService.Cancel(Key)  
+			ConnectionService.Disconnect(Name.."-Countdown", game)
+			getgenv().CountDowns[Name] = nil
 			if Ended then Ended() end
 		end
 	end)
 end
 
+DelayService.Cancel_CountDown = function(Name,Run)
+	if Run then
+		getgenv().CountDowns[Name]()
+	end
+	ConnectionService.Disconnect(Name.."-Countdown",game)
+end
+
 -- [[ CONNECTION SERVICE ]]
 
-_G.Connections = {}
+getgenv().Connections = {}
 
-local function Connection(object)
-	if not _G.Connections[object] then
-		_G.Connections[object] = {}
+const function Connection(object)
+	if not getgenv().Connections[object] then
+		getgenv().Connections[object] = {}
 		if typeof(object) == "Instance" then
 			object.AncestryChanged:Once(function()
-				_G.Connections[object] = nil
+				getgenv().Connections[object] = nil
 			end)
 			object.Destroying:Once(function()
-				_G.Connections[object] = nil
+				getgenv().Connections[object] = nil
 			end)
 		end
 	end
-	return _G.Connections[object]
+	return getgenv().Connections[object]
 end
 
 export type CT = "Connect" | "Yield" | "Once" 
@@ -407,23 +417,22 @@ function OnEvent:Init()
 		end
 	end
 
-	for _, Character in Live:GetChildren() do
+	for _, Character in getgenv().Live:GetChildren() do
 		CharAdded(Character)
 	end
 
-	Live.ChildAdded:Connect(CharAdded)
-	Live.ChildRemoved:Connect(CharRemoving)
+	getgenv().Live.ChildAdded:Connect(CharAdded)
+	getgenv().Live.ChildRemoved:Connect(CharRemoving)
 
 end
 
 -- [[ HIGHLIGHT SERVICE ]]
 
-local Highlights = Storage.Highlights
-
-local Fade = TweenInfo.new(0.3,Enum.EasingStyle.Linear,Enum.EasingDirection.Out)
+const Highlights = Storage.Highlights
+const Fade = TweenInfo.new(0.3,Enum.EasingStyle.Linear,Enum.EasingDirection.Out)
 
 HighlightService.FadeOut = function(Highlight)
-	local Tween = TweenService:Create(Highlight,Fade,{OutlineTransparency = 1,FillTransparency = 1})
+	const Tween = TweenService:Create(Highlight,Fade,{OutlineTransparency = 1,FillTransparency = 1})
 	Tween:Play()
 	Tween.Completed:Once(function()
 		Highlight:Destroy()
@@ -436,7 +445,7 @@ HighlightService.new = function(Highlight : string | Highlight,Adornee : Instanc
 		H:Destroy()
 	end
 
-	Highlight = Highlights:FindFirstChild(Highlight):Clone()
+	Highlight = (typeof(Highlight) == "string" and Highlights:FindFirstChild(Highlight) or Highlight):Clone()
 	Highlight.Enabled = true
 	Highlight.Parent = Adornee
 	Highlight.Adornee = Adornee
@@ -446,28 +455,18 @@ HighlightService.new = function(Highlight : string | Highlight,Adornee : Instanc
 	DelayService.Delay(Highlight,Duration,function()
 		HighlightService.FadeOut(Highlight)
 	end)
+	
 	return Highlight
 end
 
 -- [[ SERVICES SYSTEM ]]
 
 local SERVICES = {
-	["Roblox"] = {
-		["TS"] = TweenService,
-		["RS"] = RunService,
-		["DB"] = Debris,
-		["PLRS"] = Players,
-		["UIS"] = UserInputService,
-		["VIM"] = VirtualInputManager,
-		["S"] = SoundService
-	},
-	["Gerp"] = {
-		["M"] = MathService,
-		["CS"] = ConnectionService,
-		["DS"] = DelayService,
-		["OE"] = OnEvent,
-		["HS"] = HighlightService
-	}
+	["M"] = MathService,
+	["CS"] = ConnectionService,
+	["DS"] = DelayService,
+	["OE"] = OnEvent,
+	["HS"] = HighlightService
 }
 
 return SERVICES
