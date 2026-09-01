@@ -440,21 +440,22 @@ HighlightService.FadeOut = function(Highlight)
 	end)
 end
 
-HighlightService.new = function(Highlight : string | Highlight,Adornee : Instance,Duration)
+HighlightService.new = function(Highlight : string,Adornee : Instance,Duration)
 	for _, H in Adornee:QueryDescendants("Highlight") do
 		if Highlights:FindFirstChild(H.Name) or H:HasTag("Gerp") then continue end
 		H:Destroy()
 	end
 
-	Highlight = (typeof(Highlight) == "string" and Highlights:FindFirstChild(Highlight,true) or Highlight):Clone()
+	Highlight = Highlights:FindFirstChild(Highlight,true):Clone()
 	Highlight.Enabled = true
+
 	Highlight.Parent = Adornee
 	Highlight.Adornee = Adornee
 	
 	Highlight.OutlineTransparency = 1
 	Highlight.FillTransparency = 1
 
-	TweenService:Create(Highlight,Fade,{OutlineTransparency = Highlight:GetAttribute("OutlineTransparency"),FillTransparency = Highlight:GetAttribute("FillTransparency")}):Play()
+	TweenService:Create(Highlight,Fade,{OutlineTransparency = Highlight:GetAttribute("OutlineTransparency") or 1,FillTransparency = Highlight:GetAttribute("FillTransparency") or 1}):Play()
 
 	DelayService.Delay(Highlight,Duration,function()
 		HighlightService.FadeOut(Highlight)
