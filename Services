@@ -447,7 +447,7 @@ HighlightService.new = function(Highlight : string,Adornee : Instance,Duration)
 	end
 
   ConnectionService.Connect("Highlighted",Adornee,Adornee.DescendantAdded,nil,"Connect",function(H)
-    if Highlights:FindFirstChild(H.Name) or H:HasTag("Gerp") then continue end
+    if Highlights:FindFirstChild(H.Name) or H:HasTag("Gerp") then return end
 		H:Destroy()
   end)
 
