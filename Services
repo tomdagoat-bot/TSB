@@ -1,5 +1,4 @@
 if not getgenv then
-	-- returns a global table
 	getgenv = function()
 		return shared
 	end
