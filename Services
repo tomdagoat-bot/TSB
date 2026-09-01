@@ -213,7 +213,7 @@ DelayService.CountDown = function(Name, Duration, Rate, Callback, Ended)
 end
 
 DelayService.Cancel_CountDown = function(Name,Run)
-	if Run then
+	if Run and getgenv().CountDowns[Name] then
 		getgenv().CountDowns[Name]()
 	end
 	ConnectionService.Disconnect(Name.."-Countdown",game)
