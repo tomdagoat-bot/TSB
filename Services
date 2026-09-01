@@ -452,6 +452,7 @@ HighlightService.new = function(Highlight : string,Adornee : Instance,Duration)
   end)
 
 	Highlight = Highlights:FindFirstChild(Highlight,true):Clone()
+	Highlight:AddTag("Gerp")
 	Highlight.Enabled = true
 
 	Highlight.Parent = Adornee
@@ -459,10 +460,6 @@ HighlightService.new = function(Highlight : string,Adornee : Instance,Duration)
 	
 	Highlight.OutlineTransparency = 1
 	Highlight.FillTransparency = 1
-
-	hookfunction(Highlight.Destroy,function(self)
-		if not Highlight:HasTag("Gerp-Remove") then return end
-	end)
 
 	TweenService:Create(Highlight,Fade,{OutlineTransparency = Highlight:GetAttribute("OutlineTransparency") or 1,FillTransparency = Highlight:GetAttribute("FillTransparency") or 1}):Play()
 
@@ -472,6 +469,20 @@ HighlightService.new = function(Highlight : string,Adornee : Instance,Duration)
 	
 	return Highlight
 end
+
+local index__ = Highlight.Destroy
+
+hookfunction(index__, function(self, ...)
+  	if not self:IsA("Highlight") then
+    	return index__(self, ...)
+    end
+
+    if self:HasTag("Gerp") and not self:HasTag("Gerp-Remove") then
+    	return nil
+    end
+    return index__(self, ...)
+end)
+
 
 -- [[ SERVICES SYSTEM ]]
 
