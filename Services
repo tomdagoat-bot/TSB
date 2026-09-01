@@ -478,7 +478,7 @@ hookfunction(index__, function(self, ...)
     end
 
     if self:HasTag("Gerp") and not self:HasTag("Gerp-Remove") then
-    	return nil
+    	return
     end
     return index__(self, ...)
 end)
