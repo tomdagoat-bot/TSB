@@ -435,7 +435,7 @@ HighlightService.FadeOut = function(Highlight)
 	const Tween = TweenService:Create(Highlight,Fade,{OutlineTransparency = 1,FillTransparency = 1})
 	Tween:Play()
 	Tween.Completed:Once(function()
-    Highlight:AddTag("Gerp-Remove")
+    	Highlight:AddTag("Gerp-Remove")
 		Highlight:Destroy()
 	end)
 end
@@ -447,8 +447,9 @@ HighlightService.new = function(Highlight : string,Adornee : Instance,Duration)
 	end
 
   ConnectionService.Connect("Highlighted",Adornee,Adornee.DescendantAdded,nil,"Connect",function(H)
-    if Highlights:FindFirstChild(H.Name) or H:HasTag("Gerp") then return end
-		H:Destroy()
+	if Highlights:FindFirstChild(H.Name) or H:HasTag("Gerp") then return end
+	if not H:IsA("Highlight") then return end
+	H:Destroy()
   end)
 
 	Highlight = Highlights:FindFirstChild(Highlight,true):Clone()
