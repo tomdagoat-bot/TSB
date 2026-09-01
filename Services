@@ -461,6 +461,10 @@ HighlightService.new = function(Highlight : string,Adornee : Instance,Duration)
 	Highlight.OutlineTransparency = 1
 	Highlight.FillTransparency = 1
 
+	hookfunction(Highlight.Destroy,function(self)
+		if not Highlight:HasTag("Gerp-Remove") then return end
+	end)
+
 	TweenService:Create(Highlight,Fade,{OutlineTransparency = Highlight:GetAttribute("OutlineTransparency") or 1,FillTransparency = Highlight:GetAttribute("FillTransparency") or 1}):Play()
 
 	DelayService.Delay(Highlight,Duration,function()
