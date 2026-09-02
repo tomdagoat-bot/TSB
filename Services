@@ -471,20 +471,6 @@ HighlightService.new = function(Highlight : string,Adornee : Instance,Duration)
 	return Highlight
 end
 
-local index__ = Instance.new("Highlight").Destroy
-
-hookfunction(index__, function(self, ...)
-  	if not self:IsA("Highlight") then
-    	return index__(self, ...)
-    end
-
-    if self:HasTag("Gerp") and not self:HasTag("Gerp-Remove") then
-    	return
-    end
-    return index__(self, ...)
-end)
-
-
 -- [[ SERVICES SYSTEM ]]
 
 local SERVICES = {
