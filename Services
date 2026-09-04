@@ -118,7 +118,8 @@ function MathService:Behind(Origin,Goal)
 	return MathService.Dot(Origin,Goal) >= 0
 end
 
-MathService.Nearest = function(Origin : BasePart) : Model
+MathService.Nearest = function(Origin : BasePart,IgnoreDeath) : Model
+  IgnoreDeath = IgnoreDeath == nil and true
 	local Nearest = nil
 	local MaxDistance = math.huge
 	for _,Model in pairs(getgenv().Live:GetChildren()) do
@@ -127,7 +128,7 @@ MathService.Nearest = function(Origin : BasePart) : Model
 		if not ROOT then continue end
 		local HUM = Model:FindFirstChildOfClass("Humanoid")
 		if not HUM then continue end
-		if HUM.Health <= 0 then continue end
+		if IgnoreDeath and HUM.Health <= 0 then continue end
 
 		local Distance = MathService.GetDistance(ROOT,Origin)
 		if Distance > MaxDistance then continue end
