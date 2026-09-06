@@ -1,0 +1,2257 @@
+if not game:IsLoaded() then
+	game.Loaded:wait()
+end
+
+if not getgenv then
+	getgenv = function()
+		return shared
+	end
+end
+
+if getgenv().GerpLoaded then return end
+getgenv().GerpLoaded = true
+
+const Env = getgenv()
+
+const Players = game:GetService("Players")
+const Player : Player = Players.LocalPlayer
+const PlayerGui = Player.PlayerGui
+
+if not gethui then
+	gethui = function()
+		return PlayerGui
+	end
+end
+
+if not identifyexecutor then
+	identifyexecutor = function()
+		return "Your Executor"
+	end
+end
+
+if not setfpscap then
+	setfpscap = function()
+		print(`sorry, {identifyexecutor()} doesn't support uncapping fps.`)
+	end
+end
+
+if not httpget then
+	httpget = function()
+		return game.HttpGet
+	end
+end
+
+if not hookmetamethod or not getnamecallmethod or not checkcaller or not getcustomasset or not hookfunction or not httpget then
+	Player:Kick(`sorry, {identifyexecutor()} doesn't support this script.`)
+	return
+end
+
+const function Gerp_Table(t)
+	const Values = table.clone(t)
+	table.clear(t)
+	for Key, Value in Values do
+		if typeof(Value) == "table" then
+			Gerp_Table(Value)
+			t[Key] = Value
+		else
+			t[Value] = true
+		end
+	end
+	return Values
+end
+
+const OWNER = {7530861005,11624302113,11331680829}
+
+Gerp_Table(OWNER)
+
+const VERSION = "1.0.1"
+
+const Path = "Gerp"
+const Assets_File = "Tsb-Assets.rbxm"
+const UI_File = "Gerp-TSB.rbxm"
+
+const Repo = "https://github.com/tomdagoat-bot/TSB/raw/refs/heads/main"
+
+const Target_Key = "Locked"
+
+const Skin_Info = {
+	Hidden_Limbs = {},
+	Hide_Face = false,
+	Color = Color3.new(1,1,1),
+	Cooldowns_Gradiant = nil
+}
+
+const Skins = {}
+Skins.All = {}
+
+Skins.new = function(Name,Info)
+	const Skin = table.clone(Skin_Info)
+	
+	for key, value in Info do
+		Skin[key] = value
+	end
+	
+	Skins.All[Name] = Skin
+end
+
+Skins.new("Angel",{Hidden_Limbs = {"Right Leg","Head"},Color = Color3.fromRGB(255,205,0)})
+Skins.new("V1",{Color = Color3.new(1,1,1)})
+Skins.new("?",{Hide_Face = true,Hidden_Limbs = {"Right Leg","Head","Left Leg","Right Arm","Left Arm"},Color = Color3.fromRGB(150,0,0)})
+
+const Default_Profile = "rbxassetid://132975398557010"
+const Ult_Bar = "rbxassetid://17136251821"
+const Ult_Fill = "rbxassetid://17136251960"
+
+const FileLoader = loadstring(httpget("https://raw.githubusercontent.com/tomdagoat-bot/Rbxm-Loader/refs/heads/main/Code"))()
+
+const Saved_Version = FileLoader.Read("Version.txt",Path)
+
+if Saved_Version ~= VERSION then
+	FileLoader.Write(VERSION,"Version.txt",Path)
+
+	FileLoader.Remove(nil,Path,true)
+	FileLoader.Remove(nil,"Gerp_UI",true)
+end
+
+const Storage = FileLoader.Load(Repo,Assets_File,game:GetService("ReplicatedStorage"),Path)
+const UI = FileLoader.Load(Repo,UI_File,gethui(),Path)
+
+const GerpUI = loadstring(httpget("https://raw.githubusercontent.com/tomdagoat-bot/GerpUI/refs/heads/main/Library"))()
+
+getgenv().Services = loadstring(httpget("https://raw.githubusercontent.com/tomdagoat-bot/TSB/refs/heads/main/Services"))()
+
+const Lerp = .45
+const Dashing_Lerp = 1
+
+const Uptilt_Swing = .125
+const Forth_M1_Swing = .07
+
+const Prediction_After = .25
+const Max_Predicition = .6
+const Prediction_Backward_Dot = .75
+const Prediction_Min_Distance = 4
+const Prediction_Max_Distance = 30
+const Prediction_Max_ClosingSpeed = 250
+const Prediction_Backward_ClosingSpeed = 70
+const Prediction_Min_Backward_Distance = 6
+const Prediction_Max_AngularVelocity = 10
+
+const Yield_TimeOut = 5
+
+const Safe_Distance = 20
+const Attack_Distance = 9
+
+const FrontDash_CD = 5
+const SideDash_CD = 2
+const Evasive_CD = 30
+
+const Counter_Duration = .8
+const DeathCounter_Duration = 10
+
+const Anti_Third = {"Uptilt", "Forth M1"}
+const Limbs = {"Head","Torso"}
+const TechTypes = {"Uptilt","Forth M1","Lethal","Third M1"}
+const Illegal_Movesets = {"KJ","Sorcerer","CUSTOM"}
+const Quotes = {
+	"ayo sussy",
+	"Love From Israel 😂💙🇮🇱",
+	"h",
+	"i have hard.",
+	"OHHH OHHH COOK IT",
+	"hi mommy",
+	"FUNK so tuff",
+	"Love From India 🇮🇳🤎",
+	"fi"
+}
+
+const Anim_Lookup = {}
+
+const Is_Owner = OWNER[Player.UserId] ~= nil
+const Is_Ranked = workspace:GetAttribute("DuelTeams") ~= nil
+const Is_PS = workspace:GetAttribute("VIPServer") ~= nil
+
+const Hotbar_Color = Color3.new(0,0,0)
+const Ult_Color = Color3.fromRGB(0,255,160)
+
+const Appear = TweenInfo.new(.6,Enum.EasingStyle.Quad,Enum.EasingDirection.Out)
+const Bar = TweenInfo.new(.3,Enum.EasingStyle.Sine,Enum.EasingDirection.Out)
+const ColorShift = TweenInfo.new(.8,Enum.EasingStyle.Linear,Enum.EasingDirection.In)
+
+getgenv().Lerp = Lerp
+getgenv().Prediction_After = Prediction_After
+
+getgenv().SpawnNear = "Target"
+getgenv().Picked_Skin = "?"
+
+getgenv().Predicting = true
+getgenv().ShiftLock_Priority = true
+getgenv().Prediction_Dynamic = true
+
+getgenv().Live = workspace.Live
+
+const Owner_Assets = Storage.Owner
+const Script_Title = Is_Owner and "SNEAK PEAK" or "GERP HUB"
+
+const function Is_Blue(color)
+	const h, s, v = color:ToHSV()
+	return h >= 170/360 and h <= 260/360
+		and s >= .15 and v >= .15
+end
+
+const function Swap_Color(CS : Color3, Color, IsColor)
+	const KeyPoints = {}
+	for _, KeyPoint in ipairs(CS.Keypoints) do
+		const color = IsColor(KeyPoint.Value) and Color or KeyPoint.Value
+		table.insert(KeyPoints, ColorSequenceKeypoint.new(KeyPoint.Time, color))
+	end
+	return ColorSequence.new(KeyPoints)
+end
+
+const Moveset_Rename = { 
+	["Blade"] = "Atomic Samurai", 
+	["CUSTOM"] = "WAITING", 
+	["Ninja"] = "Sonic", 
+	["KJ"] = "Kj", 
+	["Purple"] = "Suiryu", 
+	["Esper"] = "Tatsumaki", 
+	["Sorcerer"] = "Gojo", 
+	["Zombie"] = "Zombie Man", 
+	["Tech"] = "Child Emperor", 
+	["Bald"] = "Saitama", 
+	["Hunter"] = "Garou", 
+	["Batter"] = "Metal Bat", 
+	["Cyborg"] = "Genos", 
+	["Monster"] = "Monster Garou",
+}
+
+const AnimIDS = {
+	Uptilt = {
+		"rbxassetid://10503381238",
+		"rbxassetid://13379003796"
+	},
+	["Forth M1"] = {
+		"rbxassetid://13294471966",
+		"rbxassetid://10469643643",
+		"rbxassetid://13295936866",
+		"rbxassetid://13378708199",
+		"rbxassetid://15162694192",
+		"rbxassetid://16552234590",
+		"rbxassetid://17889290569",
+		"rbxassetid://134775406437626",
+		"rbxassetid://17325537719",
+	},
+	Lethal = {
+		"rbxassetid://12296113986"
+	},
+	Flowing = {
+		"rbxassetid://12273188754"
+	},
+	["Third M1"] = {
+		"rbxassetid://10469639222",
+		"rbxassetid://13532604085",
+		"rbxassetid://13295919399",
+		"rbxassetid://13378751717",
+		"rbxassetid://14001963401",
+		"rbxassetid://15240176873",
+		"rbxassetid://16515448089",
+		"rbxassetid://17889471098",
+		"rbxassetid://104895379416342",
+		"rbxassetid://17325522388"
+	}
+}
+
+const Other_IDS = {
+	SideDash = {
+		"rbxassetid://10480793962",
+		"rbxassetid://10480796021",
+	},
+	FrontDash = {
+		"rbxassetid://10479335397",
+		"rbxassetid://10491993682",
+		"rbxassetid://13380255751",
+	},
+	Counters = {
+		"rbxassetid://12351854556",
+		"rbxassetid://15311685628",
+		"rbxassetid://78521642007560",
+		"rbxassetid://118270485922095"
+	},
+	Block = {
+		"rbxassetid://10470389827",
+		"rbxassetid://14357943487"
+	}
+}
+
+const Exclude_BackDash = {
+	"Death Counter",
+	"Prey's Peril",
+	"Ignition Burst",
+	"Blitz Shot",
+	"Jet Dive",
+	"Grand Slam",
+	"Split Second Counter",
+	"Crushing Pull",
+	"Expulsive Push",
+	"Vanishing Kick",
+	"Whirlwind Drop",
+	"Plasma Canon",
+	"Spiraling Storm"
+}
+
+Gerp_Table(Illegal_Movesets)
+Gerp_Table(AnimIDS)
+Gerp_Table(Other_IDS)
+Gerp_Table(Exclude_BackDash)
+Gerp_Table(Anti_Third)
+
+for Condition, Animations in AnimIDS do
+	for ID in Animations do
+		Anim_Lookup[ID] = Condition
+	end
+end
+
+const MathService = getgenv().Services.M
+const ConnectionService = getgenv().Services.CS
+const DelayService = getgenv().Services.DS
+const Events = getgenv().Services.OE
+const HighlightService = getgenv().Services.HS
+
+const TweenService = game:GetService("TweenService")
+const RunService = game:GetService("RunService")
+const Debris = game:GetService("Debris")
+const UserInputService = game:GetService("UserInputService")
+const VirtualInputManager = game:GetService("VirtualInputManager")
+const SoundService = game:GetService("SoundService")
+
+const StarterGui = game:GetService("StarterGui")
+const ReplicatedFirst = game:GetService("ReplicatedFirst")
+
+const Audios = Storage:WaitForChild("Sounds")
+const Death_Sounds = Audios.Died:GetChildren()
+
+const Mouse = Player:GetMouse()
+
+const Map = workspace.Map
+const RNG = Random.new()
+
+const Target_Hitbox = Storage:FindFirstChild("Hitbox"):Clone()
+
+function Emit(VFX,Parent)
+	if Parent then
+		VFX = VFX:Clone()
+		VFX.Parent = Parent
+	end
+	if VFX:IsA("ParticleEmitter") then
+		if VFX:GetAttribute("EmitDelay") then
+			task.delay(VFX:GetAttribute("EmitDelay"),function()
+				VFX:Emit(VFX:GetAttribute("EmitCount") or 1)
+			end)
+		else
+			VFX:Emit(VFX:GetAttribute("EmitCount") or 1)
+		end
+	else	
+		for _, p in VFX:QueryDescendants("ParticleEmitter") do
+			Emit(p)
+		end
+	end
+end
+
+Events.new("Locked_Changed")
+Events.new("Counter")
+Events.new("Death Counter")
+
+export type NameCall = "namecall__"
+
+local Locked_HP_Tween : Tween
+local Locked_Ultimate_Tween : Tween
+
+local namecall : NameCall
+local Died_At : Vector3
+local Owner_Color : Color3
+
+local Override_StopDash = false
+local Shiftlock_Enabled = UserInputService.MouseBehavior == Enum.MouseBehavior.LockCenter 
+
+UserInputService:GetPropertyChangedSignal("MouseBehavior"):Connect(function()
+	Shiftlock_Enabled = UserInputService.MouseBehavior == Enum.MouseBehavior.LockCenter 
+end)
+
+for _, v in UI:GetChildren() do
+	v.Position = v:GetAttribute("Hidden")
+	if v.Name == "Target" then continue end
+	TweenService:Create(v,Appear,{Position = v:GetAttribute("Position")}):Play()
+end
+
+const function PlaySound(Sound)
+	const Audio = typeof(Sound) == "string" and Audios:FindFirstChild(Sound) or Sound
+	if not Audio then return end
+
+	SoundService:PlayLocalSound(Audio)
+end
+
+local Character : Model
+local Humanoid : Humanoid
+local Hrp : BasePart
+local Animator : Animator
+local RE : RemoteEvent
+local HotBar : Frame
+
+const Character_Limbs : {BasePart} = {}
+const Current_Moveset : {TextButton} = {}
+
+const function Target(Guy)
+	const Model = Guy or getgenv().Target
+	if not Model then return end
+	const H = Model:WaitForChild("Humanoid",Yield_TimeOut)
+	const HRP = Model:WaitForChild("HumanoidRootPart",Yield_TimeOut)
+	const P = Players:GetPlayerFromCharacter(Model)
+	const A = H:WaitForChild("Animator",Yield_TimeOut)
+	return Model,H,HRP,P,A
+end
+
+const function AddAccessory(Accessory)
+	if not Accessory:IsA("Accessory") then
+		return
+	end
+
+	const Cloned = Accessory:Clone()
+	const Handle = Cloned:FindFirstChild("Handle")
+
+	if not Handle or not Handle:IsA("BasePart") then
+		Cloned:Destroy()
+		return
+	end
+
+	Handle.CanCollide = false
+	Handle.Massless = true
+
+	const Acc_Attach = Handle:FindFirstChildOfClass("Attachment")
+
+	if not Acc_Attach then
+		Cloned:Destroy()
+		return
+	end
+
+	const Char_Attach = Character:FindFirstChild(Acc_Attach.Name,true)
+
+	if not Char_Attach then
+		Cloned:Destroy()
+		return
+	end
+
+	Cloned.Parent = Character
+
+	Handle.CFrame = Char_Attach.WorldCFrame * Acc_Attach.CFrame:Inverse()
+
+	const Weld = Instance.new("Weld")
+	Weld.Name = "AccessoryWeld"
+	Weld.Part0 = Char_Attach.Parent
+	Weld.Part1 = Handle
+	Weld.C0 = Char_Attach.CFrame
+	Weld.C1 = Acc_Attach.CFrame
+	Weld.Parent = Handle
+
+	return Cloned
+end
+
+const function Quote()
+	return Quotes[RNG:NextInteger(1,#Quotes)]
+end
+
+const function X()
+	return RNG:NextInteger(0,1) == 0 and 1 or -1
+end
+
+const HubWindow = GerpUI:Window({
+	Name = `WELCOME, {Player.DisplayName}`,
+	["Loading Screen"] = true,
+	["Transparent"] = false,
+	["Display Version"] = true,
+	["Loading Duration"] = 1,
+	["Welcome Message"] = Is_Owner and "hi mommy lol" or "TSB HUB: AUTO TECHS",
+	["Welcome Description"] = `"{Quote()}" -Gerp`,
+	["Version"] = `v{VERSION}`
+})
+
+getgenv().Techs = {}
+
+const AutoTechs = HubWindow:CreateTab({["Name"] = "Auto Techs"})
+const SilentAim_Tab = HubWindow:CreateTab({["Name"] = "Silent Aim"})
+const Characters_Tab = HubWindow:CreateTab({["Name"] = "Characters"})
+const Settings = HubWindow:CreateTab({["Name"] = "Settings"})
+const Misc = HubWindow:CreateTab({["Name"] = "Misc"})
+
+const TechService = {}
+TechService.Enabled = {}
+
+for _, Condition in TechTypes do
+	getgenv().Techs[Condition] = {}
+	TechService.Enabled[Condition] = {}
+
+	AutoTechs:CreateSection(
+		{
+			["Name"] = `{Condition} Techs`,
+			["Description"] = `{Condition} Related Techs, You'll Need To Preform {Condition}`
+		} 
+	)
+end
+
+const Tech_Information = {
+	Name = "Mommy Tech",
+	Input = "E",
+	Marker = "swingreg",
+	Enabled = false,
+	Priority = 0,
+	DisablesOthers = true,
+	RequiresPlayer = false,
+	OnPlayed = nil,
+	MarkerReached = nil,
+	Animation = "Uptilt",
+	UsesSkill = false,
+	Skill = nil,
+	UsesDash = true,
+	StopDash = true,
+	NoCollision = false,
+	NoCollisionDuration = nil,
+	DashBoost = 1
+}
+
+local Button_Sound = false
+
+function TechService.new(info : typeof(Tech_Information))
+	const Properties = table.clone(Tech_Information)
+
+	for k, v in info do
+		Properties[k] = v
+	end
+
+	if Properties["Priority"] < 0 then
+		Properties["Priority"] = 0
+	end
+
+	const Section = AutoTechs.Content[`{Properties["Animation"]} Techs`]
+	if not Section then return end
+
+	const UI = Section:AddToggle({["Name"] = Properties.Name,["CallBack"] = function(Value)
+		Properties.Enabled = Value
+		TechService.Enabled[Properties.Animation][Properties.Name] = Properties.Enabled and Properties or nil
+
+		if not Button_Sound then
+			PlaySound("Button")
+		end
+
+		Button_Sound = true
+
+		DelayService.Delay("Button_Sounds",.15,function()
+			Button_Sound = false
+		end)
+
+		if not Properties["DisablesOthers"] or not Value then return end
+
+		for _, Tech in pairs(TechService.Enabled[Properties.Animation]) do
+			if Tech == Properties then continue end
+			if Tech.Priority > Properties.Priority then continue end
+
+			TechService.Enabled[Properties.Animation][Tech.Name] = nil
+
+			Tech.UI:Disable(true)
+		end
+	end,["Icon"] = "rbxassetid://111935382692087",["Enabled"] = Properties.Enabled})
+	UI:BindInput(Properties.Input) 
+
+	if Properties.Enabled then
+		TechService.Enabled[Properties.Animation][Properties.Name] = Properties
+	end
+
+	getgenv().Techs[Properties["Animation"]][Properties.Name] = Properties
+	Properties["UI"] = UI
+end
+
+const function Stare_Stop()
+	Humanoid.AutoRotate = true
+	ConnectionService.Disconnect("Stare",Character)
+end
+
+const function PredictCFrame(Part, t)
+	if typeof(Part) ~= "Instance" then
+		return Part
+	end
+	const Pos = Part.Position + Part.AssemblyLinearVelocity * t
+	return CFrame.new(Pos, Pos + Part.CFrame.LookVector)
+end
+
+const function Predict(TargetRoot)
+	const Origin = Hrp.Position
+	const TargetPosition = TargetRoot.Position
+
+	const Offset = Origin - TargetPosition
+	const Distance = Offset.Magnitude
+
+	if Distance < 0.001 then
+		return 0
+	end
+
+	const ToPlayer = Offset / Distance
+	const Velocity = TargetRoot.AssemblyLinearVelocity
+
+	const ClosingSpeed = Velocity:Dot(ToPlayer)
+
+	local DistanceAlpha = math.clamp(
+		(Distance - Prediction_Min_Distance) /
+			(Prediction_Max_Distance - Prediction_Min_Distance),
+		0,
+		1
+	)
+
+	DistanceAlpha *= DistanceAlpha
+
+	local Prediction = Prediction_After * DistanceAlpha
+
+	if ClosingSpeed > 0 then
+		const ClosingAlpha = math.min(
+			ClosingSpeed / Prediction_Max_ClosingSpeed,
+			1
+		)
+
+		const FacingDot = TargetRoot.CFrame.LookVector:Dot(ToPlayer)
+
+		Prediction += .12 * ClosingAlpha
+
+		Prediction += .08
+			* ClosingAlpha
+			* math.clamp((FacingDot - .1) / .9, 0, 1)
+
+		const AngularSpeed = TargetRoot.AssemblyAngularVelocity.Magnitude
+
+		Prediction -= .12
+			* math.min(AngularSpeed / Prediction_Max_AngularVelocity, 1)
+			* ClosingAlpha
+
+		if not (
+			ClosingSpeed >= Prediction_Backward_ClosingSpeed
+				and Distance >= Prediction_Min_Backward_Distance
+				and FacingDot >= Prediction_Backward_Dot
+				and AngularSpeed <= Prediction_Max_AngularVelocity
+			) then
+
+			const TimeToPlayer = Distance / ClosingSpeed
+			Prediction = math.min(
+				Prediction,
+				math.max(0, TimeToPlayer - .06)
+			)
+		end
+	end
+
+	return math.clamp(Prediction + .1, 0, Max_Predicition)
+end
+
+const function Stare_Connection(Object)
+	if not getgenv().Target and not Object then warn("pls select a target") return end
+
+	const H = getgenv().Target and getgenv().Target:FindFirstChild("Humanoid")
+
+	if (not H or H.Health <= 0) and not Object then
+		return
+	end
+
+	if not Character or not Humanoid or not Hrp or Humanoid.Health <= 0 then
+		return
+	end
+
+	const Goal = Object or getgenv().Target:WaitForChild("HumanoidRootPart")
+	const Is_Root = typeof(Goal) == "Instance"
+
+	ConnectionService.Connect("Stare", Character, RunService.Heartbeat, nil, "Connect", function()
+		if Shiftlock_Enabled and Env.ShiftLock_Priority then
+			return
+		end
+
+		if not Humanoid or not Hrp or Humanoid.Health <= 0 then
+			ConnectionService.Disconnect(nil,Character)
+			return
+		end
+
+		Humanoid.AutoRotate = false
+
+		const Predicting = Env.Predicting
+		const PredictionDynamic = Env.Prediction_Dynamic
+
+		if PredictionDynamic and Predicting and Is_Root then
+			Env.Prediction_After = Predict(Goal)
+		end
+
+		const PredictionAfter = Env.Prediction_After
+
+		const LookAt = Predicting
+			and PredictCFrame(Goal, PredictionAfter)
+			or Goal
+
+		MathService.LookAt(Hrp, LookAt, Env.Lerp)
+	end)
+end
+
+const function Boost_moveme(m)
+	if not m or m == 1 then return end
+
+	task.spawn(function()
+		const moveme = Hrp:WaitForChild("moveme",Yield_TimeOut)
+		if not moveme then return end
+
+		while moveme and moveme.Parent ~= nil do
+			moveme.Velocity *= m
+			task.wait()
+		end
+
+	end)
+
+end
+
+const TargetUI = UI.Target
+const TargetBars = TargetUI.Bars
+
+function Set_Target(Model,Name)
+	const OldTarget = getgenv().Target
+
+	if OldTarget and OldTarget:FindFirstChild("Silent") then
+		HighlightService.FadeOut(OldTarget:FindFirstChild("Silent"))
+	end
+
+	getgenv().Target = Model
+	getgenv().Target_Name = Name
+
+	if not Model then
+		TweenService:Create(UI.Target,Appear,{Position = UI.Target:GetAttribute("Hidden")}):Play()
+		TargetBars.Health.Fill.Size = UDim2.fromScale(1, 1)
+		Stare_Stop()
+		ConnectionService.Disconnect(nil,Target_Key)
+	else
+		TweenService:Create(UI.Target,Appear,{Position = UI.Target:GetAttribute("Position")}):Play()
+		Update_TargetInfo()
+		HighlightService.new("Silent",getgenv().Target)
+		SilentAim()
+	end
+
+	PlaySound("Open")
+	Events.Fire("Locked_Changed")
+end
+
+const Teleporter = TargetUI:FindFirstChild("Teleport")
+
+const function GetProfile(Plr)
+	if Plr then
+		const Success, ImageID = pcall(function()
+			return Players:GetUserThumbnailAsync(
+				Plr.UserId,
+				Enum.ThumbnailType.HeadShot,
+				Enum.ThumbnailSize.Size420x420
+			)
+		end)
+		if Success then return ImageID end
+	end
+	return Default_Profile
+end
+
+const function Locked_Evasive(Target)
+	if Target:GetAttribute("JustEvasived") then
+		const endtime = Target:GetAttribute("JustEvasived") + Evasive_CD
+
+		if endtime - tick() <= 0 then
+			TargetBars.Ragdoll.Visible = false
+		else
+			TargetBars.Ragdoll.Visible = true
+
+			local timeleft = endtime - tick()
+			const alpha = MathService.Alpha(timeleft,Evasive_CD)
+
+			DelayService.CountDown("Target-Evasive",timeleft,1,function(elapsed)
+				TargetBars.Ragdoll.Value.Text = `Evasive: {tostring(math.floor(elapsed))}s`
+			end,function()
+				TargetBars.Ragdoll.Visible = false
+			end)
+
+			timeleft = math.max(0,timeleft - Bar.Time)
+
+			if timeleft > 0 then
+				TweenService:Create(TargetBars.Ragdoll.Fill,Bar,{Size = UDim2.fromScale(alpha,1)}):Play()
+				task.wait(Bar.Time)
+				TweenService:Create(TargetBars.Ragdoll.Fill,TweenInfo.new(timeleft,Enum.EasingStyle.Linear,Enum.EasingDirection.In),{Size = UDim2.fromScale(0,1)}):Play()
+			else
+				TargetBars.Ragdoll.Visible = false
+			end
+		end
+	else
+		TargetBars.Ragdoll.Visible = false
+	end
+end
+
+const function Locked_Kills(TargetPlayer)
+	const Kills = TargetPlayer:WaitForChild("leaderstats"):FindFirstChild("Kills")
+
+	if Kills then
+		TargetUI.Kills.Text = `Kills: {Kills.Value}`
+		ConnectionService.Connect("Kills",Target_Key,Kills:GetPropertyChangedSignal("Value"),nil,"Connect",function()
+			TargetUI.Kills.Text = `Kills: {Kills.Value}`
+		end)
+	else
+		TargetUI.Kills.Text = "Kills: Hidden"
+		ConnectionService.Disconnect("Kills",Target_Key)
+	end
+end
+
+const function Locked_DC(Target)
+	if Target:GetAttribute("DeathCounter") then
+		TargetUI.Death.Visible = true
+		DelayService.Delay("Locked_CounterDisplay",Target:GetAttribute("DeathCounter"),function()
+			TargetUI.Death.Visible = false
+		end)
+	else
+		TargetUI.Death.Visible = false
+	end
+end
+
+const function Locked_TK(TargetPlayer)
+	TargetUI["Total Kills"].Text = `Total Kills: {TargetPlayer:GetAttribute("TotalKillsFrb") or "HIDDED"}`
+end
+
+const function Locked_Streak(Target)
+	local Streak = Target:GetAttribute("CurrentStreak") or 0
+
+	if Streak < 0 then
+		Streak = 0
+	end
+	TargetUI.Streak.Text = `Streak: {Streak}`
+end
+
+const function Locked_Ult(TargetPlayer)
+	local ult = TargetPlayer:GetAttribute("Ultimate") or 0
+	ult = MathService.Alpha(ult,100)
+
+	if Locked_Ultimate_Tween then
+		Locked_Ultimate_Tween:Cancel()
+	end
+
+	Locked_Ultimate_Tween = TweenService:Create(TargetBars.Ultimate.Fill,Bar,{Size = UDim2.fromScale(ult, 1)})
+
+	Locked_Ultimate_Tween:Play()
+
+	TargetBars.Ultimate.Value.Text = `Ultimate: {tostring(math.round(ult * 100))}%`
+end
+
+const function Locked_HP(TargetHum,Target)
+	const hp = MathService.Alpha(TargetHum.Health,TargetHum.MaxHealth)
+
+	if Locked_HP_Tween then
+		Locked_HP_Tween:Cancel()
+	end
+
+	Locked_HP_Tween = TweenService:Create(TargetBars.Health.Fill,Bar,{Size = UDim2.fromScale(hp, 1)})
+
+	Locked_HP_Tween:Play()
+
+	TargetBars.Health.Value.Text = `Heath: {tostring(math.round(hp * 100))}%`
+
+	if hp <= 0 then
+		Set_Target(nil,Target.Name)
+	end
+end
+
+const function Locked_UsedUlt(Target,bool)
+	TargetBars.Ultimate.Value.Text = bool and "IN ULTIMATE" or "Ultimate: 0%"
+	TweenService:Create(TargetBars.Ultimate.Fill,Bar,{Size = UDim2.fromScale(bool and 1 or 0,1)}):Play()
+end
+
+function Update_TargetInfo()
+	const Target : Model,Target_Hum : Humanoid,Target_Hrp,Target_Plr : Player,_ = Target()
+
+	TargetUI.Username.Text = Target_Plr and Target_Plr.DisplayName or Target.Name
+	TargetUI.Username.Profile:FindFirstChildOfClass("ImageLabel").Image = GetProfile(Target_Plr)
+
+	const Player_Exists = Target_Plr ~= nil
+
+	TargetBars.Ultimate.Visible = Player_Exists
+	TargetBars.Ragdoll.Visible = Player_Exists
+	TargetUI.Moveset.Visible = Player_Exists
+	TargetUI.Kills.Visible = Player_Exists
+	TargetUI["Total Kills"].Visible = Player_Exists
+	TargetUI.Streak.Visible = Player_Exists
+
+	if Player_Exists then
+
+		Locked_Evasive(Target)
+
+		ConnectionService.Connect("Evasive",Target_Key,Target:GetAttributeChangedSignal("JustEvasived"),nil,"Connect",function()
+			Locked_Evasive(Target)
+		end)
+
+		Locked_Kills(Target_Plr)
+
+		ConnectionService.Connect("KillsAdded",Target_Key,Target_Plr:WaitForChild("leaderstats").ChildAdded,nil,"Connect",function(DataStored)
+			if DataStored.Name == "Kills" then
+				Locked_Kills(Target_Plr)
+			end
+		end)
+
+		ConnectionService.Connect("KillsRemoved",Target_Key,Target_Plr:WaitForChild("leaderstats").ChildRemoved,nil,"Connect",function(DataStored)
+			if DataStored.Name == "Kills" then
+				Locked_Kills(Target_Plr)
+			end
+		end)
+
+		Locked_DC(Target)
+
+		ConnectionService.Connect("DeathCountered",Target_Key,Target:GetAttributeChangedSignal("DeathCounter"),nil,"Connect",function()
+			Locked_DC(Target)
+		end)
+
+		Locked_TK(Target_Plr)
+
+		ConnectionService.Connect("Total Kills",Target_Key,Target_Plr:GetAttributeChangedSignal("TotalKillsFrb"),nil,"Connect",function()
+			Locked_TK(Target_Plr)
+		end)
+
+		Locked_Streak(Target)
+
+		ConnectionService.Connect("Streak",Target_Key,Target:GetAttributeChangedSignal("CurrentStreak"),nil,"Connect",function()
+			Locked_Streak(Target)
+		end)
+
+		Locked_Ult(Target_Plr)
+
+		ConnectionService.Connect("Ultimate",Target_Key,Target_Plr:GetAttributeChangedSignal("Ultimate"),nil,"Connect",function()
+			Locked_Ult(Target_Plr)
+		end)
+
+		if Target:GetAttribute("Ulted") then
+			Locked_UsedUlt(Target,true)
+		end
+
+		ConnectionService.Connect("UltimateIn",Target_Key,Target:GetAttributeChangedSignal("Ulted"),nil,"Connect",function()
+			Locked_UsedUlt(Target,Target:GetAttribute("Ulted"))
+		end)
+
+		local Moveset = Target:GetAttribute("Character") or "CUSTOM"
+
+		TargetUI.Moveset.Text = `Moveset: {Moveset_Rename[Moveset] or Target:GetAttribute("Character")}`
+
+		ConnectionService.Connect("Moveset",Target_Key,Target:GetAttributeChangedSignal("Character"),nil,"Connect",function()
+			Moveset = Target:GetAttribute("Character") or "CUSTOM"
+			TargetUI.Moveset.Text = `Moveset: {Moveset_Rename[Moveset] or Target:GetAttribute("Character")}`
+		end)
+	end
+
+	Locked_HP(Target_Hum,Target)
+
+	ConnectionService.Connect("Health",Target_Key,Target_Hum.HealthChanged,nil,"Connect",function()
+		Locked_HP(Target_Hum,Target)
+	end)
+
+	ConnectionService.Connect("Died",Target_Key,Target_Hum.Died,nil,"Connect",function()
+		ConnectionService.Disconnect(nil,Target_Key)
+	end)
+
+	ConnectionService.Connect("Teleportation",Target_Key,Teleporter.MouseButton1Click,nil,"Connect",function()
+		Hrp.CFrame = Target_Hrp.CFrame * CFrame.new(0,0,Attack_Distance - 4)
+	end)
+
+end
+
+const Is_Mobile = UserInputService.TouchEnabled
+
+const function Get_Nearest(Origin,Dead)
+	return MathService.Nearest(Origin ~= nil and Origin or Is_Mobile and Hrp or Mouse.Hit,Dead)
+end
+
+const SilentAim_Section = SilentAim_Tab:CreateSection()
+
+const SilentAim_Button = SilentAim_Section:AddToggle({
+	Name = "Silent Aim",
+	CallBack = function(_)
+		SilentAim()
+	end,
+	Icon = "rbxassetid://139650104834071"
+})
+
+SilentAim_Button:BindInput("T")
+
+function SilentAim(Object)
+	if SilentAim_Button.Enabled then
+		DelayService.Yield(function() return Env.Target ~= nil end,60)
+		Stare_Connection(Object) 
+	else
+		Stare_Stop()
+	end
+end
+
+Player:SetAttribute("S_CDINDICATOR", true)
+
+Player:GetAttributeChangedSignal("S_CDINDICATOR"):Connect(function()
+	if Player:GetAttribute("S_CDINDICATOR") then return end
+
+	Player:SetAttribute("S_CDINDICATOR", true)
+end)
+
+function Communicate(Args)
+	if not RE then return end
+	RE:FireServer(Args)
+end
+
+const function FrontDash()
+	Communicate({Dash = Enum.KeyCode.W, Key = Enum.KeyCode.Q, Goal = "KeyPress"})
+end
+
+const function BackDash()
+	Communicate({Dash = Enum.KeyCode.S, Key = Enum.KeyCode.Q, Goal = "KeyPress"})
+end
+
+const function SideDash(Direction)
+	Communicate({Dash = Enum.KeyCode[Direction], Key = Enum.KeyCode.Q, Goal = "KeyPress"})
+end
+
+const function Unblock()
+	Communicate({Key = Enum.KeyCode.F, Goal = "KeyRelease"})
+end
+
+const function Block(duration)
+	Communicate({Key = Enum.KeyCode.F, Goal = "KeyPress"})
+	DelayService.Delay("Blocking",duration or .2,function()
+		Unblock()		
+	end)
+end
+
+const function StopM1()
+	Communicate({Goal = "LeftClickRelease"})
+end
+
+const function M1(duration)
+	Communicate({Goal = "LeftClick"})
+	DelayService.Delay("M1ing",duration or .2,function()
+		StopM1()		
+	end)
+end
+
+const function WallCombo()
+	Communicate({Goal = "Wall Combo"})
+end
+
+const function UseMove(Move)
+	const Object = Player:FindFirstChild("Backpack"):FindFirstChild(Move)
+	if not Object then return end
+
+	Communicate({IsAutoActivate = true, Goal = "Console Move", Tool = Object, ToolName = Move})
+end
+
+const function StopDash()
+	Communicate({BV = Hrp:FindFirstChild("moveme"), Goal = "delete bv"})
+end
+
+const CounterUI = Storage:FindFirstChild("Counters")
+const TechDisplay = Storage:FindFirstChild("TechFx")
+
+const TechTween = TweenInfo.new(.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+
+function Tech_FX(Tech)
+	const TechUI = Character:FindFirstChild("TechFx")
+	if TechUI then
+		TechUI.Tech.Text = Tech
+
+		TweenService:Create(TechUI,TechTween,{Size = TechUI:GetAttribute("Size")}):Play()
+
+		HighlightService.new(Env.Picked_Skin or "Tech",Character,1)
+
+		DelayService.Delay(`{Tech}-TechFx`,1,function()
+			TweenService:Create(TechUI,TechTween,{Size = UDim2.fromScale(0, 0)}):Play()
+		end)
+	end
+end
+
+function Look_Behind(Root,Duration)
+	if Hrp == Root then
+		return
+	end
+	const Person = Root.Parent
+	ConnectionService.Connect("Near",Person,RunService.Heartbeat,Duration,"Connect",function()
+		if MathService.GetDistance(Hrp,Root) <= Safe_Distance and not Character:FindFirstChild("Ragdoll") then
+			Stare_Stop()
+			MathService.LookAt(Hrp, Hrp.Position * 2 - Root.Position)
+			Person.Humanoid.AutoRotate = false
+		else
+			SilentAim()
+			Person.Humanoid.AutoRotate = true
+		end
+	end)
+
+	DelayService.Delay(`{Root.Parent.Name}-Countered_Stare`,Duration + .2,function()
+		SilentAim()
+	end)
+end
+
+Events.Bind("Counter",function(Person,Root,UI)
+	if Person:HasTag("Counter-Cooldown") then return end
+	Person:AddTag("Counter-Cooldown")
+
+	const Distance = MathService.GetDistance(Hrp,Root)
+
+	if Distance <= Safe_Distance then
+		PlaySound("Counter")
+		if Distance <= Safe_Distance / 2 then
+			Communicate({Dash = Enum.KeyCode.S, Key = Enum.KeyCode.Q, Goal = "KeyPress"})
+			Hrp.AssemblyLinearVelocity = -Root.CFrame.LookVector * 90
+		end
+	end
+
+	HighlightService.new("Counter",Person,Counter_Duration)
+
+	if UI then
+		UI.Counter.Visible = true
+
+		DelayService.Delay(`{Person.Name}-Counter`,Counter_Duration,function()
+			UI.Counter.Visible = false
+			Person:RemoveTag("Counter-Cooldown")
+		end)
+	end
+
+	Look_Behind(Root,Counter_Duration)
+end)
+
+Events.Bind("Death Counter",function(Person,Root,CounterDisplay)
+	if Person:HasTag("Counter-Cooldown") then return end
+	Person:AddTag("Counter-Cooldown")
+
+	if MathService.GetDistance(Hrp,Root) <= Safe_Distance then
+		PlaySound("Death")
+	end
+
+	HighlightService.new("Death",Person,DeathCounter_Duration)
+
+	if CounterDisplay then
+		CounterDisplay.Death.Visible = true
+
+		DelayService.CountDown(`{Person.Name}-Death_Counter`,DeathCounter_Duration,1,function(elapsed)
+			Person:SetAttribute("DeathCounter", elapsed)
+		end,function()
+			CounterDisplay.Death.Visible = false
+			Person:SetAttribute("DeathCounter", nil)
+			Person:RemoveTag("Counter-Cooldown")
+		end)
+
+	end
+
+	Look_Behind(Root,DeathCounter_Duration)
+end)
+
+const function Is_Counter(r,Person,Root,CounterDisplay)
+	if r.Name == "Counter" then 
+		Events.Fire("Death Counter",Person,Root,CounterDisplay)
+	elseif r.Name ~= "Counter" and not r.Name:find("Projectile") and not r.Name:find("Death") and r.Name:find("Counter") then
+		Events.Fire("Counter",Person,Root,CounterDisplay)
+	end
+end
+
+Events.Bind("CharacterAdded",function(Person : Model)
+	const _,Hum,Root,Plr,Anim = Target(Person)
+
+	task.wait(.2)
+
+	if getgenv().Target_Name == Person.Name then
+		Set_Target(Person)
+	end
+
+	ConnectionService.Connect("Died",Person,Hum.Died,nil,"Once",function()
+		if getgenv().Target == Person then
+			Set_Target(nil,Person.Name)
+		end
+		if Is_Owner and Person:GetAttribute("LastHit") == Player.Name then
+			Emit(Owner_Assets.BF,Root)
+		end
+		ConnectionService.Disconnect({"Evasive","Ulted","ChildAdded"},Person)
+		task.wait(Players.RespawnTime - .5)
+		ConnectionService.Disconnect({"Damaged","FX_Added"},Person)
+	end)
+
+	const CounterDisplay = CounterUI:Clone()
+	CounterDisplay.Parent = Root
+
+	ConnectionService.Connect("Evasive",Person,Person:GetAttributeChangedSignal("JustEvasived"),nil,"Connect",function()
+		if math.floor(Person:GetAttribute("JustEvasived")) == math.floor(tick()) then return end
+		Person:SetAttribute("JustEvasived",tick())
+	end)
+
+	ConnectionService.Connect("Ulted",Person,Person:GetAttributeChangedSignal("Ulted"),nil,"Connect",function()
+		DelayService.Yield(function() return not Person:FindFirstChildOfClass("ForceField") end,20)
+		Person:SetAttribute("JustUltimate",tick())
+	end)
+
+	if Is_Owner then
+
+		ConnectionService.Connect("Damaged",Person,Person:GetAttributeChangedSignal("LastDamage"),nil,"Connect",function()
+			if Person:GetAttribute("LastHit") ~= Player.Name then return end
+			task.wait()
+			for _, fx in Person:QueryDescendants("ParticleEmitter") do
+				fx.Color = Swap_Color(fx.Color,Owner_Color,Is_Blue)
+			end
+		end)
+
+		ConnectionService.Connect("FX_Added",Person,Person.DescendantAdded,nil,"Connect",function(fx)
+			Is_Counter(fx,Person,Root,CounterDisplay)
+
+			if Person:GetAttribute("LastHit") ~= Player.Name then return end
+
+			task.wait()
+
+			if tick() - (Person:GetAttribute("LastDamage") + 3598) > 1.5 then return end
+
+			if fx:IsA("ParticleEmitter") then
+				fx.Color = Swap_Color(fx.Color,Owner_Color,Is_Blue)
+			end
+
+		end)
+	else
+		ConnectionService.Connect("ChildAdded",Person,Person.ChildAdded,nil,"Connect",function(counter)
+			Is_Counter(counter,Person,Root,CounterDisplay)
+		end)
+	end
+end)
+
+Events.Bind("CharacterRemoving",function(Person)
+	if getgenv().Target == Person then
+		Set_Target(nil,Person.Name)
+	end
+end)
+
+Events.Bind("PlayerRemoving",function(plr : Player)
+	if getgenv().Target_Name == plr.Name then
+		Set_Target(nil,plr.Name)
+	end
+end)
+
+const function UnHide_TK(plr)
+	const Leaderstats = plr:WaitForChild("leaderstats",Yield_TimeOut)
+
+	local TotalKills = Leaderstats:FindFirstChild("Total Kills")
+
+	if TotalKills then 
+		return
+	else
+		TotalKills = Instance.new("NumberValue")
+		TotalKills.Parent = Leaderstats
+		TotalKills.Name = "Total Kills"
+	end
+
+	TotalKills.Value = plr:GetAttribute("TotalKillsFrb") or 0
+
+	ConnectionService.Connect("Total Kills",plr,plr:GetAttributeChangedSignal("TotalKillsFrb"),nil,"Connect",function()
+		TotalKills.Value = plr:GetAttribute("TotalKillsFrb")
+	end)
+
+	ConnectionService.Connect("LeaderstatRemoved",plr,Leaderstats.ChildRemoved,nil,"Connect",function()
+		UnHide_TK(plr)
+	end)
+end
+
+UnHide_TK(Player)
+
+Events.Bind("PlayerAdded",UnHide_TK)
+
+const Local_HP_Gui = UI.Health
+
+getgenv().Off = function(Duration)
+	Stare_Stop()
+	DelayService.Cancel("On")
+
+	DelayService.Delay("Off",Duration,function()
+		SilentAim()
+	end)
+end
+
+getgenv().On = function(Duration,Object,TurnOff)
+	Stare_Connection(Object)
+
+	DelayService.Cancel("Off")
+
+	DelayService.Delay("On",Duration,function()
+		if TurnOff then
+			Stare_Stop()
+			task.wait(TurnOff)
+			SilentAim()
+		else
+			SilentAim()
+		end
+	end)
+end
+
+const CD_Tweens = {
+	["Front Dash"] = TweenInfo.new(FrontDash_CD, Enum.EasingStyle.Linear, Enum.EasingDirection.In),
+	["Side Dash"] = TweenInfo.new(SideDash_CD, Enum.EasingStyle.Linear, Enum.EasingDirection.In),
+	["Evasive"] = TweenInfo.new(Evasive_CD, Enum.EasingStyle.Linear, Enum.EasingDirection.In)
+}
+
+function OnCD(Skill,CD)
+	const Frame = UI.Cooldowns:FindFirstChild(Skill, true)
+
+	if not Frame then
+		return
+	end
+
+	const Fill = Frame.Fill
+	const Value = Frame:FindFirstChildOfClass("TextLabel")
+
+	Fill.Size = UDim2.fromScale(1, 1)
+	TweenService:Create(Fill,CD_Tweens[Skill],{Size = UDim2.fromScale(0, 1)}):Play()
+
+	DelayService.CountDown(Skill,CD,1,function(elapsed)
+		Value.Text = `{Skill}: {tostring(elapsed)}`
+	end,function()
+		Value.Text = Skill
+		TweenService:Create(Fill,TweenInfo.new(.2, Enum.EasingStyle.Linear, Enum.EasingDirection.In),{Size = UDim2.fromScale(0, 1)}):Play()
+	end)
+end
+
+const function Dash_Comparable(Compare)
+	if not Character:GetAttribute("JustForwardDashed") or workspace:GetAttribute("NoDashCooldown") then
+		return true
+	end
+	return tick() - Character:GetAttribute("JustForwardDashed") > (Compare or FrontDash_CD)
+end
+
+const function MoveOnCD(Move)
+	const Base = Current_Moveset[Move]
+
+	if Base and Base.Parent then
+		return Base:FindFirstChild("Cooldown") ~= nil
+	end
+
+	Current_Moveset[Move] = nil
+
+	for _, Object in HotBar:GetChildren() do
+		if not Object:IsA("GuiObject") then
+			continue
+		end
+
+		const ObjectBase = Object:FindFirstChild("Base")
+
+		if ObjectBase:FindFirstChild("ToolName").Text == Move then
+			Current_Moveset[Move] = ObjectBase
+			return ObjectBase:FindFirstChild("Cooldown") ~= nil
+		end
+	end
+
+	return true
+end
+
+const function Custom_Ultimate()
+	const MH = PlayerGui:WaitForChild("Bar").MagicHealth
+	const Controller = MH.Health.Bar
+
+	Controller.Bar.Image = Ult_Fill
+	Controller.Parent.Glow.Image = Ult_Bar
+	Controller.Parent.Glow.ImageTransparency = .1
+
+	MH.Size = UDim2.fromOffset(397,25)
+	Controller.Bar.Size = MH.Size
+	Controller.Parent.Glow.Size = MH.Size
+
+	TweenService:Create(Controller.Bar,ColorShift,{ImageColor3 = Is_Owner and Skins.All[Env.Picked_Skin].Color or Ult_Color}):Play()
+end
+
+const function Local_HP()
+	const alpha = MathService.Alpha(Humanoid.Health,Humanoid.MaxHealth)
+
+	TweenService:Create(Local_HP_Gui.Fill,Bar,{Size = UDim2.fromScale(alpha,1)}):Play()
+	Local_HP_Gui:FindFirstChildOfClass("TextLabel").Text = `{tostring(math.round(alpha * 100))}%`
+
+	if alpha <= 0 then
+		Died_At = Hrp.Position
+		if RNG:NextInteger(1,2) == 1 then
+			PlaySound(Death_Sounds[RNG:NextInteger(1,#Death_Sounds)])
+		end
+		ConnectionService.Disconnect(nil,Character)
+
+		Character = nil
+		Humanoid = nil
+		Hrp = nil
+		Animator = nil
+	end
+end
+
+const FrontDash_Attributes = {"JustForwardDashed","JustBackDashed"}
+const SideDash_Attributes = {"JustRightDashed","JustLeftDashed"}
+
+Events.Bind("MyCharacterAdded",function(New_Character)
+	Character = New_Character
+
+	task.spawn(function()
+		const _, H, R, _, A = Target(New_Character)
+		Humanoid = H
+		Hrp = R
+		Animator = A
+		RE = Character:WaitForChild("Communicate",Yield_TimeOut)
+
+		const Tech_VFX = TechDisplay:Clone()
+
+		Tech_VFX.Parent = Character
+		Tech_VFX.Adornee = Character:WaitForChild("Head",Yield_TimeOut)
+	end)
+
+	Character:SetAttribute("UltimateName",Script_Title)
+
+	ConnectionService.Connect("Ult_Name",Character,Character:GetAttributeChangedSignal("UltimateName"),nil,"Connect",function() 
+		if Character:GetAttribute("UltimateName") == Script_Title then return end
+		Character:SetAttribute("UltimateName",Script_Title)
+	end)
+
+	if getgenv().SpawnNear and not Is_Ranked then
+		task.wait(.2)
+
+		local Closest
+		local Distance = math.huge
+
+		const Location = getgenv().SpawnNear == "Death" and Died_At or getgenv().SpawnNear == "Target" and select(3,Target())
+
+		if Location then
+			for _, Spawn in Map:GetChildren() do
+				if Spawn.Name ~= "SpawnLocation" then continue end
+
+				const SpawnDistance = MathService.GetDistance(Location,Spawn)
+
+				if Distance > SpawnDistance then
+					Closest = Spawn
+					Distance = SpawnDistance
+				end
+			end
+
+			if Closest then
+				Hrp.CFrame = Closest.CFrame * CFrame.new(0,3,0)
+			end
+		end
+	end
+
+	task.wait(.1)
+
+	table.clear(Character_Limbs)
+
+	for _, b in Character:GetChildren() do
+		if not b:IsA("BasePart") then continue end
+		table.insert(Character_Limbs,b)
+	end
+
+	task.wait(.2)
+
+	HotBar = PlayerGui:WaitForChild("Hotbar"):WaitForChild("Backpack"):WaitForChild("Hotbar")
+
+	Custom_Ultimate()
+
+	DelayService.Cancel_CountDown("Evasive",true)
+	DelayService.Cancel_CountDown("FrontDash",true)
+	DelayService.Cancel_CountDown("SideDash",true)
+
+	SilentAim()
+
+	ConnectionService.Connect("Animation",Character,Animator.AnimationPlayed,nil,"Connect",function(Track : AnimationTrack)
+
+		const Condition = Anim_Lookup[Track.Animation.AnimationId]
+		if not Condition then return end
+
+		if not getgenv().Techs[Condition] then return end
+
+		if Condition ~= "Third M1" then
+			getgenv().Off(Track.Length)
+		end
+
+		if Condition == "Uptilt" and Character:GetAttribute("DragonUppercut") then
+			return
+		end
+
+		const Nearest, Dist = Get_Nearest(Hrp)
+		if not Nearest then return end
+
+		if Dist > Attack_Distance then return end
+
+		local _,Target_Humanoid,Target_Hrp,Target_Player,_ = Target(Nearest)
+
+		if Target_Humanoid.Health <= (Condition == "Lethal" and 16 or 3.5) then return end
+
+		local LastTech
+		local LastPriority = -1
+
+		for _, Tech in pairs(TechService.Enabled[Condition]) do
+			if Tech.Priority <= LastPriority then continue end
+
+			if Tech.RequiresPlayer and not Target_Player then continue end
+			if Tech.UsesSkill and MoveOnCD(Tech.Skill) then continue end
+			if Tech.UsesDash and not Dash_Comparable(5 - (Condition == "Lethal" and Track.Length - .2 or Track.Length * 2.5 / 3)) then continue end
+
+			LastTech = Tech
+			LastPriority = Tech.Priority
+		end
+
+		if not LastTech then return end
+
+		if Condition == "Third M1" then
+			if UserInputService:IsKeyDown(Enum.KeyCode.Space) then return end
+			for Animation in Anti_Third do
+				for _, Tech in pairs(TechService.Enabled[Animation]) do
+					if Tech.Priority <= LastTech.Priority then continue end
+					if Tech.RequiresPlayer and not Target_Player then continue end
+					if Tech.UsesSkill and MoveOnCD(Tech.Skill) then continue end
+					if Tech.UsesDash and not Dash_Comparable(5 - Track.Length * 2.5 / 3) then continue end
+
+					return
+				end
+			end
+		end
+
+		if Anti_Third[Condition] then
+			if Shiftlock_Enabled and getgenv().ShiftLock_Priority then return end
+
+			Humanoid.AutoRotate = false
+
+			Humanoid.WalkSpeed = 0
+			Humanoid.JumpPower = 0
+
+			ConnectionService.Connect("No_Movement",Character,Humanoid:GetPropertyChangedSignal("WalkSpeed"),.8,"Connect",function()
+				Humanoid.WalkSpeed = 0
+				Humanoid.JumpPower = 0
+			end)
+		end
+
+		const Prediction_ = getgenv().Predicting
+
+		getgenv().Predicting = false
+		getgenv().InTech = true
+
+		ConnectionService.Connect(`{Condition}-Tech`,Character,Track:GetMarkerReachedSignal(LastTech.Marker),Track.Length + .2,"Once",function()
+			task.spawn(function()
+				Tech_FX(LastTech.Name)
+			end)
+
+			if LastTech.DashBoost ~= 1 then
+				Boost_moveme(LastTech.DashBoost)
+			end
+
+			const NoCollDur = LastTech.NoCollisionDuration or 3
+
+			if LastTech.NoCollision then
+				ConnectionService.Connect("No_Collision",Character,RunService.Heartbeat,NoCollDur,"Connect",function()
+					for _, part in Character_Limbs do
+						part.CanCollide = false
+					end
+				end)
+
+				DelayService.Delay("Restore_Collision",NoCollDur,function()
+					task.wait()
+					for _, part in pairs(Limbs) do
+						Character[part].CanCollide = true
+					end
+				end)
+			end
+
+			const yield = Condition == "Uptilt" and Uptilt_Swing
+
+			if LastTech.Marker == "swingreg" and yield then
+				task.wait(yield)
+			end
+
+			if LastTech.MarkerReached then
+				LastTech.MarkerReached(Target_Hrp,Track)
+			end
+
+			Humanoid.WalkSpeed = 16
+			Humanoid.JumpPower = 50
+
+			Humanoid.AutoRotate = true
+
+			getgenv().Predicting = Prediction_
+			getgenv().InTech = false
+
+			getgenv().Lerp = Lerp
+			Override_StopDash = false
+		end)
+
+		Override_StopDash = LastTech.StopDash
+
+		if LastTech.OnPlayed then
+			getgenv().Off(Track.Length)
+			LastTech.OnPlayed(Target_Hrp,Track)
+
+			if not LastTech.MarkerReached then
+				getgenv().Lerp = Lerp
+				Override_StopDash = false
+			end
+		end
+
+	end)
+
+	ConnectionService.Connect("Ragdolled",Character,Character.ChildAdded,nil,"Connect",function(r)
+		if r.Name == "Ragdoll" or r.Name == "RagdollSim" then
+			Stare_Stop()
+		end
+	end)
+
+	ConnectionService.Connect("UnRagdolled",Character,Character.ChildRemoved,nil,"Connect",function(r)
+		if r.Name == "Ragdoll" or r.Name == "RagdollSim" then
+			SilentAim()
+		end
+	end)
+
+	Local_HP()
+
+	ConnectionService.Connect("Health",Character,Humanoid.HealthChanged,nil,"Connect",function()
+		Local_HP()
+	end)
+
+	ConnectionService.Connect("Died",Character,Humanoid.Died,nil,"Once",function()
+		ConnectionService.Disconnect(nil,Character)
+
+		Character = nil
+		Humanoid = nil
+		Hrp = nil
+		Animator = nil
+	end)
+
+	ConnectionService.Connect("Evasived",Character,Character:GetAttributeChangedSignal("JustEvasived"),nil,"Connect",function()
+		OnCD("Evasive",Evasive_CD)
+	end)
+
+	for _, Con in SideDash_Attributes do
+		ConnectionService.Connect(Con,Character,Character:GetAttributeChangedSignal(Con),nil,"Connect",function()
+			OnCD("Side Dash",SideDash_CD)
+
+			if math.floor(Character:GetAttribute(Con)) == math.floor(tick()) then return end
+			Character:SetAttribute(Con,tick())
+		end)
+	end
+
+	for _, Con in FrontDash_Attributes do
+		ConnectionService.Connect(Con,Character,Character:GetAttributeChangedSignal(Con),nil,"Connect",function()
+			OnCD("Front Dash",FrontDash_CD)
+
+			if math.floor(Character:GetAttribute(Con)) == math.floor(tick()) then return end
+			Character:SetAttribute(Con,tick())
+		end)
+	end
+end)
+
+TechService.new({
+	Name = "Supa Dash",
+	Enabled = false,
+	Input = "Z",
+	Animation = "Uptilt",
+	Priority = 3,
+	Marker = "hitreg",
+	NoCollision = true,
+	OnPlayed = function(Goal,_)
+		task.wait(.1)
+
+		MathService.LookAt(Hrp,Goal,1)
+
+		task.wait(.1)
+
+		Hrp.AssemblyLinearVelocity = -Hrp.CFrame.LookVector * 100
+	end,
+	MarkerReached = function(Goal,_)
+
+		FrontDash()
+
+		getgenv().Lerp = .7
+
+		getgenv().On(1,Goal,.5)
+
+		DelayService.Delay("DashStop",.26,StopDash)
+
+		Hrp.AssemblyLinearVelocity = Vector3.new(0,50,0)
+
+		task.wait(1)
+
+	end,
+})
+
+TechService.new({
+	Name = "Dripz Dash",
+	Enabled = true,
+	Input = "J",
+	Animation = "Uptilt",
+	Priority = 3,
+	Marker = "swingreg",
+	NoCollision = true,
+	NoCollisionDuration = .5,
+	MarkerReached = function(Goal,_)
+
+		MathService.LookAt(Hrp,Hrp.CFrame * CFrame.new(0,0,10))
+
+		FrontDash()
+
+		const Start = Hrp.CFrame
+
+		DelayService.Yield(function() return math.floor(MathService.GetDistance(Hrp,Start)) >= 6 end,.28)
+
+		getgenv().On(.1,Goal,.5)
+
+		getgenv().Lerp = .5
+
+		Humanoid.HipHeight = 4.5
+
+		task.wait(.137)
+
+		getgenv().Lerp = .4
+
+		StopDash()
+
+		task.wait(.25)
+
+		Humanoid.HipHeight = 0
+
+		Hrp.AssemblyLinearVelocity = Vector3.zero
+
+	end
+})
+
+TechService.new({
+	Name = "Kiba Dash",
+	Input = "K",
+	Animation = "Uptilt",
+	Priority = 3,
+	Marker = "swingreg",
+	MarkerReached = function(Goal,_)
+		FrontDash()
+
+		MathService.Pitch = true
+
+		task.wait(.1)
+
+		ConnectionService.Connect("StickTo",Character,RunService.Heartbeat,.3,"Connect",function()
+			Hrp.CFrame = MathService.GetCFrame(Goal.Position) * CFrame.new(0,-5,0)
+			MathService.LookAt(Hrp,Hrp.CFrame * CFrame.new(0,10,0))
+		end)
+
+		task.wait(.15)
+
+		StopDash()
+
+		task.wait(.15)
+
+		MathService.Pitch = false
+
+		Hrp.CFrame = Hrp.CFrame * CFrame.new(0,-3,0)
+		Hrp.AssemblyLinearVelocity = Vector3.zero
+	end,
+})
+
+TechService.new({
+	Name = "Loop Dash",
+	Input = "L",
+	Animation = "Uptilt",
+	Priority = 3,
+	Marker = "swingreg",
+	NoCollision = true,
+	StopDash = false,
+	MarkerReached = function(Goal,_)
+
+		getgenv().Off(.2)
+
+		MathService.LookAt(Hrp,Hrp.CFrame * CFrame.new(5,0,0))
+
+		FrontDash()
+
+		task.wait(.1)
+
+		getgenv().On(1,Goal)
+		getgenv().Lerp = .09
+
+		task.wait(.33)
+
+		getgenv().Lerp = .11
+
+		task.wait(.15)
+
+		StopDash()
+
+		task.wait(.5)
+
+	end,
+})
+
+TechService.new({
+	Name = "XQC Dash",
+	Input = "E",
+	Animation = "Uptilt",
+	Priority = 3,
+	Marker = "hitreg",
+	NoCollision = true,
+	NoCollisionDuration = .6,
+	OnPlayed = function(Goal,_)
+		task.wait(.2)
+
+		MathService.LookAt(Hrp,Goal)
+
+		Hrp.AssemblyLinearVelocity = Hrp.CFrame.RightVector * -40
+	end,
+	MarkerReached = function(Goal,_)
+
+		DelayService.Delay("DashStop",.42,StopDash)
+		FrontDash()
+
+		task.wait(.27)
+
+		getgenv().On(.1,Goal,.5)
+		getgenv().Lerp = .3
+
+		Humanoid.HipHeight = 5
+
+		task.wait(.15)
+
+		Humanoid.HipHeight = 0
+
+	end,
+})
+
+TechService.new({
+	Name = "Extender ( OP )",
+	Input = "N",
+	Animation = "Third M1",
+	Priority = 10,
+	Marker = nil,
+	OnPlayed = function(Goal,_)
+		task.wait(.15)
+
+		Hrp.AssemblyLinearVelocity = Hrp.CFrame.RightVector * -330 + Vector3.new(0,40,0)
+
+		task.wait(.2)
+
+		FrontDash()
+
+		MathService.LookAt(Hrp,Goal.CFrame * CFrame.new(0,0,-2))
+
+		task.wait(.45)
+
+		MathService.LookAt(Hrp,Goal,1)
+
+		task.wait(.2)
+
+		MathService.LookAt(Hrp,Goal,1)
+
+		StopDash()
+	end
+})
+
+TechService.new({
+	Name = "Boomy Twisted",
+	Enabled = true,
+	Input = "R",
+	Animation = "Forth M1",
+	Priority = 11,
+	Marker = "swingreg",
+	StopDash = false,
+	MarkerReached = function(Goal,_)
+		MathService.LookAt(Hrp,Goal)
+
+		FrontDash()
+
+		task.wait(.1)
+
+		const Reg = Hrp.CFrame
+
+		getgenv().Lerp = .5
+
+		getgenv().On(.1,Reg * CFrame.new(-15,0,-6))
+
+		task.wait(.12)	
+
+		getgenv().On(.12,Reg * CFrame.new(0,0,-8))
+
+		task.wait(.11)
+
+		getgenv().On(.2,Reg * CFrame.new(1,0,-25))
+
+		DelayService.Yield(function() return MathService.GetDistance(Hrp,Reg * CFrame.new(1,0,-15)) <= 1 end,.1)
+
+		getgenv().Lerp = 1
+
+		getgenv().On(.15,Reg * CFrame.new(-1,0,-30),.3)
+
+		task.wait(.13)
+
+		StopDash()
+
+		task.wait(.3)
+	end,
+})
+
+TechService.new({
+	Name = "Instant Twisted",
+	Enabled = false,
+	Input = "H",
+	Animation = "Forth M1",
+	Priority = 11,
+	Marker = "swingreg",
+	OnPlayed = function()
+		task.wait(.2)
+
+		Hrp.AssemblyLinearVelocity = -Hrp.CFrame.LookVector * 60
+	end,
+	MarkerReached = function(Goal,_)
+		MathService.LookAt(Hrp,Goal)
+
+		FrontDash()
+
+		task.wait(.09)
+
+		const Reg = Hrp.CFrame
+
+		getgenv().Lerp = 1
+
+		getgenv().On(.06,Reg * CFrame.new(-6,0,2))
+
+		task.wait(.08)	
+
+		getgenv().On(.06,Reg * CFrame.new(10,0,-6))
+
+		task.wait(.08)
+
+		getgenv().On(.1,Reg * CFrame.new(-5,0,-30),.3)
+
+		task.wait(.17)
+
+		StopDash()
+
+		task.wait(.3)
+	end,
+})
+
+TechService.new({
+	Name = "Uplift Tech",
+	Enabled = true,
+	Input = "X",
+	Animation = "Uptilt",
+	Priority = 5,
+	Marker = "swingreg",
+	UsesSkill = true,
+	RequiresPlayer = true,
+	DisablesOthers = false,
+	Skill = "Hunter's Grasp",
+	OnPlayed = function(Goal,Track)
+		MathService:Tween(Hrp,function()
+			return MathService.GetCFrame(Goal.Position) + Vector3.new(0,5,1)
+		end,.2,Goal)
+
+		Hrp.Anchored = true
+
+		task.wait(.125)
+
+		Hrp.Anchored = false
+		Hrp.AssemblyLinearVelocity = Vector3.new(0,-10,0) + Hrp.CFrame.LookVector * -12
+
+		task.wait(.165)
+
+		getgenv().On(.1,Goal,.4)
+
+		UseMove("Hunter's Grasp")
+	end,
+	UsesDash = false
+})
+
+TechService.new({
+	Name = "Instant Lethal",
+	Enabled = true,
+	Input = "P",
+	Animation = "Lethal",
+	Priority = 2,
+	Marker = "finalslam",
+	MarkerReached = function(Goal,_)
+		FrontDash()
+
+		Hrp.AssemblyLinearVelocity = Vector3.zero
+
+		ConnectionService.Connect("Front_Dashed",Character,Animator.AnimationPlayed,2,"Connect",function(Track)
+			if Other_IDS.FrontDash[Track.Animation.AnimationId] then
+				ConnectionService.Connect("FrontDash-land",Character,Track:GetMarkerReachedSignal("swing"),2,"Once",function()
+					Hrp.AssemblyLinearVelocity = Vector3.new(0,35,0)
+				end)
+			end
+		end)
+
+		task.wait(.25)
+
+		getgenv().Lerp = .7
+		getgenv().On(.1,Goal,.6)
+
+		task.wait(.1)
+
+		StopDash()
+
+		task.wait(.1)
+
+	end,
+	OnPlayed = function(_,Track)
+		ConnectionService.Connect("Lethal-spark",Character,Track:GetMarkerReachedSignal("spark"),Track.Length,"Once",function()
+			VirtualInputManager:SendKeyEvent(true,Enum.KeyCode.Space,false,game)
+			task.wait(.8)
+			VirtualInputManager:SendKeyEvent(false,Enum.KeyCode.Space,false,game)
+		end)
+	end
+})
+
+SilentAim_Section:AddButton({
+	Name = "Select Target",
+	CallBack = function()
+		const Nearest = Get_Nearest()
+
+		if not Nearest then
+			Set_Target(nil)
+			return 
+		end
+
+		if getgenv().Target == Nearest then
+			Set_Target(nil,nil)
+		else
+			Set_Target(Nearest)
+		end
+	end,
+	Icon = "rbxassetid://13285102351"
+}):BindInput("Y")
+
+const function Hitbox_Displayer()
+	if (not getgenv().Target and getgenv().Predicting) or not getgenv().Predicting then
+		ConnectionService.Disconnect("Server_Hitbox",game)
+		Target_Hitbox.Parent = ReplicatedFirst
+	elseif getgenv().Target and getgenv().Predicting then
+		Target_Hitbox.Parent = workspace
+		ConnectionService.Connect("Server_Hitbox",game,RunService.RenderStepped,nil,"Connect",function()
+			if not getgenv().Target then
+				ConnectionService.Disconnect("Server_Hitbox",game)
+				Target_Hitbox.Parent = ReplicatedFirst
+				return 
+			end
+			Target_Hitbox.CFrame = PredictCFrame(getgenv().Target:FindFirstChild("HumanoidRootPart"),getgenv().Prediction_After)
+		end)
+	end
+end
+
+Events.Bind("Locked_Changed",Hitbox_Displayer)
+
+SilentAim_Section:AddToggle({
+	Name = "Prediction",
+	CallBack = function(Value)
+		getgenv().Predicting = Value
+		Hitbox_Displayer()
+	end,
+	Icon = "rbxassetid://6523858394",
+	Enabled = getgenv().Predicting
+}):BindInput("C")
+
+const Optimisations = Misc:CreateSection({["Name"] = "Optimisations",["Description"] = "Features To Make The Game Feel Faster"})
+
+Optimisations:AddButton({["Name"] = "Unlock Fps",["CallBack"] = function()
+	setfpscap(9999)
+end,["Icon"] = "rbxassetid://115289332203941"})
+
+const Extra = Misc:CreateSection({["Name"] = "Extra Features",["Description"] = "Quality Of Life Features"})
+const Avatars = Misc:CreateSection({["Name"] = "Cool Avatars",["Description"] = "Client Sided Avatars That Look Tuff"})
+
+if not Is_Ranked then
+	getgenv().ND = Extra:AddToggle({["Name"] = "Spawn Near Death",["CallBack"] = function(Value)
+		if Value then
+			getgenv().NT:Disable(false)
+		end
+		getgenv().SpawnNear = Value and "Death" or nil
+	end,["Enabled"] = 	getgenv().SpawnNear == "Death",["Icon"] = "rbxassetid://9178976271"})
+
+	getgenv().NT = Extra:AddToggle({["Name"] = "Spawn Near Target",["CallBack"] = function(Value)
+		if Value then
+			getgenv().ND:Disable(false)
+		end
+		getgenv().SpawnNear = Value and "Target" or nil
+	end,["Enabled"] = 	getgenv().SpawnNear == "Target",["Icon"] = "rbxassetid://9178976271"})
+end
+
+if Is_Owner then
+	Events.Bind("MyCharacterAdded",function(New_Character)
+		const Skin = Skins.All[Env.Picked_Skin]
+		
+		Owner_Color = Skin.Color
+		
+		task.wait(.4)
+
+		for _, Limb in New_Character:GetDescendants() do
+			if Limb:IsA("Shirt") or Limb:IsA("Pants") or Limb:IsA("Accessory") or Limb:IsA("BodyColors") then
+				Limb:Destroy()
+			elseif table.find(Skin.Hidden_Limbs,Limb.Name) then
+				Limb.Transparency = 1
+				
+				New_Character:AddTag(`No{Limb.Name}`)
+			end
+		end
+
+		task.wait(.3)
+
+		if Skin.Hide_Face then
+			New_Character.Head.face:Destroy()
+		end 
+
+		const Cooldown_Preset = HotBar.Parent.LocalScript.Cooldown
+		Cooldown_Preset.BackgroundColor3 = Hotbar_Color or Owner_Color
+		Cooldown_Preset.BackgroundTransparency = .1
+
+		if Skin.Cooldowns_Gradiant then
+			Cooldown_Preset:FindFirstChildOfClass("UIGradient").Color = Skin.Cooldowns_Gradiant
+		end
+
+		for _, Accessory in Owner_Assets.Avatar:FindFirstChild(Env.Picked_Skin):GetChildren() do
+			if Accessory:IsA("Accessory") then
+				AddAccessory(Accessory)
+			else
+				Accessory:Clone().Parent = New_Character
+			end
+		end
+
+		ConnectionService.Connect("Owner_FX",New_Character,New_Character.DescendantAdded,nil,"Connect",function(d)
+			if (d:IsA("Trail") or d:IsA("ParticleEmitter")) then
+				d.Color = Swap_Color(d.Color, Owner_Color, Is_Blue)
+			end
+		end)
+	end)
+
+	ConnectionService.Connect(
+		"Hidden_VFX",
+		game,
+		workspace.Terrain.DescendantAdded,
+		nil,
+		"Connect",
+		function(d)
+			if not d:IsA("Trail") and not d:IsA("ParticleEmitter") then
+				return
+			end
+
+			const Parent = d:FindFirstAncestorOfClass("Attachment") or d:FindFirstAncestorOfClass("BasePart")
+
+			if not Parent then
+				return
+			end
+
+			const Nearest = Get_Nearest(Parent,false)
+
+			if not Nearest then
+				return
+			end
+
+			if Nearest:GetAttribute("LastHit") ~= Player.Name then
+				return
+			end
+
+			task.wait()
+
+			if tick() - (Nearest:GetAttribute("LastDamage") + 3598) > 1.5 then return end
+
+			d.Color = Swap_Color(d.Color, Owner_Color, Is_Blue)
+		end
+	)
+end
+
+Avatars:AddButton({["Name"] = "Headless", CallBack = function()
+	const Head = Character:WaitForChild("Head",Yield_TimeOut)
+	if not Head then return end
+
+	Head.Transparency = Character:HasTag("NoHead") and 0 or 1
+	Head.Size = Character:HasTag("NoHead") and Vector3.new(2,1,1) or Vector3.zero
+
+	const Method = Character:HasTag("NoHead") and "RemoveTag" or "AddTag"
+
+	Character[Method](Character,"NoHead")
+end,})
+
+Avatars:AddButton({["Name"] = "Korblox", CallBack = function()
+	const Right_Leg = Character:WaitForChild("Right Leg",Yield_TimeOut)
+	if not Right_Leg then return end
+
+	Right_Leg.Transparency = Character:HasTag("Korblox") and 0 or 1
+	Right_Leg.Size = Character:HasTag("Korblox") and Vector3.new(1,2,1) or Vector3.zero
+
+	const Method = Character:HasTag("Korblox") and "RemoveTag" or "AddTag"
+
+	Character[Method](Character,"Korblox")
+end,})
+
+
+Extra:AddToggle({["Name"] = "Shiftlock Priority",["CallBack"] = function(Value)
+	getgenv().ShiftLock_Priority = Value
+end,["Enabled"] = getgenv().ShiftLock_Priority,["Icon"] = "rbxassetid://137244388976758"})
+
+const Settings_SilentAim = Settings:CreateSection({Name = "Silent Aim"})
+
+Settings_SilentAim:AddToggle({["Name"] = "Dynamic Prediction",["CallBack"] = function(Value)
+	getgenv().Prediction_Dynamic = Value
+	if not Value then
+		getgenv().Prediction_After = Prediction_After
+	end
+end,["Enabled"] = getgenv().Prediction_Dynamic,["Icon"] = "rbxassetid://131890964104672"})
+
+const Emotes = PlayerGui.Emotes:FindFirstChildOfClass("ImageLabel")
+
+const Positioning = {
+	[5] = UDim2.fromScale(.8,.23),
+	[6] = UDim2.fromScale(.2,.23),
+	[7] = UDim2.fromScale(.2,.83),
+	[8] = UDim2.fromScale(.8,.83),
+}
+
+for i = 5, 8 do
+	const Emote = Emotes:FindFirstChild(tostring(i))
+	if not Emote then continue end
+
+	Emote.Visible = true
+
+	Emote:FindFirstChildOfClass("UIAspectRatioConstraint").AspectRatio = 1
+	Emote.Position = Positioning[i]
+
+	Emote:FindFirstChildOfClass("TextButton").Visible = true
+end
+
+for _, Emote in Emotes:GetChildren() do
+	if not tonumber(Emote.Name) then continue end
+
+	Emote.Radial.Visible = false
+	Emote.Radial:GetPropertyChangedSignal("Visible"):Connect(function()
+		if not Emote.Radial.Visible then return end
+
+		Emote.Radial.Visible = false
+	end)
+
+	Emote.Button.MouseButton1Click:Connect(function()
+		if Emote.Radial:FindFirstChildOfClass("ImageLabel") then
+			Communicate({Goal = "Emote",Emote = Emote.EmoteName.Text})
+		end
+	end)
+end
+
+for Moveset, Name in Moveset_Rename do
+	if Moveset == "CUSTOM" then continue end
+	if not Is_PS and Illegal_Movesets[Moveset] then continue end
+
+	Characters_Tab:CreateSection({["Name"] = `{Name} Moveset`,["Description"] = "Made To Use It In Duels"}):AddButton({["Name"] = "Switch To",["CallBack"] = function()
+		Communicate({Goal = "Change Character",Character = Moveset})
+	end})
+end
+
+namecall = hookmetamethod(game,"__namecall",function(self,...)
+	const args = {...}
+	const method = getnamecallmethod():lower()
+
+	if not checkcaller() and self == RE and method == "fireserver" then
+		const Info = args[1]
+		if Info.Goal == "delete bv" and getgenv().InTech and Override_StopDash then
+			return
+		elseif Info.Goal == "Console Move" and Info.ToolName == "Crushing Pull" and getgenv().Target then
+			Info.CrushingPull = getgenv().Target
+		end
+		return namecall(self,Info)
+	end
+
+	return namecall(self,...)
+end)
+
+Events:Init()
+
+while Env.GerpLoaded do
+	StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Health,false)
+	StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat,true)
+	task.wait(.5)
+end
